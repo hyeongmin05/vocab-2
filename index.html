@@ -1,0 +1,1142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FSRS 단어장</title>
+<meta name="theme-color" content="#24427C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="단어장">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=Noto+Sans+JP:wght@400;500&family=Shippori+Mincho:wght@500;700&display=swap">
+<style>
+/* Layout: app shell — header, one scrolling content column (max 760px), tab bar pinned to the bottom edge; detail pages stack over the tabs with a back bar. */
+:root {
+  --bg: #EDF0F4;
+  --surface: #FFFFFF;
+  --sunken: #F4F6F9;
+  --ink: #18202E;
+  --muted: #5A6476;
+  --line: #D3D9E2;
+  --accent: #24427C;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E0E7F4;
+  --star: #C98A0B;
+  --again: #B93A28;
+  --hard: #A86A12;
+  --good: #2C7A4B;
+  --easy: #2766A8;
+  --c-new: #2766A8;
+  --c-learn: #B93A28;
+  --c-rev: #2C7A4B;
+  --shadow: 0 1px 2px rgba(24,32,46,.06), 0 8px 24px rgba(24,32,46,.06);
+  --f-word: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --f-ui: "IBM Plex Sans KR", "Noto Sans JP", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --f-jp: "Noto Sans JP", "Hiragino Sans", "IBM Plex Sans KR", sans-serif;
+  --tabbar-h: 64px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141B; --surface: #192029; --sunken: #141A22; --ink: #E6EAF1; --muted: #9AA4B6; --line: #2B3442;
+    --accent: #8EAEEC; --accent-ink: #0F1724; --accent-soft: #222F47; --star: #E8B341;
+    --again: #EE7A66; --hard: #DFA64C; --good: #69C38C; --easy: #78ADEA;
+    --c-new: #78ADEA; --c-learn: #EE7A66; --c-rev: #69C38C;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141B; --surface: #192029; --sunken: #141A22; --ink: #E6EAF1; --muted: #9AA4B6; --line: #2B3442;
+  --accent: #8EAEEC; --accent-ink: #0F1724; --accent-soft: #222F47; --star: #E8B341;
+  --again: #EE7A66; --hard: #DFA64C; --good: #69C38C; --easy: #78ADEA;
+  --c-new: #78ADEA; --c-learn: #EE7A66; --c-rev: #69C38C;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-ui); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  margin: 0;
+  padding-top: calc(18px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(var(--tabbar-h) + 32px + env(safe-area-inset-bottom, 0px));
+}
+body.no-tabs { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
+.app { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+h2, h3 { text-wrap: balance; }
+
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.hanko { width: 38px; height: 38px; border-radius: 8px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-family: var(--f-word); font-weight: 700; font-size: 21px; line-height: 1; }
+.brand h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+.brand p { margin: 0; font-size: 12px; color: var(--muted); }
+.sync { font-size: 12px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.sync::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.sync[data-kind="db"]::before { background: var(--good); }
+.sync[data-kind="local"]::before { background: var(--good); }
+
+/* page bar for stacked pages */
+.pagebar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pagebar .left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.pagebar h2 { margin: 0; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* generic */
+.section-title { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+.stack { display: grid; gap: 18px; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 16px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:disabled { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--muted); }
+.btn.ghost { background: transparent; }
+.btn.small { padding: 6px 12px; font-size: 13.5px; }
+.btn.danger { background: var(--again); border-color: var(--again); color: var(--surface); }
+.empty { margin: 0; color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+
+/* tab bar */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px));
+}
+.tabbar-inner { max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); height: var(--tabbar-h); }
+.tab { border: 0; background: transparent; display: grid; place-items: center; align-content: center; gap: 2px; font-size: 11.5px; color: var(--muted); }
+.tab svg { width: 22px; height: 22px; }
+.tab[aria-current="page"] { color: var(--accent); font-weight: 600; }
+
+/* decks */
+.decks { display: flex; flex-direction: column; gap: 12px; }
+.deck { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; display: grid; gap: 14px; box-shadow: var(--shadow); }
+.deck-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.deck h3 { margin: 0; font-size: 18px; font-weight: 600; }
+.deck-meta { margin: 0; font-size: 13px; color: var(--muted); }
+.bar { height: 4px; background: var(--accent-soft); border-radius: 2px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+.counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+.counts div { background: var(--sunken); border-radius: 10px; padding: 8px 12px; }
+.counts dt { font-size: 12px; color: var(--muted); }
+.counts dd { margin: 0; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.c-new dd { color: var(--c-new); } .c-learn dd { color: var(--c-learn); } .c-rev dd { color: var(--c-rev); }
+.deck-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.confirm { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13.5px; }
+
+/* tools */
+.tools { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .tools { grid-template-columns: 1fr; } }
+.tools .panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.tools h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.tools p { margin: 0; font-size: 13px; color: var(--muted); }
+#importFile, #backupFile { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.import-msg { font-size: 13px; }
+.import-msg[data-kind="error"] { color: var(--again); }
+.stepper { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 10px; padding: 3px; align-self: flex-start; }
+.stepper button { width: 36px; height: 34px; border: 0; background: transparent; border-radius: 8px; font-size: 18px; }
+.stepper button:hover { background: var(--accent-soft); }
+.stepper output { min-width: 44px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 3px; align-self: flex-start; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; border-radius: 8px; padding: 6px 12px; font-size: 13.5px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+/* search + chips */
+.searchrow { display: flex; gap: 8px; align-items: center; }
+.search { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 11px 14px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 13px; }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+/* word list */
+.list { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.row { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: transparent; padding: 12px 16px; }
+.row:last-child { border-bottom: 0; }
+.row:hover { background: var(--sunken); }
+.row .w { font-family: var(--f-jp); font-size: 17px; font-weight: 500; }
+.row .w mark { background: none; color: var(--accent); font-weight: 700; }
+.row .r { font-family: var(--f-jp); font-size: 13px; color: var(--muted); margin-left: 8px; }
+.row .m { font-size: 13.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .star { color: var(--star); font-size: 15px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dot.s-learn { background: var(--c-learn); } .dot.s-rev { background: var(--c-rev); } .dot.s-long { background: var(--accent); }
+.more { display: flex; justify-content: center; }
+
+/* kanji grid */
+.kgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.ktile { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 6px 8px; display: grid; justify-items: center; gap: 2px; }
+.ktile:hover { border-color: var(--accent); }
+.ktile .k { font-family: var(--f-word); font-weight: 700; font-size: 32px; line-height: 1.15; }
+.ktile .ko { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.ktile .n { font-size: 11px; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* word page */
+.hero { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 24px; display: grid; gap: 14px; }
+.hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.hero .word { font-family: var(--f-word); font-weight: 700; font-size: clamp(2.4rem, 8vw, 3.6rem); line-height: 1.2; overflow-wrap: anywhere; }
+.iconbtn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; width: 38px; height: 38px; display: inline-grid; place-items: center; flex: none; color: var(--muted); }
+.iconbtn:hover { color: var(--accent); border-color: var(--accent); }
+.iconbtn[aria-pressed="true"] { color: var(--star); border-color: var(--star); }
+.iconbtn svg { width: 18px; height: 18px; }
+.reading { font-family: var(--f-jp); font-size: 21px; font-weight: 500; color: var(--accent); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.meaning { font-size: 18px; font-weight: 500; }
+.meaning i { font-style: normal; color: var(--muted); font-size: 15px; font-weight: 400; }
+.pos { display: inline-block; font-size: 12px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.decktag { display: inline-block; font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; }
+.example { background: var(--sunken); border-radius: 12px; padding: 12px 14px; display: grid; gap: 4px; }
+.example .jp { font-family: var(--f-jp); font-size: 16.5px; line-height: 1.8; display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
+.example .jp b { color: var(--accent); font-weight: 600; }
+.example .ko { font-size: 14px; color: var(--muted); }
+.kj { cursor: pointer; border-bottom: 1px dotted var(--muted); }
+.kj:hover, .kj:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+.kbreak { display: grid; gap: 8px; }
+.kitem { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 14px; align-items: center; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px 14px 8px 8px; text-align: left; width: 100%; }
+.kitem:hover { border-color: var(--accent); }
+.kitem .k { font-family: var(--f-word); font-weight: 700; font-size: 34px; line-height: 1; display: grid; place-items: center; height: 52px; background: var(--sunken); border-radius: 8px; }
+.kitem .ko { font-weight: 600; }
+.kitem .sub { font-size: 12.5px; color: var(--muted); }
+.kitem .go { color: var(--muted); font-size: 18px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 0; }
+.facts div { background: var(--sunken); border-radius: 10px; padding: 9px 12px; }
+.facts dt { font-size: 12px; color: var(--muted); }
+.facts dd { margin: 0; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* kanji page */
+.khero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; }
+@media (max-width: 480px) { .khero { grid-template-columns: 1fr; justify-items: start; } }
+.kbig { font-family: var(--f-word); font-weight: 700; font-size: 104px; line-height: 1; width: 148px; height: 148px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 16px; background:
+  linear-gradient(var(--line), var(--line)) center/1px 100% no-repeat,
+  linear-gradient(var(--line), var(--line)) center/100% 1px no-repeat, var(--sunken); }
+.kko { font-size: 24px; font-weight: 600; margin: 0; }
+.kchips { display: flex; gap: 6px; flex-wrap: wrap; }
+.kchip { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 4px 10px; display: inline-flex; gap: 6px; align-items: baseline; }
+.kchip:hover { border-color: var(--accent); }
+.kchip b { font-family: var(--f-word); font-size: 20px; }
+.kchip span { font-size: 12px; color: var(--muted); }
+
+/* study */
+.qcounts { display: flex; gap: 12px; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 15px; }
+.qcounts .n { color: var(--c-new); } .qcounts .l { color: var(--c-learn); } .qcounts .r { color: var(--c-rev); }
+.qcounts span[data-cur="1"] { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); min-height: 340px; padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 20px; position: relative; }
+.card .tag { position: absolute; top: 14px; left: 18px; font-size: 11.5px; font-weight: 600; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); }
+.tag.t-new { color: var(--c-new); } .tag.t-learn { color: var(--c-learn); } .tag.t-rev { color: var(--c-rev); }
+.card .open { position: absolute; top: 10px; right: 12px; }
+.front { flex: 1; display: grid; place-items: center; text-align: center; padding-top: 18px; min-height: 140px; gap: 10px; }
+.front .word { font-family: var(--f-word); font-weight: 700; font-size: clamp(2.6rem, 9vw, 4.4rem); line-height: 1.2; letter-spacing: .02em; overflow-wrap: anywhere; }
+.front .mfront { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 600; }
+.front .blank { font-family: var(--f-jp); font-size: 16px; color: var(--muted); max-width: 34em; }
+.html-front { font-family: var(--f-jp); font-size: clamp(1.6rem, 6vw, 2.6rem); line-height: 1.35; overflow-wrap: anywhere; }
+.back { border-top: 1px dashed var(--line); padding-top: 18px; display: grid; gap: 14px; min-width: 0; }
+.back .word-inline { font-family: var(--f-word); font-weight: 700; font-size: 34px; }
+.html-back { font-family: var(--f-jp); font-size: 16px; line-height: 1.7; overflow-wrap: anywhere; }
+.actions { display: grid; gap: 10px; }
+.reveal { width: 100%; padding: 16px; font-size: 16px; justify-content: center; }
+.rates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.rate { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 6px 12px; display: grid; gap: 2px; justify-items: center; }
+.rate b { font-size: 15.5px; font-weight: 600; }
+.rate span { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rate kbd { font-family: var(--f-ui); font-size: 10.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+.rate[data-g="1"] b { color: var(--again); } .rate[data-g="1"]:hover { border-color: var(--again); }
+.rate[data-g="2"] b { color: var(--hard); }  .rate[data-g="2"]:hover { border-color: var(--hard); }
+.rate[data-g="3"] b { color: var(--good); }  .rate[data-g="3"]:hover { border-color: var(--good); }
+.rate[data-g="4"] b { color: var(--easy); }  .rate[data-g="4"]:hover { border-color: var(--easy); }
+.hint { margin: 0; font-size: 12px; color: var(--muted); text-align: center; }
+@media (hover: none) { .rate kbd, .hint { display: none; } }
+.done { text-align: center; display: grid; gap: 10px; padding: 56px 20px; }
+.done h3 { margin: 0; font-family: var(--f-word); font-size: 26px; font-weight: 700; }
+.done p { margin: 0; color: var(--muted); }
+.done .btn { justify-self: center; }
+
+/* form */
+.form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 600; }
+.field input, .field select, .field textarea { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 12px; width: 100%; }
+.field textarea { min-height: 70px; resize: vertical; font-family: var(--f-jp); }
+.field .jpi { font-family: var(--f-jp); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+.formmsg { font-size: 13px; }
+.formmsg[data-kind="error"] { color: var(--again); }
+.formactions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* stats */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.tile dt { font-size: 12.5px; color: var(--muted); }
+.tile dd { margin: 2px 0 0; font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tile dd small { font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.chart { display: grid; grid-template-columns: repeat(14, 1fr); gap: 6px; align-items: end; height: 170px; padding-top: 18px; }
+.chart .col { display: grid; grid-template-rows: auto 1fr auto; height: 100%; justify-items: center; gap: 4px; min-width: 0; }
+.chart .v { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; align-self: end; }
+.chart .barv { width: 100%; max-width: 26px; background: var(--accent); border-radius: 4px 4px 0 0; align-self: end; min-height: 2px; }
+.chart .barv.zero { background: var(--line); }
+.chart .d { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chart .col.today .d { color: var(--accent); font-weight: 600; }
+.dist { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--line); }
+.dist i { display: block; height: 100%; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: var(--c); }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 13.5px; max-width: calc(100% - 32px); box-shadow: var(--shadow); z-index: 20; }
+@media (prefers-reduced-motion: no-preference) {
+  .card, .hero { animation: in .18s ease-out; }
+  @keyframes in { from { transform: translateY(4px); opacity: .6; } to { transform: none; opacity: 1; } }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="hanko" aria-hidden="true">単</div>
+      <div>
+        <h1>FSRS 단어장</h1>
+        <p>단어 · 한자 · 간격 반복</p>
+      </div>
+    </div>
+    <span id="sync" class="sync">불러오는 중</span>
+  </header>
+  <div id="view"><p class="empty">단어 목록을 불러오는 중이에요.</p></div>
+</div>
+
+<nav class="tabbar" id="tabbar" aria-label="메뉴">
+  <div class="tabbar-inner">
+    <button class="tab" type="button" data-tab="learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/></svg>학습</button>
+    <button class="tab" type="button" data-tab="words"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>단어</button>
+    <button class="tab" type="button" data-tab="kanji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M12 3.5v17M3.5 12h17" stroke-dasharray="2 2"/></svg>한자</button>
+    <button class="tab" type="button" data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>통계</button>
+  </div>
+</nav>
+<input id="importFile" type="file" accept=".json,.csv,.txt,.tsv,application/json,text/csv,text/plain">
+<input id="backupFile" type="file" accept=".json,application/json">
+<div id="toast" class="toast" hidden></div>
+
+<script>
+(() => {
+  // ================= FSRS-5 =================
+  const W = [0.40255,1.18385,3.173,15.69105,7.1949,0.5345,1.4604,0.0046,1.54575,0.1192,1.01925,1.9395,0.11,0.29605,2.2698,0.2315,2.9898,0.51655,0.6621];
+  const DECAY = -0.5, FACTOR = 19 / 81;
+  const MIN = 60000, DAY = 86400000, LEARN_AHEAD = 20 * MIN;
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const R = (t, s) => Math.pow(1 + FACTOR * t / s, DECAY);
+  const ivl = s => clamp(Math.round(s / FACTOR * (Math.pow(0.9, 1 / DECAY) - 1)), 1, 36500);
+  const initS = g => Math.max(W[g - 1], 0.1);
+  const initD = g => clamp(W[4] - Math.exp(W[5] * (g - 1)) + 1, 1, 10);
+  const nextD = (d, g) => { const dp = d + (-W[6] * (g - 3)) * (10 - d) / 9; return clamp(W[7] * initD(4) + (1 - W[7]) * dp, 1, 10); };
+  const recallS = (d, s, r, g) => s * (1 + Math.exp(W[8]) * (11 - d) * Math.pow(s, -W[9]) * (Math.exp((1 - r) * W[10]) - 1) * (g === 2 ? W[15] : 1) * (g === 4 ? W[16] : 1));
+  const forgetS = (d, s, r) => Math.min(W[11] * Math.pow(d, -W[12]) * (Math.pow(s + 1, W[13]) - 1) * Math.exp((1 - r) * W[14]), s);
+  const shortS = (s, g) => s * Math.exp(W[17] * (g - 3 + W[18]));
+
+  function dayStart(t) { const d = new Date(t); d.setHours(4, 0, 0, 0); if (d.getTime() > t) d.setDate(d.getDate() - 1); return d.getTime(); }
+  function addDays(t, n) { const d = new Date(dayStart(t)); d.setDate(d.getDate() + n); return d.getTime(); }
+  const nextCutoff = t => addDays(t, 1);
+  const dayKey = t => { const d = new Date(dayStart(t)); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+
+  function toReview(o, now, days) { o.st = "review"; o.step = 0; o.ivl = days; o.due = addDays(now, days); }
+  function schedule(p, g, now) {
+    const out = Object.assign({ reps: 0, lapses: 0 }, p || {});
+    out.reps = (out.reps || 0) + 1;
+    if (!p || p.st === "new") {
+      out.first = now; out.last = now; out.s = initS(g); out.d = initD(g);
+      if (g === 1) { out.st = "learning"; out.step = 0; out.due = now + MIN; }
+      else if (g === 2) { out.st = "learning"; out.step = 0; out.due = now + 6 * MIN; }
+      else if (g === 3) { out.st = "learning"; out.step = 1; out.due = now + 10 * MIN; }
+      else toReview(out, now, ivl(out.s));
+      return out;
+    }
+    if (p.st === "learning" || p.st === "relearning") {
+      const re = p.st === "relearning";
+      out.last = now; out.s = shortS(p.s, g); out.d = nextD(p.d, g);
+      if (g === 1) { out.step = 0; out.due = now + (re ? 10 : 1) * MIN; }
+      else if (g === 2) { out.due = now + (re ? 10 : 6) * MIN; }
+      else if (g === 3 && !re && (p.step || 0) === 0) { out.step = 1; out.due = now + 10 * MIN; }
+      else { let i = ivl(out.s); if (g === 4) i = Math.max(i, ivl(shortS(p.s, 3)) + 1); toReview(out, now, i); }
+      return out;
+    }
+    const el = Math.max(0, (now - p.last) / DAY), r = R(el, p.s);
+    out.last = now; out.d = nextD(p.d, g);
+    if (g === 1) { out.s = forgetS(p.d, p.s, r); out.lapses = (p.lapses || 0) + 1; out.st = "relearning"; out.step = 0; out.due = now + 10 * MIN; return out; }
+    const sH = recallS(p.d, p.s, r, 2), sG = recallS(p.d, p.s, r, 3), sE = recallS(p.d, p.s, r, 4);
+    let iH = ivl(sH), iG = ivl(sG), iE = ivl(sE);
+    iH = Math.min(iH, iG); iG = Math.max(iG, iH + 1); iE = Math.max(iE, iG + 1);
+    const pick = { 2: [sH, iH], 3: [sG, iG], 4: [sE, iE] }[g];
+    out.s = pick[0]; toReview(out, now, pick[1]);
+    return out;
+  }
+  function fmtDays(d) { if (d < 30) return d + "일"; if (d < 365) return (Math.round(d / 30 * 10) / 10) + "개월"; return (Math.round(d / 365 * 10) / 10) + "년"; }
+  function fmtNext(st, now) {
+    if (st.st === "review") return fmtDays(st.ivl);
+    const m = Math.max(1, Math.round((st.due - now) / MIN));
+    return m < 60 ? m + "분" : Math.round(m / 60) + "시간";
+  }
+
+  // ================= helpers =================
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const KANJI_RE = /[㐀-䶿一-鿿豈-﫿]/;
+  const kanjiOf = s => [...new Set([...String(s || "")].filter(ch => KANJI_RE.test(ch)))];
+  let toastTimer = null;
+  function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
+  const ALLOWED = new Set(["B", "STRONG", "I", "EM", "U", "BR", "DIV", "P", "SPAN", "RUBY", "RT", "RB", "RP", "SUB", "SUP", "UL", "OL", "LI", "SMALL"]);
+  function sanitize(html) {
+    const doc = new DOMParser().parseFromString("<div>" + String(html) + "</div>", "text/html");
+    const walk = node => {
+      for (const ch of [...node.childNodes]) {
+        if (ch.nodeType === 1) {
+          if (!ALLOWED.has(ch.tagName)) {
+            if (["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED"].includes(ch.tagName)) { ch.remove(); continue; }
+            walk(ch); ch.replaceWith(...ch.childNodes); continue;
+          }
+          for (const a of [...ch.attributes]) ch.removeAttribute(a.name);
+          walk(ch);
+        } else if (ch.nodeType !== 3) ch.remove();
+      }
+    };
+    const root = doc.body.firstChild; walk(root); return root.innerHTML;
+  }
+  const htmlText = html => { const d = new DOMParser().parseFromString(String(html), "text/html"); return (d.body.textContent || "").trim(); };
+  const ICON = {
+    speak: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>',
+    starO: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>',
+    open: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>',
+  };
+  const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
+  function speak(text) {
+    if (!canSpeak || !text) return;
+    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "ja-JP"; u.rate = 0.9; const v = speechSynthesis.getVoices().find(v => /^ja/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) {}
+  }
+  const speakBtn = (text, label) => canSpeak && text ? `<button class="iconbtn" type="button" data-act="speak" data-text="${esc(text)}" aria-label="${esc(label || "발음 듣기")}">${ICON.speak}</button>` : "";
+
+  // Mark where the headword sits inside its example sentence.
+  function hlRange(ex, w, pos) {
+    const key = String(w || "").replace(/\(と\)|[()]/g, "");
+    const cands = [key];
+    if (/^동사|い형용사/.test(pos || "")) cands.push(key.slice(0, -1));
+    if (key.endsWith("に")) cands.push(key.slice(0, -1));
+    if (key.endsWith("する")) cands.push(key.slice(0, -2));
+    for (const c of cands) { const i = c ? ex.indexOf(c) : -1; if (i >= 0) return [i, i + c.length]; }
+    return null;
+  }
+  // Text with every kanji turned into a link to its kanji page; optional bold range.
+  function linkText(str, range) {
+    let out = "", inB = false;
+    [...String(str || "")].forEach((ch, idx) => {
+      // [...str] splits by code point; keep range in UTF-16 units approximately (BMP only in practice)
+      if (range && idx === range[0]) { out += "<b>"; inB = true; }
+      out += KANJI_RE.test(ch) ? `<span class="kj" role="link" tabindex="0" data-act="kanji" data-k="${esc(ch)}">${esc(ch)}</span>` : esc(ch);
+      if (range && idx === range[1] - 1) { out += "</b>"; inB = false; }
+    });
+    if (inB) out += "</b>";
+    return out;
+  }
+
+  // ================= state =================
+  const S = {
+    decks: [], cards: [], byKey: {}, kanji: {}, kidx: new Map(),
+    states: {}, settings: { newPerDay: 20, dir: "w2m" }, favs: {}, days: {}, words: [],
+    store: null, ready: false, tab: "learn", stack: [],
+    study: null, undo: null,
+    q: "", filter: "all", wordLimit: 100, kq: "", kanjiLimit: 240, confirmDel: null, waitTimer: null,
+  };
+  const topPage = () => S.stack[S.stack.length - 1] || null;
+
+  // ================= stores =================
+  async function withRetry(fn) { try { return await fn(); } catch (e) { if (e && e.code === "unavailable") { await sleep(400 + Math.random() * 600); return fn(); } throw e; } }
+
+  function LocalStore() {
+    const get = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+    const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("기기 저장 공간에 저장하지 못했어요."); } };
+    return {
+      kind: "local",
+      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), days: get("fsrs.days", {}) }; },
+      async saveState() { put("fsrs.states", S.states); },
+      async deleteState() { put("fsrs.states", S.states); },
+      async saveSettings(o) { put("fsrs.settings", o); },
+      async saveDeck() { put("fsrs.decks", importedMetas); },
+      async deleteDeck() { put("fsrs.decks", importedMetas); put("fsrs.states", S.states); put("fsrs.favs", S.favs); },
+      async saveWord() { put("fsrs.words", S.words); },
+      async deleteWord() { put("fsrs.words", S.words); put("fsrs.states", S.states); put("fsrs.favs", S.favs); },
+      async saveFavs() { put("fsrs.favs", S.favs); },
+      async saveDay() { put("fsrs.days", S.days); },
+      async saveAll() {
+        put("fsrs.states", S.states); put("fsrs.settings", { newPerDay: S.settings.newPerDay, dir: S.settings.dir });
+        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.days", S.days);
+      },
+    };
+  }
+
+  const chains = {};
+  function serial(name, fn, errMsg) {
+    chains[name] = (chains[name] || Promise.resolve()).then(fn).catch(() => toast(errMsg || "저장하지 못했어요. 연결을 확인해 주세요."));
+    return chains[name];
+  }
+  const persistState = (k, v) => serial("st:" + k, () => (v ? S.store.saveState(k, v) : S.store.deleteState(k)), "복습 기록을 저장하지 못했어요. 연결을 확인해 주세요.");
+  let favTimer = null;
+  const persistFavs = () => { clearTimeout(favTimer); favTimer = setTimeout(() => serial("favs", () => S.store.saveFavs()), 500); };
+  const persistDay = k => serial("day:" + k, () => S.store.saveDay(k));
+
+  // ================= data model =================
+  function wordCard(deckId, r, i) { return { key: deckId + "-" + i, deck: deckId, w: r[0], r: r[1], ko: r[2], en: r[3], pos: r[4], ex: r[5], exko: r[6] }; }
+  function myCard(w) { return { key: "w-" + w.id, deck: "mine", id: w.id, mine: true, w: w.w, r: w.r || "", ko: w.ko || "", en: w.en || "", pos: w.pos || "", ex: w.ex || "", exko: w.exko || "", createdAt: w.createdAt || 0 }; }
+  function htmlCard(m, r, i) { return { key: m.id + "-" + i, deck: m.id, html: true, front: r[0], back: r[1] || "", w: htmlText(r[0]), ko: htmlText(r[1] || "").slice(0, 80) }; }
+  let importedMetas = [];
+  function rebuild() {
+    const mine = { id: "mine", name: "내 단어", builtin: true, mineDeck: true, cards: S.words.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).map(myCard) };
+    const imported = importedMetas.map(m => ({ id: m.id, name: m.name, meta: m, cards: (m.rows || []).map((r, i) => m.kind === "words" ? wordCard(m.id, r, i) : htmlCard(m, r, i)) }));
+    S.decks = [...imported.filter(d => d.meta.kind === "words"), mine, ...imported.filter(d => d.meta.kind !== "words")];
+    S.cards = S.decks.flatMap(d => d.cards);
+    S.byKey = {}; for (const c of S.cards) S.byKey[c.key] = c;
+    S.kidx = new Map();
+    for (const c of S.cards) for (const k of kanjiOf(c.w)) { if (!S.kidx.has(k)) S.kidx.set(k, []); S.kidx.get(k).push(c.key); }
+  }
+  const deckName = id => (S.decks.find(d => d.id === id) || {}).name || "";
+  function statusOf(key) {
+    const s = S.states[key];
+    if (!s) return { cls: "", label: "새 카드" };
+    if (s.st === "learning" || s.st === "relearning") return { cls: "s-learn", label: s.st === "relearning" ? "다시 학습 중" : "학습 중" };
+    if (s.s >= 21) return { cls: "s-long", label: "장기 기억" };
+    return { cls: "s-rev", label: "복습 중" };
+  }
+
+  // ================= queue =================
+  function deckCounts(deck, now) {
+    const cut = nextCutoff(now), start = dayStart(now);
+    let unseen = 0, learn = 0, rev = 0, introduced = 0, seen = 0;
+    for (const c of deck.cards) {
+      const s = S.states[c.key];
+      if (!s) { unseen++; continue; }
+      seen++; if (s.first >= start) introduced++;
+      if (s.st === "learning" || s.st === "relearning") { if (s.due < cut) learn++; }
+      else if (s.st === "review" && s.due < cut) rev++;
+    }
+    return { newToday: Math.max(0, Math.min(unseen, S.settings.newPerDay - introduced)), learn, rev, total: deck.cards.length, seen };
+  }
+  function nextCard(deck, now) {
+    const cut = nextCutoff(now);
+    let learnNow = null, review = null, ahead = null, firstNew = null;
+    for (const c of deck.cards) {
+      const s = S.states[c.key];
+      if (!s) { if (!firstNew) firstNew = c; continue; }
+      if (s.st === "learning" || s.st === "relearning") {
+        if (s.due <= now && (!learnNow || s.due < S.states[learnNow.key].due)) learnNow = c;
+        else if (s.due <= now + LEARN_AHEAD && (!ahead || s.due < S.states[ahead.key].due)) ahead = c;
+      } else if (s.st === "review" && s.due < cut && (!review || s.due < S.states[review.key].due)) review = c;
+    }
+    if (learnNow) return { c: learnNow, q: "l" };
+    if (review) return { c: review, q: "r" };
+    if (firstNew && deckCounts(deck, now).newToday > 0) return { c: firstNew, q: "n" };
+    if (ahead) return { c: ahead, q: "l" };
+    return null;
+  }
+  function nextLearnLater(deck, now) {
+    let t = null;
+    for (const c of deck.cards) { const s = S.states[c.key]; if (s && (s.st === "learning" || s.st === "relearning") && s.due > now && (t === null || s.due < t)) t = s.due; }
+    return t;
+  }
+
+  // ================= navigation =================
+  function go(page) { S.stack.push(page); render(); window.scrollTo(0, 0); }
+  function back() { S.stack.pop(); render(); }
+  function setTab(t) { S.tab = t; S.stack = []; S.study = null; render(); window.scrollTo(0, 0); }
+
+  // ================= render: shell =================
+  function renderSync() {
+    const el = $("#sync");
+    if (!S.store) { el.textContent = "불러오는 중"; el.removeAttribute("data-kind"); return; }
+    el.dataset.kind = S.store.kind;
+    el.textContent = "이 기기에 저장";
+  }
+  function render() {
+    renderSync();
+    clearTimeout(S.waitTimer);
+    const page = topPage();
+    const studying = page && page.t === "study";
+    $("#tabbar").hidden = !!studying;
+    document.body.classList.toggle("no-tabs", !!studying);
+    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-current", b.dataset.tab === S.tab && !page ? "page" : "false"));
+    let html;
+    if (!page) html = { learn: viewLearn, words: viewWords, kanji: viewKanji, stats: viewStats }[S.tab]();
+    else html = { study: viewStudy, word: viewWord, kanji: viewKanjiPage, edit: viewEdit }[page.t](page);
+    $("#view").innerHTML = html;
+    if (page && page.t === "edit") fillEdit(page);
+  }
+  const pagebar = (title, right) => `<div class="pagebar"><div class="left"><button class="btn ghost" type="button" data-act="back">← 뒤로</button><h2>${esc(title)}</h2></div>${right || ""}</div>`;
+
+  const importMsgHtml = () => S.importMsg ? `<div class="import-msg" ${S.importMsg.kind ? `data-kind="${S.importMsg.kind}"` : ""}>${esc(S.importMsg.text)}</div>` : "";
+
+  // ================= view: learn =================
+  function viewLearn() {
+    if (!S.ready) return '<p class="empty">단어 목록을 불러오는 중이에요.</p>';
+    const onboarding = importedMetas.length ? "" : `<article class="deck"><div class="deck-head"><h3>단어 데이터 가져오기</h3></div>
+      <p class="note">처음이라면 받은 단어장 파일(예: 한끝N2-단어.json)을 가져오세요. 한 번만 하면 이 기기에 저장돼요.</p>
+      <div class="deck-actions"><label class="btn primary" for="importFile">파일 선택</label></div>${importMsgHtml()}</article>`;
+    const now = Date.now();
+    const decks = S.decks.map(d => {
+      if (d.mineDeck && !d.cards.length) {
+        return `<article class="deck"><div class="deck-head"><h3>내 단어</h3><p class="deck-meta">아직 추가한 단어가 없어요</p></div>
+          <p class="note">교재 밖에서 만난 단어를 추가하면 여기서 같이 복습해요. 한자 페이지에도 연결돼요.</p>
+          <div class="deck-actions"><button class="btn" type="button" data-act="add">+ 단어 추가</button></div></article>`;
+      }
+      const c = deckCounts(d, now), due = c.newToday + c.learn + c.rev;
+      const pct = c.total ? Math.round(c.seen / c.total * 100) : 0;
+      const act = S.ready ? `<button class="btn primary" type="button" data-act="study" data-deck="${esc(d.id)}" ${due ? "" : "disabled"}>${due ? "공부하기" : "오늘 분량 끝"}</button>` : '<span class="muted">복습 기록 불러오는 중…</span>';
+      let extra = "";
+      if (d.mineDeck) extra = `<button class="btn ghost" type="button" data-act="add">+ 단어 추가</button>`;
+      else if (!d.builtin && S.ready) extra = S.confirmDel === d.id
+        ? `<span class="confirm">덱과 복습 기록을 모두 지울까요? <button class="btn danger" type="button" data-act="deldeck-yes" data-deck="${esc(d.id)}">삭제</button><button class="btn ghost" type="button" data-act="deldeck-no">취소</button></span>`
+        : `<button class="btn ghost" type="button" data-act="deldeck" data-deck="${esc(d.id)}">덱 삭제</button>`;
+      return `<article class="deck">
+        <div class="deck-head"><h3>${esc(d.name)}</h3><p class="deck-meta num">${c.total}장 중 ${c.seen}장 학습 시작</p></div>
+        <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+        <dl class="counts"><div class="c-new"><dt>새 카드</dt><dd>${c.newToday}</dd></div><div class="c-learn"><dt>학습 중</dt><dd>${c.learn}</dd></div><div class="c-rev"><dt>복습</dt><dd>${c.rev}</dd></div></dl>
+        <div class="deck-actions">${act}${extra}</div>
+      </article>`;
+    }).join("");
+    return `<div class="stack">
+      <section><h2 class="section-title">덱</h2><div class="decks">${onboarding}${decks}</div></section>
+      <section class="tools">
+        <div class="panel">
+          <h2>하루 새 카드</h2>
+          <p>덱마다 하루에 처음 보는 카드 수예요.</p>
+          <div class="stepper"><button type="button" data-act="npd" data-d="-5" aria-label="줄이기">−</button><output class="num">${S.settings.newPerDay}</output><button type="button" data-act="npd" data-d="5" aria-label="늘리기">+</button></div>
+        </div>
+        <div class="panel">
+          <h2>카드 앞면</h2>
+          <p>뜻 → 단어는 예문의 단어 자리를 비워서 보여줘요.</p>
+          <div class="seg"><button type="button" data-act="dir" data-v="w2m" aria-pressed="${S.settings.dir !== "m2w"}">단어 → 뜻</button><button type="button" data-act="dir" data-v="m2w" aria-pressed="${S.settings.dir === "m2w"}">뜻 → 단어</button></div>
+        </div>
+        <div class="panel">
+          <h2>덱 추가</h2>
+          <p>단어장 파일(.json)이나 Anki용 CSV, '앞면,뒷면' 두 칸짜리 CSV를 새 덱으로 추가해요.</p>
+          <div><label class="btn" for="importFile">파일 선택</label></div>
+          ${importedMetas.length ? importMsgHtml() : ""}
+        </div>
+        <div class="panel">
+          <h2>기록 백업</h2>
+          <p>덱·내 단어·복습 기록을 파일 하나로 저장해요. 다른 기기에서 가져오면 그대로 이어져요. 가져오면 이 기기의 기록이 파일 내용으로 바뀌어요.</p>
+          <div class="deck-actions"><button class="btn" type="button" data-act="export">내보내기</button><label class="btn ghost" for="backupFile">가져오기</label></div>
+        </div>
+      </section>
+      <p class="note">복습 일정은 FSRS-5 기본 매개변수(목표 기억률 90%)로 계산해요. 하루는 새벽 4시에 바뀌어요.</p>
+    </div>`;
+  }
+
+  // ================= view: words =================
+  function matchWord(c, q) {
+    if (!q) return true;
+    return (c.w && c.w.includes(q)) || (c.r && c.r.includes(q)) || (c.ko && c.ko.includes(q)) || (c.en && c.en.toLowerCase().includes(q.toLowerCase()));
+  }
+  function filteredCards() {
+    const q = S.q.trim();
+    return S.cards.filter(c => {
+      if (!matchWord(c, q)) return false;
+      const f = S.filter, s = S.states[c.key];
+      if (f === "fav") return !!S.favs[c.key];
+      if (f === "mine") return c.deck === "mine";
+      if (f === "new") return !s;
+      if (f === "learn") return s && (s.st === "learning" || s.st === "relearning");
+      if (f === "rev") return s && s.st === "review";
+      return true;
+    });
+  }
+  function wordRow(c, hlK) {
+    const st = statusOf(c.key);
+    const w = hlK ? esc(c.w).split(esc(hlK)).join(`<mark>${esc(hlK)}</mark>`) : esc(c.w);
+    return `<button class="row" type="button" data-act="word" data-key="${esc(c.key)}">
+      <span class="dot ${st.cls}" title="${st.label}"></span>
+      <span style="min-width:0"><span class="w" lang="ja">${w}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}<div class="m">${esc(c.ko)}</div></span>
+      <span>${S.favs[c.key] ? '<span class="star" aria-label="즐겨찾기">★</span>' : ""}</span>
+    </button>`;
+  }
+  function wordsResults() {
+    const list = filteredCards();
+    const shown = list.slice(0, S.wordLimit);
+    return `<p class="note num">${list.length}개 단어</p>
+      ${shown.length ? `<div class="list">${shown.map(c => wordRow(c)).join("")}</div>` : '<p class="empty">조건에 맞는 단어가 없어요.</p>'}
+      ${list.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-words">더 보기 (${list.length - shown.length}개 남음)</button></div>` : ""}`;
+  }
+  function viewWords() {
+    const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["mine", "내 단어"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"]]
+      .map(([k, l]) => `<button class="chip" type="button" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${l}</button>`).join("");
+    return `<div class="stack">
+      <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
+      <div class="chips">${chips}</div>
+      <div id="wresults" class="stack">${wordsResults()}</div>
+    </div>`;
+  }
+
+  // ================= view: kanji list =================
+  function viewKanji() {
+    return `<div class="stack">
+      <div class="searchrow"><input id="ksearch" class="search" type="search" placeholder="한자나 음훈으로 검색 (예: 相, 서로)" value="${esc(S.kq)}" autocomplete="off"></div>
+      <div id="kresults" class="stack">${kanjiResults()}</div>
+    </div>`;
+  }
+  function kanjiResults() {
+    const q = S.kq.trim();
+    let ks = [...S.kidx.entries()].map(([k, keys]) => ({ k, n: keys.length, ko: (S.kanji[k] || {}).ko || "" }));
+    if (q) ks = ks.filter(x => x.k.includes(q) || x.ko.includes(q) || [...q].some(ch => ch === x.k));
+    ks.sort((a, b) => b.n - a.n || a.k.localeCompare(b.k));
+    const shown = ks.slice(0, S.kanjiLimit);
+    return `<p class="note num">내 단어에 쓰인 한자 ${ks.length}자 · 많이 쓰인 순</p>
+      ${shown.length ? `<div class="kgrid">${shown.map(x => `<button class="ktile" type="button" data-act="kanji" data-k="${esc(x.k)}"><span class="k" lang="ja">${esc(x.k)}</span><span class="ko">${esc(x.ko || "—")}</span><span class="n">${x.n}단어</span></button>`).join("")}</div>` : '<p class="empty">찾는 한자가 없어요.</p>'}
+      ${ks.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-kanji">더 보기 (${ks.length - shown.length}자 남음)</button></div>` : ""}`;
+  }
+
+  // ================= view: word page =================
+  function kanjiItems(c) {
+    const ks = kanjiOf(c.w);
+    if (!ks.length) return '<p class="note">이 단어에는 한자가 없어요.</p>';
+    return `<div class="kbreak">${ks.map(k => {
+      const info = S.kanji[k] || {}, n = (S.kidx.get(k) || []).length;
+      const sub = [info.on && info.on.length ? "음 " + info.on.join("・") : "", info.kun && info.kun.length ? "훈 " + info.kun.join("・") : ""].filter(Boolean).join(" · ");
+      return `<button class="kitem" type="button" data-act="kanji" data-k="${esc(k)}"><span class="k" lang="ja">${esc(k)}</span><span style="min-width:0"><div class="ko">${esc(info.ko || "음훈 정보 없음")}</div><div class="sub" lang="ja">${esc(sub || `이 한자가 들어간 단어 ${n}개`)}</div></span><span class="go" aria-hidden="true">›</span></button>`;
+    }).join("")}</div>`;
+  }
+  function recordFacts(key) {
+    const s = S.states[key], now = Date.now();
+    if (!s) return '<p class="note">아직 공부하지 않은 단어예요. 덱에서 공부하기를 누르면 순서대로 나와요.</p>';
+    const st = statusOf(key);
+    let due;
+    if (s.st === "review") { const d = new Date(s.due); due = (d.getMonth() + 1) + "월 " + d.getDate() + "일"; }
+    else due = s.due <= now ? "지금" : fmtNext(s, now) + " 뒤";
+    const r = s.st === "review" ? Math.round(R(Math.max(0, (now - s.last) / DAY), s.s) * 100) + "%" : "—";
+    return `<dl class="facts">
+      <div><dt>상태</dt><dd>${st.label}</dd></div>
+      <div><dt>다음 복습</dt><dd>${due}</dd></div>
+      <div><dt>현재 기억 확률</dt><dd>${r}</dd></div>
+      <div><dt>기억 안정도</dt><dd>${s.s >= 1 ? fmtDays(Math.round(s.s)) : "1일 미만"}</dd></div>
+      <div><dt>복습 횟수</dt><dd>${s.reps || 0}회</dd></div>
+      <div><dt>잊은 횟수</dt><dd>${s.lapses || 0}회</dd></div>
+    </dl>`;
+  }
+  function viewWord(page) {
+    const c = S.byKey[page.key];
+    if (!c) return pagebar("단어") + '<p class="empty">이 단어를 찾을 수 없어요.</p>';
+    const fav = !!S.favs[c.key];
+    const favBtn = `<button class="iconbtn" type="button" data-act="fav" data-key="${esc(c.key)}" aria-pressed="${fav}" aria-label="즐겨찾기">${fav ? ICON.star : ICON.starO}</button>`;
+    let body;
+    if (c.html) {
+      body = `<div class="hero"><div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.w)}${favBtn}</div></div>
+        <div class="html-back" lang="ja">${sanitize(c.back)}</div><div><span class="decktag">${esc(deckName(c.deck))}</span></div></div>`;
+    } else {
+      const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
+      body = `<div class="hero">
+        <div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w)}${favBtn}</div></div>
+        ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}</div>` : ""}
+        <div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
+        <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">${esc(deckName(c.deck))}</span></div>
+        ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span>${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
+      </div>`;
+    }
+    const right = c.mine ? `<button class="btn small" type="button" data-act="edit" data-key="${esc(c.key)}">편집</button>` : "";
+    return `<div class="stack">${pagebar(c.w, right)}${body}
+      <section><h2 class="section-title">한자</h2>${kanjiItems(c)}</section>
+      <section><h2 class="section-title">내 학습 기록</h2>${recordFacts(c.key)}</section>
+    </div>`;
+  }
+
+  // ================= view: kanji page =================
+  function viewKanjiPage(page) {
+    const k = page.k, info = S.kanji[k] || {}, keys = S.kidx.get(k) || [];
+    const cards = keys.map(key => S.byKey[key]).filter(Boolean);
+    const co = new Map();
+    for (const c of cards) for (const x of kanjiOf(c.w)) if (x !== k) co.set(x, (co.get(x) || 0) + 1);
+    const coList = [...co.entries()].sort((a, b) => b[1] - a[1]).slice(0, 16);
+    const fact = (label, v) => `<div><dt>${label}</dt><dd lang="ja">${v ? esc(v) : '<span class="muted" style="font-weight:400">—</span>'}</dd></div>`;
+    const hasDetail = (info.on && info.on.length) || (info.kun && info.kun.length) || info.strokes;
+    return `<div class="stack">${pagebar(k + "  " + (info.ko || ""))}
+      <div class="hero">
+        <div class="khero">
+          <div class="kbig" lang="ja">${esc(k)}</div>
+          <div style="display:grid;gap:10px;min-width:0">
+            <p class="kko">${esc(info.ko || "음훈 정보 없음")}</p>
+            <dl class="facts">
+              ${fact("음독", (info.on || []).join("・"))}
+              ${fact("훈독", (info.kun || []).join("・"))}
+              ${fact("획수", info.strokes ? info.strokes + "획" : "")}
+            </dl>
+            ${hasDetail ? "" : '<p class="note">음독·훈독·획수는 한자 데이터를 연결하면 채워져요.</p>'}
+          </div>
+        </div>
+      </div>
+      <section><h2 class="section-title num">이 한자가 들어간 단어 ${cards.length}개</h2>
+        ${cards.length ? `<div class="list">${cards.map(c => wordRow(c, k)).join("")}</div>` : '<p class="empty">내 단어 중에는 이 한자가 들어간 단어가 없어요.</p>'}
+      </section>
+      ${coList.length ? `<section><h2 class="section-title">함께 쓰인 한자</h2><div class="kchips">${coList.map(([x, n]) => `<button class="kchip" type="button" data-act="kanji" data-k="${esc(x)}"><b lang="ja">${esc(x)}</b><span>${esc((S.kanji[x] || {}).ko || "")}</span></button>`).join("")}</div></section>` : ""}
+    </div>`;
+  }
+
+  // ================= view: edit word =================
+  const POS = ["명사", "동사·자동사", "동사·타동사", "い형용사", "な형용사", "부사", "접속사", "연체사", "표현", "기타"];
+  function viewEdit(page) {
+    const isNew = !page.key;
+    const del = !isNew ? (page.confirmDel
+      ? `<span class="confirm">이 단어와 복습 기록을 지울까요? <button class="btn danger" type="button" data-act="delword-yes">삭제</button><button class="btn ghost" type="button" data-act="delword-no">취소</button></span>`
+      : `<button class="btn ghost" type="button" data-act="delword">단어 삭제</button>`) : "";
+    return `<div class="stack">${pagebar(isNew ? "단어 추가" : "단어 편집")}
+      <form class="panel form" id="wordForm" novalidate>
+        <div class="field"><label for="f_w">단어 *</label>
+          <input id="f_w" class="jpi" type="text" placeholder="예: 把握する" autocomplete="off" required>
+          <p class="note" id="dupNote" hidden></p>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f_r">읽기</label><input id="f_r" class="jpi" type="text" placeholder="はあくする" autocomplete="off"></div>
+          <div class="field"><label for="f_pos">품사</label><select id="f_pos">${POS.map(p => `<option value="${p}">${p}</option>`).join("")}</select></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f_ko">한국어 뜻 *</label><input id="f_ko" type="text" placeholder="파악하다" autocomplete="off"></div>
+          <div class="field"><label for="f_en">영어</label><input id="f_en" type="text" placeholder="to grasp" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="f_ex">예문</label><textarea id="f_ex" placeholder="状況を正確に把握することが大切だ。"></textarea></div>
+        <div class="field"><label for="f_exko">예문 해석</label><input id="f_exko" type="text" autocomplete="off"></div>
+        <div id="formMsg" class="formmsg" hidden></div>
+        <div class="formactions"><button class="btn primary" type="submit">${isNew ? "저장하고 덱에 추가" : "저장"}</button><button class="btn ghost" type="button" data-act="back">취소</button>${del}</div>
+      </form>
+      <p class="note">저장하면 '내 단어' 덱에 들어가고, 단어에 쓰인 한자의 페이지에도 연결돼요.</p>
+    </div>`;
+  }
+  const FIELDS = ["w", "r", "pos", "ko", "en", "ex", "exko"];
+  function fillEdit(page) {
+    const d = page.draft || {};
+    for (const f of FIELDS) { const el = document.getElementById("f_" + f); if (el && d[f] != null) el.value = d[f]; }
+    if (!page.focused) { page.focused = true; const el = document.getElementById("f_w"); if (el && !d.w) el.focus(); }
+    dupCheck();
+  }
+  function readForm() { const o = {}; for (const f of FIELDS) { const el = document.getElementById("f_" + f); o[f] = el ? el.value.trim() : ""; } return o; }
+  function formMsg(text, kind) { const m = $("#formMsg"); if (!m) return; m.hidden = !text; m.textContent = text || ""; if (kind) m.dataset.kind = kind; else m.removeAttribute("data-kind"); }
+  function dupCheck() {
+    const el = $("#f_w"), note = $("#dupNote"); if (!el || !note) return;
+    const page = topPage(), v = el.value.trim();
+    const hit = v && S.cards.find(c => c.w === v && c.key !== page.key);
+    note.hidden = !hit; note.textContent = hit ? `이미 '${deckName(hit.deck)}' 덱에 있는 단어예요.` : "";
+  }
+  async function saveWordForm() {
+    const page = topPage(), f = readForm();
+    if (!f.w) return formMsg("단어를 입력해 주세요.", "error");
+    if (!f.ko) return formMsg("한국어 뜻을 입력해 주세요.", "error");
+    const existing = page.key ? S.byKey[page.key] : null;
+    const id = existing ? existing.id : "m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    const word = { id, ...f, createdAt: existing ? existing.createdAt || Date.now() : Date.now() };
+    const i = S.words.findIndex(x => x.id === id);
+    if (i >= 0) S.words[i] = word; else S.words.push(word);
+    rebuild();
+    try { await S.store.saveWord(word); } catch (e) { formMsg("저장하지 못했어요. 연결을 확인해 주세요.", "error"); return; }
+    S.stack.pop();
+    if (!existing) { toast(`'${word.w}'를 내 단어에 추가했어요.`); go({ t: "word", key: "w-" + id }); }
+    else { toast("저장했어요."); render(); }
+  }
+  async function deleteWord() {
+    const page = topPage(), c = S.byKey[page.key]; if (!c) return;
+    S.words = S.words.filter(x => x.id !== c.id); delete S.states[c.key]; delete S.favs[c.key];
+    rebuild();
+    S.stack = S.stack.filter(p => p.key !== c.key);
+    render();
+    try { await S.store.deleteWord(c.id, c.key); toast(`'${c.w}'를 지웠어요.`); } catch (e) { toast("지우는 중 문제가 생겼어요."); }
+  }
+
+  // ================= view: study =================
+  function cardFront(c, dir) {
+    if (c.html) return `<div class="html-front" lang="ja">${sanitize(c.front)}</div>`;
+    if (dir === "m2w") {
+      let blank = "";
+      if (c.ex) { const rg = hlRange(c.ex, c.w, c.pos); blank = rg ? esc(c.ex.slice(0, rg[0])) + "＿＿" + esc(c.ex.slice(rg[1])) : ""; }
+      return `<div class="mfront">${esc(c.ko)}</div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}${blank ? `<div class="blank" lang="ja">${blank}</div>` : ""}`;
+    }
+    return `<div class="word" lang="ja">${esc(c.w)}</div>`;
+  }
+  function cardBack(c, dir) {
+    if (c.html) return `<div class="back"><div class="html-back" lang="ja">${sanitize(c.back)}</div><div style="display:flex;gap:6px">${speakBtn(htmlText(c.front))}</div>${kanjiOf(c.w).length ? kanjiItems(c) : ""}</div>`;
+    const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
+    return `<div class="back">
+      ${dir === "m2w" ? `<div class="word-inline" lang="ja">${linkText(c.w)}</div>` : ""}
+      ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}${speakBtn(c.r)}</div>` : ""}
+      ${dir === "m2w" ? "" : `<div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div><div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}</div>`}
+      ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span>${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
+      ${kanjiOf(c.w).length ? kanjiItems(c) : ""}
+    </div>`;
+  }
+  function viewStudy(page) {
+    const deck = S.decks.find(d => d.id === page.deck);
+    if (!deck) return pagebar("공부") + '<p class="empty">덱을 찾을 수 없어요.</p>';
+    const now = Date.now();
+    const st = S.study;
+    if (!st.card) { st.card = nextCard(deck, now); st.revealed = false; }
+    const c = deckCounts(deck, now), cur = st.card ? st.card.q : "";
+    const right = `<div style="display:flex;align-items:center;gap:12px"><div class="qcounts"><span class="n" data-cur="${cur === "n" ? 1 : 0}" title="새 카드">${c.newToday}</span><span class="l" data-cur="${cur === "l" ? 1 : 0}" title="학습 중">${c.learn}</span><span class="r" data-cur="${cur === "r" ? 1 : 0}" title="복습">${c.rev}</span></div><button class="btn ghost small" type="button" data-act="undo" ${S.undo && S.undo.deck === deck.id ? "" : "disabled"}>되돌리기</button></div>`;
+    const bar = `<div class="pagebar"><div class="left"><button class="btn ghost" type="button" data-act="back">← 덱 목록</button><h2>${esc(deck.name)}</h2></div>${right}</div>`;
+    if (!st.card) {
+      const later = nextLearnLater(deck, now);
+      let msg = "오늘 이 덱에서 볼 카드를 모두 끝냈어요.";
+      if (later && later < nextCutoff(now)) {
+        const m = Math.max(1, Math.round((later - now) / MIN));
+        msg = `학습 중인 카드가 ${m}분 뒤에 다시 나와요. 이 화면을 열어 두면 시간이 되면 이어서 보여 드려요.`;
+        S.waitTimer = setTimeout(() => { const p = topPage(); if (p && p.t === "study" && S.study && !S.study.card) render(); }, Math.max(1000, later - LEARN_AHEAD - now + 500));
+      }
+      return `<div class="stack">${bar}<div class="card"><div class="done"><h3>おつかれさま</h3><p>${esc(msg)}</p><button class="btn" type="button" data-act="back">덱 목록으로</button></div></div></div>`;
+    }
+    const card = st.card.c, dir = S.settings.dir;
+    const tag = { n: ["새 카드", "t-new"], l: ["학습 중", "t-learn"], r: ["복습", "t-rev"] }[st.card.q];
+    let actions;
+    if (!st.revealed) actions = `<button class="btn primary reveal" type="button" data-act="reveal">정답 보기</button><p class="hint">스페이스로 정답 보기</p>`;
+    else {
+      const prev = S.states[card.key] || null, names = ["다시", "어려움", "좋음", "쉬움"];
+      actions = `<div class="rates">${[1, 2, 3, 4].map(g => `<button class="rate" type="button" data-act="rate" data-g="${g}"><b>${names[g - 1]}</b><span>${fmtNext(schedule(prev, g, now), now)}</span><kbd>${g}</kbd></button>`).join("")}</div><p class="hint">숫자 1–4로 평가 · 한자를 누르면 한자 페이지로 가요</p>`;
+    }
+    const openBtn = st.revealed ? `<button class="iconbtn open" type="button" data-act="word" data-key="${esc(card.key)}" aria-label="단어 페이지 열기">${ICON.open}</button>` : "";
+    return `<div class="stack">${bar}
+      <div class="card"><span class="tag ${tag[1]}">${tag[0]}</span>${openBtn}<div class="front">${cardFront(card, dir)}</div>${st.revealed ? cardBack(card, dir) : ""}</div>
+      <div class="actions">${actions}</div></div>`;
+  }
+  function bumpDay(isNew, sign) {
+    const k = dayKey(Date.now());
+    const d = Object.assign({ rev: 0, new: 0 }, S.days[k] || {});
+    d.rev = Math.max(0, d.rev + sign); if (isNew) d.new = Math.max(0, d.new + sign);
+    S.days[k] = d; persistDay(k);
+  }
+  function rate(g) {
+    const st = S.study; if (!st || !st.card || !st.revealed) return;
+    const c = st.card.c, prev = S.states[c.key] || null, nxt = schedule(prev, g, Date.now());
+    S.states[c.key] = nxt;
+    S.undo = { key: c.key, prev, deck: topPage().deck, card: st.card };
+    persistState(c.key, nxt); bumpDay(!prev, 1);
+    st.card = null; st.revealed = false; render();
+  }
+  function undo() {
+    const u = S.undo; if (!u) return;
+    if (u.prev) S.states[u.key] = u.prev; else delete S.states[u.key];
+    persistState(u.key, u.prev); bumpDay(!u.prev, -1);
+    S.undo = null; S.study.card = u.card; S.study.revealed = false; render();
+  }
+
+  // ================= view: stats =================
+  function viewStats() {
+    const now = Date.now(), todayK = dayKey(now);
+    let streak = 0; { let t = now; if (!(S.days[todayK] && S.days[todayK].rev)) t = addDays(now, -1); for (;;) { const d = S.days[dayKey(t)]; if (d && d.rev > 0) { streak++; t = addDays(t, -1); } else break; } }
+    const today = S.days[todayK] || { rev: 0, new: 0 };
+    let nNew = 0, nLearn = 0, nRev = 0, nLong = 0;
+    for (const c of S.cards) { const s = S.states[c.key]; if (!s) nNew++; else if (s.st === "learning" || s.st === "relearning") nLearn++; else if (s.s >= 21) nLong++; else nRev++; }
+    const total = S.cards.length || 1;
+    const cols = []; let max = 1;
+    for (let i = 13; i >= 0; i--) { const t = addDays(now, -i), k = dayKey(t), d = S.days[k] || { rev: 0 }; max = Math.max(max, d.rev); cols.push({ k, v: d.rev, day: new Date(dayStart(t)).getDate(), today: i === 0 }); }
+    const seg = (n, c) => n ? `<i style="width:${n / total * 100}%;background:var(${c})"></i>` : "";
+    return `<div class="stack">
+      <dl class="tiles" style="margin:0">
+        <div class="tile"><dt>연속 학습</dt><dd>${streak}<small>일</small></dd></div>
+        <div class="tile"><dt>오늘 복습</dt><dd>${today.rev}<small>회</small></dd></div>
+        <div class="tile"><dt>오늘 새로 본 단어</dt><dd>${today.new}<small>개</small></dd></div>
+        <div class="tile"><dt>장기 기억 단어</dt><dd>${nLong}<small>개</small></dd></div>
+      </dl>
+      <section class="panel"><h2 class="section-title" style="margin:0">최근 14일 복습 수</h2>
+        <div class="chart">${cols.map(c => `<div class="col ${c.today ? "today" : ""}"><span class="v">${c.v || ""}</span><span class="barv ${c.v ? "" : "zero"}" style="height:${c.v ? Math.max(4, c.v / max * 100) : 2}%"></span><span class="d">${c.day}</span></div>`).join("")}</div>
+      </section>
+      <section class="panel"><h2 class="section-title">전체 단어 ${S.cards.length}개의 상태</h2>
+        <div class="dist">${seg(nLong, "--accent")}${seg(nRev, "--c-rev")}${seg(nLearn, "--c-learn")}</div>
+        <div class="legend num"><span style="--c:var(--accent)">장기 기억 ${nLong}</span><span style="--c:var(--c-rev)">복습 중 ${nRev}</span><span style="--c:var(--c-learn)">학습 중 ${nLearn}</span><span style="--c:var(--line)">새 카드 ${nNew}</span></div>
+        <p class="note" style="margin-top:10px">장기 기억은 기억 안정도가 21일 이상인 단어예요.</p>
+      </section>
+    </div>`;
+  }
+
+  // ================= events =================
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-act], [data-tab]"); if (!t) return;
+    if (t.dataset.tab) return setTab(t.dataset.tab);
+    const a = t.dataset.act, page = topPage();
+    switch (a) {
+      case "back": if (page && page.t === "study") { S.study = null; } back(); break;
+      case "study": S.study = { card: null, revealed: false }; go({ t: "study", deck: t.dataset.deck }); break;
+      case "reveal": if (S.study && S.study.card) { S.study.revealed = true; render(); } break;
+      case "rate": rate(+t.dataset.g); break;
+      case "undo": undo(); break;
+      case "word": go({ t: "word", key: t.dataset.key }); break;
+      case "kanji": e.preventDefault(); if (!(page && page.t === "kanji" && page.k === t.dataset.k)) go({ t: "kanji", k: t.dataset.k }); break;
+      case "fav": { const k = t.dataset.key; if (S.favs[k]) delete S.favs[k]; else S.favs[k] = true; persistFavs(); render(); break; }
+      case "speak": speak(t.dataset.text); break;
+      case "add": go({ t: "edit", key: null, draft: S.tab === "words" && S.q && KANJI_RE.test(S.q) ? { w: S.q.trim() } : {} }); break;
+      case "edit": { const c = S.byKey[t.dataset.key]; go({ t: "edit", key: c.key, draft: { w: c.w, r: c.r, pos: c.pos, ko: c.ko, en: c.en, ex: c.ex, exko: c.exko } }); break; }
+      case "export": exportBackup(); break;
+      case "delword": page.draft = readForm(); page.confirmDel = true; render(); break;
+      case "delword-no": page.draft = readForm(); page.confirmDel = false; render(); break;
+      case "delword-yes": deleteWord(); break;
+      case "filter": S.filter = t.dataset.f; S.wordLimit = 100; render(); break;
+      case "more-words": { S.wordLimit += 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); break; }
+      case "more-kanji": { S.kanjiLimit += 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); break; }
+      case "npd": setNewPerDay(S.settings.newPerDay + (+t.dataset.d)); break;
+      case "dir": S.settings.dir = t.dataset.v; saveSettingsSoon(); render(); break;
+      case "deldeck": S.confirmDel = t.dataset.deck; render(); break;
+      case "deldeck-no": S.confirmDel = null; render(); break;
+      case "deldeck-yes": deleteDeck(t.dataset.deck); break;
+    }
+  });
+  document.addEventListener("keydown", e => {
+    const t = e.target;
+    if (t && t.classList && t.classList.contains("kj") && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); t.click(); return; }
+    const page = topPage();
+    if (!page || page.t !== "study" || !S.study || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/INPUT|TEXTAREA|SELECT/.test(t && t.tagName)) return;
+    if ((e.key === " " || e.key === "Enter") && S.study.card && !S.study.revealed) { e.preventDefault(); S.study.revealed = true; render(); }
+    else if (S.study.revealed && /^[1-4]$/.test(e.key)) { e.preventDefault(); rate(+e.key); }
+    else if (e.key === "z" && S.undo) undo();
+  });
+  document.addEventListener("input", e => {
+    if (e.target.id === "wsearch") { S.q = e.target.value; S.wordLimit = 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); }
+    else if (e.target.id === "ksearch") { S.kq = e.target.value; S.kanjiLimit = 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); }
+    else if (e.target.id === "f_w") dupCheck();
+  });
+  document.addEventListener("submit", e => { if (e.target.id === "wordForm") { e.preventDefault(); saveWordForm(); } });
+
+  let settingsTimer = null;
+  function saveSettingsSoon() {
+    clearTimeout(settingsTimer);
+    settingsTimer = setTimeout(() => { if (S.store) S.store.saveSettings({ newPerDay: S.settings.newPerDay, dir: S.settings.dir }).catch(() => toast("설정을 저장하지 못했어요.")); }, 700);
+  }
+  function setNewPerDay(n) { S.settings.newPerDay = clamp(n, 0, 200); saveSettingsSoon(); render(); }
+
+  async function deleteDeck(id) {
+    const d = S.decks.find(x => x.id === id); if (!d || d.builtin) return;
+    const keys = d.cards.map(c => c.key);
+    for (const k of keys) { delete S.states[k]; delete S.favs[k]; }
+    importedMetas = importedMetas.filter(m => m.id !== id); S.confirmDel = null;
+    if (S.undo && S.undo.deck === id) S.undo = null;
+    rebuild(); render();
+    try { await S.store.deleteDeck(id, d.meta || {}, keys); toast(`'${d.name}' 덱을 지웠어요.`); } catch (e) { toast("덱을 지우는 중 문제가 생겼어요. 새로고침 후 다시 시도해 주세요."); }
+  }
+
+  // ================= CSV import =================
+  function parseDelimited(s, sep) {
+    const rows = []; let row = [], f = "", q = false;
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (q) { if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+      else if (c === '"' && f === "") q = true;
+      else if (c === sep) { row.push(f); f = ""; }
+      else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; }
+      else if (c !== "\r") f += c;
+    }
+    if (f !== "" || row.length) { row.push(f); rows.push(row); }
+    return rows;
+  }
+  function parseImport(text, filename) {
+    text = text.replace(/^﻿/, "");
+    let sep = null, deck = null, cols = null; const body = [];
+    for (const ln of text.split(/\r?\n/)) {
+      if (ln.startsWith("#")) { const m = ln.match(/^#([A-Za-z]+):(.*)$/); if (m) { const k = m[1].toLowerCase(), v = m[2].trim(); if (k === "separator") sep = { tab: "\t", comma: ",", semicolon: ";", pipe: "|", space: " " }[v.toLowerCase()] || v; else if (k === "deck") deck = v; else if (k === "columns") cols = v; } continue; }
+      body.push(ln);
+    }
+    const raw = body.join("\n");
+    if (!sep) sep = raw.includes("\t") ? "\t" : (raw.includes(";") && !raw.includes(",") ? ";" : ",");
+    let fi = 0, bi = 1;
+    if (cols) { const names = cols.split(sep).map(x => x.trim().toLowerCase()); if (names.indexOf("front") >= 0) fi = names.indexOf("front"); if (names.indexOf("back") >= 0) bi = names.indexOf("back"); }
+    const rows = parseDelimited(raw, sep).filter(r => r.length > Math.max(fi, bi) && r[fi].trim()).map(r => [r[fi].trim(), (r[bi] || "").trim()]);
+    const name = (deck ? deck.split("::").pop() : filename.replace(/\.[^.]+$/, "")).trim() || "가져온 덱";
+    return { name, rows };
+  }
+  function readDeckFile(text, filename) {
+    const t = text.replace(/^\uFEFF/, "").trim();
+    if (/\.json$/i.test(filename) || t.startsWith("{")) {
+      const j = JSON.parse(t);
+      if (j && j.format === "fsrs-backup") return { error: "이 파일은 기록 백업이에요. '기록 백업 → 가져오기'로 열어 주세요." };
+      if (!j || !Array.isArray(j.words)) return { error: "단어장 파일 형식이 아니에요." };
+      const rows = j.words.filter(r => Array.isArray(r) && r[0]).map(r => [0, 1, 2, 3, 4, 5, 6].map(i => String(r[i] == null ? "" : r[i])));
+      return { name: String(j.name || filename.replace(/\.[^.]+$/, "")), rows, kind: "words", id: j.id };
+    }
+    const p = parseImport(t, filename);
+    return { name: p.name, rows: p.rows, kind: "html" };
+  }
+  $("#importFile").addEventListener("change", async e => {
+    const file = e.target.files && e.target.files[0]; e.target.value = "";
+    const say = (text, kind) => { S.importMsg = { text, kind }; if (!topPage() && S.tab === "learn") render(); };
+    if (!file) return;
+    if (!S.ready) return say("기록을 불러온 뒤에 다시 시도해 주세요.", "error");
+    try {
+      const r = readDeckFile(await file.text(), file.name);
+      if (r.error) return say(r.error, "error");
+      const { name, rows, kind } = r;
+      if (!rows.length) return say("카드로 읽을 줄을 찾지 못했어요. 파일 내용을 확인해 주세요.", "error");
+      if (rows.length > 5000) return say("한 번에 5,000장까지 가져올 수 있어요. 파일을 나눠서 가져와 주세요.", "error");
+      if (S.decks.some(d => d.name === name)) return say(`'${name}' 덱이 이미 있어서 가져오지 않았어요.`, "error");
+      const okId = r.id && /^[A-Za-z0-9_-]{1,40}$/.test(r.id) && !S.decks.some(d => d.id === r.id) && r.id !== "mine";
+      const meta = { id: okId ? r.id : "d" + Date.now().toString(36), name, kind, createdAt: Date.now(), count: rows.length, rows };
+      importedMetas.push(meta); rebuild();
+      await S.store.saveDeck();
+      say(`'${name}' 덱에 ${rows.length}장을 추가했어요.`);
+    } catch (err) {
+      say("가져오는 중 문제가 생겼어요. 파일 형식을 확인한 뒤 다시 시도해 주세요.", "error");
+    }
+  });
+
+  // ================= backup =================
+  async function exportBackup() {
+    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, days: S.days, decks: importedMetas };
+    const name = "FSRS단어장-백업-" + dayKey(Date.now()) + ".json";
+    const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+    try {
+      const file = new File([blob], name, { type: "application/json" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file] });
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  }
+  $("#backupFile").addEventListener("change", async e => {
+    const file = e.target.files && e.target.files[0]; e.target.value = "";
+    if (!file) return;
+    try {
+      const j = JSON.parse((await file.text()).replace(/^\uFEFF/, ""));
+      if (!j || j.format !== "fsrs-backup") { toast("FSRS 단어장 백업 파일이 아니에요."); return; }
+      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.days = j.days || {};
+      importedMetas = Array.isArray(j.decks) ? j.decks : [];
+      if (j.settings) { if (Number.isFinite(j.settings.newPerDay)) S.settings.newPerDay = j.settings.newPerDay; if (j.settings.dir) S.settings.dir = j.settings.dir; }
+      S.undo = null; S.stack = []; S.study = null;
+      rebuild(); await S.store.saveAll(); render();
+      toast("백업에서 기록을 불러왔어요.");
+    } catch (err) { toast("백업 파일을 읽지 못했어요."); }
+  });
+
+  // ================= boot =================
+  async function boot() {
+    render();
+    try { S.kanji = await fetch("kanji.json").then(r => r.json()); } catch (e) { S.kanji = {}; }
+    S.store = LocalStore();
+    const data = await S.store.loadAll();
+    S.states = data.states || {};
+    if (data.settings) { if (Number.isFinite(data.settings.newPerDay)) S.settings.newPerDay = data.settings.newPerDay; if (data.settings.dir) S.settings.dir = data.settings.dir; }
+    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.days = data.days || {};
+    rebuild();
+    S.ready = true;
+    render();
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+    if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("sw.js"); } catch (e) {} }
+  }
+  boot();
+})();
+</script>
+</body>
+</html>
