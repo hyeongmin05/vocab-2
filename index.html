@@ -146,7 +146,7 @@ h2, h3 { text-wrap: balance; }
 .tools .panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .tools h2 { margin: 0; font-size: 15px; font-weight: 600; }
 .tools p { margin: 0; font-size: 13px; color: var(--muted); }
-#importFile, #backupFile { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+#importFile, #backupFile, #gridFile { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .import-msg { font-size: 13px; }
 .import-msg[data-kind="error"] { color: var(--again); }
 .stepper { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 10px; padding: 3px; align-self: flex-start; }
@@ -228,6 +228,11 @@ h2, h3 { text-wrap: balance; }
   linear-gradient(var(--line), var(--line)) center/100% 1px no-repeat, var(--sunken); }
 .kko { font-size: 24px; font-weight: 600; margin: 0; }
 .kchips { display: flex; gap: 6px; flex-wrap: wrap; }
+.krow { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; border-bottom: 1px solid var(--line); }
+.krow:last-child { border-bottom: 0; }
+.krow > .row { border-bottom: 0; }
+.kchips.side { justify-content: flex-end; padding: 8px 14px 8px 0; max-width: 55vw; }
+@media (max-width: 560px) { .kchips.side .kchip span { display: none; } .kchips.side { gap: 4px; padding-right: 10px; } }
 .kchip { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 4px 10px; display: inline-flex; gap: 6px; align-items: baseline; }
 .kchip:hover { border-color: var(--accent); }
 .kchip b { font-family: var(--f-word); font-size: 20px; }
@@ -259,7 +264,69 @@ h2, h3 { text-wrap: balance; }
 .rate[data-g="1"] b { color: var(--again); } .rate[data-g="1"]:hover { border-color: var(--again); }
 .rate[data-g="2"] b { color: var(--hard); }  .rate[data-g="2"]:hover { border-color: var(--hard); }
 .rate[data-g="3"] b { color: var(--good); }  .rate[data-g="3"]:hover { border-color: var(--good); }
-.rate[data-g="4"] b { color: var(--easy); }  .rate[data-g="4"]:hover { border-color: var(--easy); }
+.rate[data-g="4"] b { color: var(--easy); }
+.rates.two { grid-template-columns: 1fr 1fr; gap: 10px; }
+.rates.two .rate { padding: 16px 8px; border-radius: 14px; }
+.rates.two .rate b { font-size: 17px; }
+.rates.two .rate[data-g="3"] span { color: var(--accent); }
+.scard { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); padding: 18px 18px 16px; display: flex; flex-direction: column; min-height: min(68vh, 640px); }
+.sc-top { display: flex; align-items: center; gap: 8px; }
+.sc-top .grow { flex: 1; }
+.ago { background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 13px; padding: 5px 12px; border-radius: 999px; white-space: nowrap; }
+.favplain { border: 0; background: transparent; color: var(--line); width: 34px; height: 34px; display: grid; place-items: center; padding: 0; }
+.favplain svg { width: 22px; height: 22px; }
+.favplain[aria-pressed="true"] { color: var(--star); }
+.pillbtn { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 8px 14px; display: inline-flex; gap: 6px; align-items: center; font-size: 14px; color: var(--ink); }
+.pillbtn svg { width: 18px; height: 18px; }
+.sc-main { flex: 1; display: grid; place-content: center; justify-items: center; text-align: center; gap: 8px; padding: 36px 0 28px; min-height: 250px; }
+.sc-reading { font-family: var(--f-jp); color: var(--muted); font-size: 20px; letter-spacing: .04em; }
+.bigword { font-family: var(--f-word); font-weight: 600; font-size: clamp(3rem, 15vw, 5.2rem); line-height: 1.15; border: 0; background: transparent; color: inherit; padding: 0; overflow-wrap: anywhere; }
+.bigword.ko { font-family: var(--f-ui); font-weight: 700; font-size: clamp(1.8rem, 8vw, 2.6rem); }
+.sc-mean { font-size: 20px; font-weight: 700; }
+.sc-mean i { font-style: normal; font-weight: 400; font-size: 15px; color: var(--muted); }
+.sc-ex { border-top: 1px solid var(--line); padding: 26px 4px 6px; text-align: center; font-family: var(--f-word); font-size: 19px; line-height: 2.2; }
+.sc-ex { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.sc-ex:active { opacity: .7; }
+.sc-ex rt { font-family: var(--f-jp); font-size: 10.5px; color: var(--muted); }
+.sc-ex .hid { color: var(--muted); font-family: var(--f-ui); font-size: 14px; }
+.sc-exko { text-align: center; color: var(--muted); font-size: 15px; padding: 0 4px; }
+.sc-bottom { margin-top: auto; display: flex; gap: 10px; padding-top: 24px; }
+.circ { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); background: transparent; display: grid; place-items: center; color: var(--muted); flex: none; padding: 0; }
+.circ svg { width: 20px; height: 20px; }
+.circ:disabled { opacity: .4; }
+.sc-bottom .toggle { flex: 1; border: 1px solid var(--line); border-radius: 999px; background: transparent; font-size: 15.5px; font-weight: 600; color: var(--ink); }
+.sc-bottom .toggle[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.rates.two .rate b { color: var(--ink); }
+.rates.two .rate[data-g="3"] { background: var(--sunken); }
+.stimer { display: inline-flex; align-items: center; gap: 6px; background: var(--sunken); border-radius: 999px; padding: 5px 12px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stimer svg { width: 16px; height: 16px; }
+.wchips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.wchip { border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; color: var(--muted); background: transparent; }
+.wchip.s-long { border-color: var(--accent); color: var(--accent); }
+.wchip.s-learn { border-color: var(--c-learn); color: var(--c-learn); }
+button.wchip { color: var(--ink); }
+button.wchip:disabled { color: var(--muted); }
+.sessbar { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sessbar .bar { flex: 1; }
+.reveal.soft { background: var(--surface); }
+.pickrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.stepper.big button { width: 48px; height: 44px; font-size: 22px; }
+.stepper.big output { min-width: 70px; font-size: 24px; }
+.dirwrap { display: grid; gap: 8px; }
+.dirhead { font-size: 13.5px; font-weight: 600; }
+.dirpick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pick > * { min-width: 0; }
+.dircard { min-width: 0; }
+.dircard { border: 1.5px solid var(--line); background: var(--surface); border-radius: 14px; padding: 10px 10px 12px; display: grid; gap: 4px; justify-items: center; color: var(--ink); }
+.dircard[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.dircard[aria-pressed="true"] b { color: var(--accent); }
+.dircard .mini { width: 100%; aspect-ratio: 5 / 3; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; display: grid; place-content: center; justify-items: center; gap: 6px; margin-bottom: 4px; }
+.dircard .mw { font-family: var(--f-word); font-weight: 700; font-size: 26px; line-height: 1; }
+.dircard .mw.ko { font-family: var(--f-ui); font-size: 22px; }
+.dircard .mq { font-size: 11.5px; color: var(--muted); background: var(--sunken); border: 1px dashed var(--line); border-radius: 999px; padding: 2px 10px; }
+.dircard b { font-size: 14.5px; }
+.dircard small { font-size: 12px; color: var(--muted); }
+.pick input[type=range] { width: 100%; accent-color: var(--accent); }  .rate[data-g="4"]:hover { border-color: var(--easy); }
 .hint { margin: 0; font-size: 12px; color: var(--muted); text-align: center; }
 @media (hover: none) { .rate kbd, .hint { display: none; } }
 .done { text-align: center; display: grid; gap: 10px; padding: 56px 20px; }
@@ -305,6 +372,67 @@ h2, h3 { text-wrap: balance; }
 .levels button span { font-size: 11.5px; }
 .levels button[aria-pressed="true"] { background: var(--accent); }
 .levels button[aria-pressed="true"] b, .levels button[aria-pressed="true"] span { color: var(--accent-ink); }
+
+/* study home */
+.allrev { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 14px; padding: 14px 18px; }
+.allrev > div { display: grid; gap: 2px; }
+.allrev b { font-size: 16px; }
+.allrev span { font-size: 13px; color: var(--muted); }
+.seg.wide { display: grid; grid-template-columns: 1fr 1fr; align-self: stretch; }
+.seg.wide button { padding: 9px 12px; font-size: 14.5px; font-weight: 600; }
+.gsel { appearance: auto; min-width: 90px; }
+
+/* table input */
+.gtools { display: flex; gap: 8px; flex-wrap: wrap; }
+a.btn { color: inherit; }
+.gwrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.gtable { border-collapse: collapse; min-width: 1060px; width: 100%; font-size: 14px; }
+.gtable th { position: sticky; top: 0; background: var(--sunken); color: var(--muted); font-size: 12px; font-weight: 600; text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.gtable td { border-bottom: 1px solid var(--line); padding: 0; }
+.gtable tr:last-child td { border-bottom: 0; }
+.gtable td + td { border-left: 1px solid var(--line); }
+.gcell { width: 100%; border: 0; background: transparent; padding: 9px 8px; font: inherit; color: inherit; min-width: 90px; }
+.gcell:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: var(--accent-soft); border-radius: 0; }
+.gtable th:nth-child(7), .gtable th:nth-child(8) { min-width: 220px; }
+.gnum { width: 64px; padding: 4px 6px !important; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.gstat { display: block; font-size: 10.5px; font-weight: 600; }
+.gstat.dup, .gstat.err { color: var(--again); }
+.gstat.warn { color: var(--hard); }
+.gstat.ok { color: var(--good); }
+.gdel { border: 0; background: transparent; color: var(--muted); font-size: 18px; width: 36px; height: 36px; }
+.gdel:hover { color: var(--again); }
+
+/* header right, add menu, sources */
+.topright { display: flex; align-items: center; gap: 10px; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .choices { grid-template-columns: 1fr; } }
+.choice { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 16px; padding: 20px; display: grid; gap: 8px; box-shadow: var(--shadow); }
+.choice:hover { border-color: var(--accent); }
+.choice b { font-size: 17px; }
+.choice span { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+.tools-one { display: grid; gap: 12px; }
+.tools-one h2 { margin: 0; font-size: 15px; }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.row .src, .src { font-size: 11.5px; color: var(--muted); opacity: .85; }
+.srcline { margin: 0; font-size: 12px; color: var(--muted); text-align: right; }
+
+/* add/edit form with similar-word panel */
+.editgrid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; align-items: start; }
+@media (max-width: 760px) { .editgrid { grid-template-columns: 1fr; } }
+.similar { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); max-height: calc(100vh - 140px); overflow: auto; display: grid; gap: 10px; align-content: start; }
+.similar .section-title { margin: 0; }
+.dupwarn { margin: 0; font-size: 13px; color: var(--again); font-weight: 500; }
+.simlist { display: grid; gap: 6px; }
+.simrow { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 10px; text-align: left; display: grid; grid-template-columns: auto 1fr; column-gap: 8px; row-gap: 1px; align-items: baseline; }
+.simrow:hover { border-color: var(--accent); }
+.simrow.exact { border-color: var(--again); background: color-mix(in srgb, var(--again) 6%, var(--surface)); }
+.simrow .w { font-family: var(--f-jp); font-size: 16px; font-weight: 500; }
+.simrow .r { font-family: var(--f-jp); font-size: 12px; color: var(--muted); }
+.simrow .m { grid-column: 1 / -1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.simrow .why { grid-column: 1 / -1; font-size: 11.5px; color: var(--accent); }
+#aiBtn { white-space: nowrap; flex: none; }
+.levels-sm button { padding: 7px 2px; }
+.levels-sm button b { font-size: 13.5px; }
 
 /* personal meaning + memo */
 .mymean { display: grid; gap: 4px; border: 1.5px dashed var(--star); border-radius: 12px; padding: 10px 14px; background: color-mix(in srgb, var(--star) 7%, transparent); }
@@ -358,7 +486,10 @@ h2, h3 { text-wrap: balance; }
         <p>단어 · 한자 · 간격 반복</p>
       </div>
     </div>
-    <span id="sync" class="sync">불러오는 중</span>
+    <div class="topright">
+      <span id="sync" class="sync">불러오는 중</span>
+      <button class="iconbtn" type="button" data-act="settings" aria-label="설정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
   </header>
   <div id="view"><p class="empty">단어 목록을 불러오는 중이에요.</p></div>
 </div>
@@ -374,6 +505,7 @@ h2, h3 { text-wrap: balance; }
 </nav>
 <input id="importFile" type="file" accept=".json,.csv,.txt,.tsv,application/json,text/csv,text/plain">
 <input id="backupFile" type="file" accept=".json,application/json">
+<input id="gridFile" type="file" accept=".xlsx,.csv,.tsv,.txt">
 <div id="toast" class="toast" hidden></div>
 
 <script>
@@ -465,6 +597,13 @@ h2, h3 { text-wrap: balance; }
     speak: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
     star: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>',
     starO: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4.5l4 4L9 18H5v-4z"/><path d="M4 21h16"/></svg>',
+    eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    detail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M8 9h4M8 13h2"/></svg>',
+    undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
     open: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>',
   };
   const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
@@ -500,7 +639,7 @@ h2, h3 { text-wrap: balance; }
   // ================= state =================
   const S = {
     decks: [], cards: [], byKey: {}, kanji: {}, kidx: new Map(),
-    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false }, write: null, favs: {}, days: {}, notes: {}, words: [],
+    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, days: {}, notes: {}, levels: {}, words: [],
     store: null, ready: false, tab: "learn", stack: [],
     study: null, undo: null,
     q: "", filter: "all", wlevel: "mine", wsrc: "all", wordLimit: 100, kq: "", kfilter: "all", kanjiLimit: 240, confirmDel: null, waitTimer: null,
@@ -515,7 +654,7 @@ h2, h3 { text-wrap: balance; }
     const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("기기 저장 공간에 저장하지 못했어요."); } };
     return {
       kind: "local",
-      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}) }; },
+      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}) }; },
       async saveState() { put("fsrs.states", S.states); },
       async deleteState() { put("fsrs.states", S.states); },
       async saveSettings(o) { put("fsrs.settings", o); },
@@ -526,9 +665,10 @@ h2, h3 { text-wrap: balance; }
       async saveFavs() { put("fsrs.favs", S.favs); },
       async saveDay() { put("fsrs.days", S.days); },
       async saveNotes() { put("fsrs.notes", S.notes); },
+      async saveLevels() { put("fsrs.levels", S.levels); },
       async saveAll() {
         put("fsrs.states", S.states); put("fsrs.settings", S.settings);
-        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.days", S.days); put("fsrs.notes", S.notes);
+        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels);
       },
     };
   }
@@ -544,12 +684,12 @@ h2, h3 { text-wrap: balance; }
   const persistDay = k => serial("day:" + k, () => S.store.saveDay(k));
 
   // ================= data model =================
-  function wordCard(deckId, r, i) { return { key: deckId + "-" + i, deck: deckId, w: r[0], r: r[1], ko: r[2], en: r[3], pos: r[4], ex: r[5], exko: r[6] }; }
-  function myCard(w) { return { key: "w-" + w.id, deck: "mine", id: w.id, mine: true, w: w.w, r: w.r || "", ko: w.ko || "", en: w.en || "", pos: w.pos || "", ex: w.ex || "", exko: w.exko || "", createdAt: w.createdAt || 0 }; }
+  function wordCard(deckId, r, i) { return { key: deckId + "-" + i, deck: deckId, idx: i, w: r[0], r: r[1], ko: r[2], en: r[3], pos: r[4], ex: r[5], exko: r[6], exf: r[7] || "" }; }
+  function myCard(w) { return { key: "w-" + w.id, deck: "mine", id: w.id, mine: true, level: w.level && w.level !== "mine" ? w.level : null, w: w.w, r: w.r || "", ko: w.ko || "", en: w.en || "", pos: w.pos || "", ex: w.ex || "", exko: w.exko || "", exf: w.exf || "", createdAt: w.createdAt || 0 }; }
   function htmlCard(m, r, i) { return { key: m.id + "-" + i, deck: m.id, html: true, front: r[0], back: r[1] || "", w: htmlText(r[0]), ko: htmlText(r[1] || "").slice(0, 80) }; }
   let importedMetas = [];
   function rebuild() {
-    const mine = { id: "mine", name: "내 단어", builtin: true, mineDeck: true, cards: S.words.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).map(myCard) };
+    const mine = { id: "mine", name: "직접 추가한 단어", builtin: true, mineDeck: true, cards: S.words.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)).map(myCard) };
     const imported = importedMetas.map(m => ({ id: m.id, name: m.name, meta: m, cards: (m.rows || []).map((r, i) => m.kind === "words" ? wordCard(m.id, r, i) : htmlCard(m, r, i)) }));
     S.decks = [...imported.filter(d => d.meta.kind === "words"), mine, ...imported.filter(d => d.meta.kind !== "words")];
     S.cards = S.decks.flatMap(d => d.cards);
@@ -562,10 +702,10 @@ h2, h3 { text-wrap: balance; }
   const deckName = id => (S.decks.find(d => d.id === id) || {}).name || "";
   function statusOf(key) {
     const s = S.states[key];
-    if (!s) return { cls: "", label: "새 카드" };
+    if (!s) return { cls: "", label: "새 단어" };
     if (s.st === "learning" || s.st === "relearning") return { cls: "s-learn", label: s.st === "relearning" ? "다시 학습 중" : "학습 중" };
     if (s.s >= 21) return { cls: "s-long", label: "장기 기억" };
-    return { cls: "s-rev", label: "복습 중" };
+    return { cls: "s-rev", label: "단기 기억" };
   }
 
   // ================= queue =================
@@ -573,7 +713,7 @@ h2, h3 { text-wrap: balance; }
   const qCards = (deck, mode) => mode === "write" ? deck.cards.filter(c => writeTarget(c)) : deck.cards;
   function deckCounts(deck, now, mode) {
     const cut = nextCutoff(now), start = dayStart(now), cards = qCards(deck, mode);
-    const limit = mode === "write" ? S.settings.writeNewPerDay : S.settings.newPerDay;
+    const limit = deck.noNew ? 0 : Infinity;
     let unseen = 0, learn = 0, rev = 0, introduced = 0, seen = 0;
     for (const c of cards) {
       const s = S.states[qKey(c, mode)];
@@ -614,10 +754,11 @@ h2, h3 { text-wrap: balance; }
   const toHira = s => String(s || "").replace(/[\u30A1-\u30F6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
   const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const WT = new Map();
-  function writeTarget(c) {
+  function writeTarget(c) { return NO_WRITE.has(c.pos) ? null : baseTarget(c); }
+  function baseTarget(c) {
     if (WT.has(c.key)) return WT.get(c.key);
     let t = null;
-    if (!c.html && !NO_WRITE.has(c.pos) && kanjiOf(c.w).length) {
+    if (!c.html && kanjiOf(c.w).length) {
       const w = c.w.replace(/\(と\)|[()]/g, "");
       const segs = [];
       for (const ch of w) {
@@ -674,8 +815,10 @@ h2, h3 { text-wrap: balance; }
     document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-current", b.dataset.tab === S.tab && !page ? "page" : "false"));
     let html;
     if (!page) html = { learn: viewLearn, words: viewWords, kanji: viewKanji, write: viewWriteTab, stats: viewStats }[S.tab]();
-    else html = { study: viewStudy, word: viewWord, kanji: viewKanjiPage, edit: viewEdit, write: viewWrite }[page.t](page);
+    else html = { study: viewStudy, word: viewWord, kanji: viewKanjiPage, edit: viewEdit, write: viewWrite, addmenu: viewAddMenu, grid: viewGrid, import: viewImport, sources: viewSources, settings: viewSettings, pick: viewPick }[page.t](page);
     $("#view").innerHTML = html;
+    clearInterval(S.tick);
+    if (page && (page.t === "study" || page.t === "write")) S.tick = setInterval(() => { const el = $("#stimer"), ss = page.t === "write" ? S.write : S.study; if (el && ss && ss.t0) el.textContent = fmtClock(Date.now() - ss.t0); }, 1000);
     if (page && page.t === "write") initPads();
     if (page && page.t === "edit") fillEdit(page);
   }
@@ -710,6 +853,7 @@ h2, h3 { text-wrap: balance; }
   function parseJsonLoose(text) {
     const t = String(text || "").replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
     try { return JSON.parse(t); } catch (e) {}
+    if (t.startsWith("[")) { const a2 = t.indexOf("["), b2 = t.lastIndexOf("]"); if (b2 > a2) return JSON.parse(t.slice(a2, b2 + 1)); }
     const a = t.indexOf("{"), b = t.lastIndexOf("}");
     if (a >= 0 && b > a) return JSON.parse(t.slice(a, b + 1));
     throw new Error("JSON 아님");
@@ -752,60 +896,440 @@ h2, h3 { text-wrap: balance; }
   }
 
   // ================= view: learn =================
+  // 공부 묶음: 급수별(lv:N), 출처별(덱 id), 전체 복습(all)
+  function levelGroups() {
+    return LEVELS.map(([k, l]) => ({ id: "lv:" + k, name: l, cards: S.cards.filter(c => cardLevel(c) === k) })).filter(g => g.cards.length);
+  }
+  function sourceGroups() {
+    return S.decks.filter(d => d.cards.length).map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, cards: d.cards }));
+  }
+  function groupById(id) {
+    if (id === "all") return { id: "all", name: "전체 복습", cards: S.cards, noNew: true };
+    if (String(id).startsWith("lv:")) { const k = id.slice(3); return { id, name: levelLabel(k), cards: S.cards.filter(c => cardLevel(c) === k) }; }
+    const d = S.decks.find(x => x.id === id);
+    return d ? { id: d.id, name: d.mineDeck ? "직접 추가" : d.name, cards: d.cards } : null;
+  }
+  function groupCard(g, mode, now) {
+    const c = deckCounts(g, now, mode); if (!c.total) return "";
+    const due = c.newToday + c.learn + c.rev, pct = Math.round(c.seen / c.total * 100);
+    const act = mode === "write" ? "write" : "study", verb = mode === "write" ? "쓰기 연습" : "공부하기";
+    return `<article class="deck">
+      <div class="deck-head"><h3>${esc(g.name)}</h3><p class="deck-meta num">${mode === "write" ? "쓰기 카드 " : ""}${c.total}장 중 ${c.seen}장 ${mode === "write" ? "연습" : "학습"} 시작</p></div>
+      <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+      <dl class="counts"><div class="c-new"><dt>새 카드</dt><dd>${c.newToday}</dd></div><div class="c-learn"><dt>학습 중</dt><dd>${c.learn}</dd></div><div class="c-rev"><dt>복습</dt><dd>${c.rev}</dd></div></dl>
+      <div class="deck-actions"><button class="btn primary" type="button" data-act="${act}" data-deck="${esc(g.id)}" ${due ? "" : "disabled"}>${due ? verb : "오늘 분량 끝"}</button></div>
+    </article>`;
+  }
+  function studyHome(mode) {
+    const now = Date.now(), all = groupById("all"), ac = deckCounts(all, now, mode), dueAll = ac.learn + ac.rev;
+    const act = mode === "write" ? "write" : "study";
+    const view = S.settings.learnView === "source" ? "source" : "level";
+    const groups = (view === "source" ? sourceGroups() : levelGroups()).map(g => groupCard(g, mode, now)).join("");
+    return `<div class="allrev">
+        <div><b>전체 복습</b><span class="num">오늘 다시 볼 카드 ${dueAll}장 · 학습 중 ${ac.learn} · 복습 ${ac.rev}</span></div>
+        <button class="btn primary" type="button" data-act="${act}" data-deck="all" ${dueAll ? "" : "disabled"}>${dueAll ? "모두 복습하기" : "복습할 카드 없음"}</button>
+      </div>
+      <div class="seg wide" role="tablist"><button type="button" data-act="learn-view" data-v="level" aria-pressed="${view === "level"}">급수별</button><button type="button" data-act="learn-view" data-v="source" aria-pressed="${view === "source"}">출처별</button></div>
+      <div class="decks">${groups || '<p class="empty">아직 공부할 단어가 없어요.</p>'}</div>`;
+  }
   function viewLearn() {
     if (!S.ready) return '<p class="empty">단어 목록을 불러오는 중이에요.</p>';
-    const onboarding = importedMetas.length ? "" : `<article class="deck"><div class="deck-head"><h3>단어 데이터 가져오기</h3></div>
-      <p class="note">처음이라면 받은 단어장 파일(예: 한끝N2-단어.json)을 가져오세요. 한 번만 하면 이 기기에 저장돼요.</p>
-      <div class="deck-actions"><label class="btn primary" for="importFile">파일 선택</label></div>${importMsgHtml()}</article>`;
-    const now = Date.now();
-    const decks = S.decks.map(d => {
-      if (d.mineDeck && !d.cards.length) {
-        return `<article class="deck"><div class="deck-head"><h3>내 단어</h3><p class="deck-meta">아직 추가한 단어가 없어요</p></div>
-          <p class="note">교재 밖에서 만난 단어를 추가하면 여기서 같이 복습해요. 한자 페이지에도 연결돼요.</p>
-          <div class="deck-actions"><button class="btn" type="button" data-act="add">+ 단어 추가</button></div></article>`;
-      }
-      const c = deckCounts(d, now), due = c.newToday + c.learn + c.rev;
-      const pct = c.total ? Math.round(c.seen / c.total * 100) : 0;
-      const act = S.ready ? `<button class="btn primary" type="button" data-act="study" data-deck="${esc(d.id)}" ${due ? "" : "disabled"}>${due ? "공부하기" : "오늘 분량 끝"}</button>` : '<span class="muted">복습 기록 불러오는 중…</span>';
-      let extra = "";
-      if (d.mineDeck) extra = `<button class="btn ghost" type="button" data-act="add">+ 단어 추가</button>`;
-      else if (!d.builtin && S.ready) extra = S.confirmDel === d.id
-        ? `<span class="confirm">덱과 복습 기록을 모두 지울까요? <button class="btn danger" type="button" data-act="deldeck-yes" data-deck="${esc(d.id)}">삭제</button><button class="btn ghost" type="button" data-act="deldeck-no">취소</button></span>`
-        : `<button class="btn ghost" type="button" data-act="deldeck" data-deck="${esc(d.id)}">덱 삭제</button>`;
-      return `<article class="deck">
-        <div class="deck-head"><h3>${esc(d.name)}</h3><p class="deck-meta num">${c.total}장 중 ${c.seen}장 학습 시작</p></div>
-        <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
-        <dl class="counts"><div class="c-new"><dt>새 카드</dt><dd>${c.newToday}</dd></div><div class="c-learn"><dt>학습 중</dt><dd>${c.learn}</dd></div><div class="c-rev"><dt>복습</dt><dd>${c.rev}</dd></div></dl>
-        <div class="deck-actions">${act}${extra}</div>
-      </article>`;
-    }).join("");
+    if (!S.cards.length) {
+      return `<div class="stack"><article class="deck"><div class="deck-head"><h3>아직 단어가 없어요</h3></div>
+        <p class="note">이 앱은 여러 책에서 배운 단어를 한곳에 모아 복습하는 단어장이에요. 단어 탭에서 한 단어씩 추가하거나, 표로 한꺼번에 넣어 보세요.</p>
+        <div class="deck-actions"><button class="btn primary" type="button" data-act="go-add">단어 추가하러 가기</button></div></article></div>`;
+    }
     return `<div class="stack">
-      <section><h2 class="section-title">덱</h2><div class="decks">${onboarding}${decks}</div></section>
+      ${studyHome("read")}
+      <p class="note">급수별과 출처별은 같은 단어를 다르게 묶은 거라 복습 기록은 하나로 이어져요. 공부할 개수와 카드 앞면은 공부하기를 누르면 고를 수 있어요.</p>
+    </div>`;
+  }
+
+  // ================= 예문 후리가나 한꺼번에 채우기 =================
+  const furiTodo = () => S.cards.filter(c => !c.html && c.ex && !furiOk(c));
+  function furiPanel() {
+    const left = furiTodo().length, F = S.furi;
+    const msg = F && F.msg ? `<p class="import-msg" ${F.kind ? `data-kind="${F.kind}"` : ""}>${esc(F.msg)}</p>` : "";
+    return `<div class="panel" id="furiPanel">
+      <h2>예문 후리가나</h2>
+      <p>공부 카드에서 의미·히라가나를 누르면 예문 전체에 후리가나가 달려요. 새로 추가하는 단어는 AI로 채우기가 같이 채워요. 이미 있는 단어는 여기서 한꺼번에 채울 수 있어요.</p>
+      <p class="num">후리가나가 없는 예문 ${left}개</p>
+      ${msg}
+      <div class="deck-actions">${F && F.running ? `<button class="btn" type="button" data-act="furi-stop">멈추기</button>` : `<button class="btn primary" type="button" data-act="furi-go" ${left && aiReady() ? "" : "disabled"}>${aiReady() ? "AI로 채우기" : "아래에서 AI 키를 먼저 넣어 주세요"}</button>`}</div>
+    </div>`;
+  }
+  function furiRefresh() { const el = $("#furiPanel"); if (el) el.outerHTML = furiPanel(); }
+  async function furiFillAll() {
+    if (S.furi && S.furi.running) return;
+    const todo = furiTodo(); if (!todo.length || !aiReady()) return;
+    const F = S.furi = { running: true, stop: false, msg: "", kind: "" };
+    let done = 0, failed = 0;
+    for (let k = 0; k < todo.length && !F.stop; k += 20) {
+      const batch = todo.slice(k, k + 20);
+      F.msg = `채우는 중… ${k}/${todo.length}`; F.kind = ""; furiRefresh();
+      const prompt = `아래 일본어 예문 각각에 후리가나를 단다. JSON 배열 하나로만 답한다. 배열 순서는 입력 순서와 같고, 원소는 {"i": 입력 번호, "exf": 결과}.
+"exf"는 예문과 글자 하나 다르지 않게 똑같이 쓰되, 한자 덩어리마다 바로 뒤에 [히라가나 읽기]를 붙인 것이다. 가나·문장부호에는 붙이지 않는다. 문맥에 맞는 읽기를 쓴다.
+예: 液晶画面は、見にくいなぁ。 → 液晶[えきしょう]画面[がめん]は、見[み]にくいなぁ。
+입력: ${JSON.stringify(batch.map((c, i) => ({ i, ex: c.ex })))}`;
+      try {
+        const v = parseJsonLoose(await aiAsk(prompt));
+        const arr = Array.isArray(v) ? v : (v && Array.isArray(v.items) ? v.items : []);
+        let deckDirty = false, wordDirty = false;
+        batch.forEach((c, i) => {
+          const a = arr.find(o => o && o.i === i) || arr[i], f = a && a.exf ? String(a.exf) : "";
+          if (!f || furiPlain(f) !== c.ex) { failed++; return; }
+          if (c.mine) { const w = S.words.find(x => x.id === c.id); if (w) { w.exf = f; wordDirty = true; } }
+          else { const m = importedMetas.find(x => x.id === c.deck); if (m && m.rows[c.idx]) { m.rows[c.idx][7] = f; deckDirty = true; } }
+          c.exf = f; done++;
+        });
+        if (deckDirty) await S.store.saveDeck();
+        if (wordDirty) await S.store.saveWord();
+      } catch (e) { F.msg = "중간에 멈췄어요: " + e.message + " 잠시 뒤 다시 누르면 남은 것부터 이어서 채워요."; F.kind = "error"; break; }
+      if (k + 20 < todo.length && !F.stop) await sleep(4500);
+    }
+    F.running = false;
+    if (F.kind !== "error") F.msg = `${done}개를 채웠어요.${failed ? ` ${failed}개는 AI 답이 예문과 맞지 않아 건너뛰었어요. 다시 누르면 그것만 다시 해요.` : ""}`;
+    furiRefresh();
+  }
+
+  // ================= view: settings =================
+  function viewSettings() {
+    return `<div class="stack">${pagebar("설정")}
       <section class="tools">
         <div class="panel">
-          <h2>하루 새 카드</h2>
-          <p>덱마다 하루에 처음 보는 카드 수예요.</p>
-          <div class="stepper"><button type="button" data-act="npd" data-d="-5" aria-label="줄이기">−</button><output class="num">${S.settings.newPerDay}</output><button type="button" data-act="npd" data-d="5" aria-label="늘리기">+</button></div>
-        </div>
-        <div class="panel">
-          <h2>카드 앞면</h2>
-          <p>뜻 → 단어는 예문의 단어 자리를 비워서 보여줘요.</p>
-          <div class="seg"><button type="button" data-act="dir" data-v="w2m" aria-pressed="${S.settings.dir !== "m2w"}">단어 → 뜻</button><button type="button" data-act="dir" data-v="m2w" aria-pressed="${S.settings.dir === "m2w"}">뜻 → 단어</button></div>
-        </div>
-        <div class="panel">
-          <h2>덱 추가</h2>
-          <p>단어장 파일(.json)이나 Anki용 CSV, '앞면,뒷면' 두 칸짜리 CSV를 새 덱으로 추가해요.</p>
-          <div><label class="btn" for="importFile">파일 선택</label></div>
-          ${importedMetas.length ? importMsgHtml() : ""}
-        </div>
-        <div class="panel">
           <h2>기록 백업</h2>
-          <p>덱·내 단어·복습 기록을 파일 하나로 저장해요. 다른 기기에서 가져오면 그대로 이어져요. 가져오면 이 기기의 기록이 파일 내용으로 바뀌어요.</p>
+          <p>덱·직접 추가한 단어·복습 기록·메모를 파일 하나로 저장해요. 다른 기기에서 가져오면 그대로 이어져요. 가져오면 이 기기의 기록이 파일 내용으로 바뀌어요.</p>
           <div class="deck-actions"><button class="btn" type="button" data-act="export">내보내기</button><label class="btn ghost" for="backupFile">가져오기</label></div>
         </div>
+        ${furiPanel()}
         ${aiPanel()}
       </section>
-      <p class="note">복습 일정은 FSRS-5 기본 매개변수(목표 기억률 90%)로 계산해요. 하루는 새벽 4시에 바뀌어요.</p>
+      <p class="note">복습 일정은 FSRS-5 기본 매개변수(목표 기억률 90%)로 계산해요. 하루는 새벽 4시에 바뀌어요. 한자 읽기·획수는 KANJIDIC(EDRDG, CC BY-SA 4.0) 기반이에요.</p>
+    </div>`;
+  }
+
+  // ================= view: add menu / import / sources =================
+  function viewAddMenu() {
+    return `<div class="stack">${pagebar("단어 추가")}
+      <div class="choices">
+        <button class="choice" type="button" data-act="add-one"><b>한 단어 추가</b><span>단어를 직접 입력해요. 비슷한 단어를 바로 보여주고, AI 키가 있으면 뜻과 예문을 채워 줘요.</span></button>
+        <button class="choice" type="button" data-act="add-grid"><b>표로 여러 개 추가</b><span>엑셀처럼 생긴 표에 바로 쓰거나, 엑셀에서 복사해 붙여 넣어요. 엑셀 양식 파일로 올릴 수도 있고, 빈칸은 AI로 채울 수 있어요.</span></button>
+      </div>
+    </div>`;
+  }
+  // ---------- 표로 여러 개 추가 ----------
+  const GBASE = [["w", "단어 *"], ["r", "읽기"], ["pos", "품사"], ["ko", "한국어 뜻 *"], ["en", "영어"], ["ex", "예문"], ["exko", "예문 해석"]];
+  // 분류를 줄마다 정할 때는 엑셀 양식과 같은 순서로 맨 끝에 '분류' 칸이 붙는다
+  const gcols = () => S.grid && S.grid.levelMode === "row" ? GBASE.concat([["lv", "분류"]]) : GBASE;
+  const newGridRow = () => ({ w: "", r: "", pos: "", ko: "", en: "", ex: "", exko: "", lv: (S.grid && S.grid.level) || "mine" });
+  function normLv(v) {
+    const t = String(v == null ? "" : v).trim().toUpperCase().replace(/^JLPT\s*/, "");
+    const m = t.match(/^N?\s*([1-5])(급)?$/);
+    if (m) return m[1];
+    return "mine";
+  }
+  function gridState() {
+    if (!S.grid) {
+      S.grid = { rows: [], level: S.tab === "words" ? S.wlevel : "mine", srcMode: "direct", src: "", levelMode: "all", skipDup: true, tried: false };
+      S.grid.rows = Array.from({ length: 10 }, newGridRow);
+    }
+    return S.grid;
+  }
+  function gridStatus(i) {
+    const g = S.grid, row = g.rows[i], w = row.w.trim();
+    if (!w) return ["", ""];
+    if (S.cards.some(c => c.w === w)) return ["dup", "이미 있음"];
+    if (g.rows.slice(0, i).some(x => x.w.trim() === w)) return ["dup", "표 안 중복"];
+    if (!row.ko.trim()) return [g.tried ? "err" : "warn", "뜻 필요"];
+    return ["ok", "✓"];
+  }
+  function gridBody() {
+    return S.grid.rows.map((row, i) => {
+      const [cls, label] = gridStatus(i);
+      return `<tr><td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}">${label}</span></td>${gcols().map(([k], j) => k === "lv"
+        ? `<td><select class="gcell gsel" data-r="${i}" data-c="${j}" aria-label="${i + 1}번 줄 분류">${LEVELS.map(([v, l]) => `<option value="${v}" ${row.lv === v ? "selected" : ""}>${l}</option>`).join("")}</select></td>`
+        : `<td><input class="gcell ${k === "w" || k === "r" || k === "ex" ? "jpi" : ""}" data-r="${i}" data-c="${j}" ${k === "pos" ? 'list="posList"' : ""} value="${esc(row[k])}" autocomplete="off"></td>`).join("")}<td><button class="gdel" type="button" data-act="g-del" data-r="${i}" aria-label="${i + 1}번 줄 지우기">×</button></td></tr>`;
+    }).join("");
+  }
+  function gridCount() { return S.grid.rows.filter(r => r.w.trim()).length; }
+  function viewGrid() {
+    const g = gridState();
+    const srcNames = importedMetas.filter(m => m.kind === "words").map(m => m.name);
+    const levelBtns = LEVELS.map(([k, l]) => `<button type="button" data-act="g-level" data-v="${k}" aria-pressed="${g.level === k}"><b>${l}</b></button>`).join("");
+    const named = g.srcMode === "named", perRow = g.levelMode === "row";
+    return `<div class="stack">${pagebar("표로 여러 개 추가")}
+      <div class="panel form">
+        <div class="grid2">
+          <div class="field"><label>출처</label>
+            <div class="seg"><button type="button" data-act="g-srcmode" data-v="named" aria-pressed="${named}">출처 지정</button><button type="button" data-act="g-srcmode" data-v="direct" aria-pressed="${!named}">직접 추가</button></div>
+            <div ${named ? "" : "hidden"} id="g_srcbox"><input id="g_src" type="text" list="srcList" value="${esc(g.src)}" autocomplete="off" placeholder="책 이름 (예: 한끝 N2, 급소공략)"><datalist id="srcList">${srcNames.map(n => `<option value="${esc(n)}"></option>`).join("")}</datalist></div>
+            <p class="note">${named ? "같은 이름의 출처가 있으면 거기에 이어서 붙어요." : "어느 책에도 속하지 않는 단어로 '직접 추가'에 들어가요."}</p>
+          </div>
+          <div class="field"><label>분류</label>
+            <div class="seg"><button type="button" data-act="g-lvmode" data-v="all" aria-pressed="${!perRow}">한꺼번에</button><button type="button" data-act="g-lvmode" data-v="row" aria-pressed="${perRow}">줄마다</button></div>
+            <div class="levels levels-sm" role="group" aria-label="분류">${levelBtns}</div>
+            <p class="note">${perRow ? "표 맨 끝 '분류' 칸에서 줄마다 골라요. 위 버튼은 새 줄의 기본값이에요." : "표의 모든 단어가 위에서 고른 분류로 들어가요."}</p>
+          </div>
+        </div>
+        <div class="gtools">
+          <button class="btn small" type="button" data-act="g-ai">빈칸 AI로 채우기</button>
+          <a class="btn small ghost" href="vocab-template.xlsx" download="단어장-양식.xlsx">엑셀 양식 받기</a>
+          <label class="btn small ghost" for="gridFile">엑셀·CSV 올리기</label>
+          <button class="btn small ghost" type="button" data-act="g-json">단어장 파일(.json) 넣기</button>
+          <button class="btn small ghost" type="button" data-act="g-clear">표 비우기</button>
+        </div>
+        <p class="note">칸을 눌러 바로 쓰거나, 엑셀에서 여러 칸을 복사해 아무 칸에나 붙여 넣으면 그 자리부터 채워져요. 단어만 쓰고 '빈칸 AI로 채우기'를 눌러도 돼요.</p>
+      </div>
+      <div class="gwrap"><table class="gtable"><thead><tr><th class="gnum">#</th>${gcols().map(([, l]) => `<th>${l}</th>`).join("")}<th></th></tr></thead><tbody id="gbody">${gridBody()}</tbody></table></div>
+      <datalist id="posList">${POS.map(p => `<option value="${p}"></option>`).join("")}</datalist>
+      <div class="formactions"><button class="btn small" type="button" data-act="g-more">+ 10줄</button></div>
+      <div class="panel form">
+        <label class="check"><input id="g_skip" type="checkbox" ${g.skipDup ? "checked" : ""}> 이미 있는 단어는 빼고 추가하기</label>
+        <div id="gridMsg" class="formmsg" hidden></div>
+        <div class="formactions"><button class="btn primary" type="button" data-act="g-save" id="gSave">추가하기 (${gridCount()}개)</button><button class="btn ghost" type="button" data-act="back">취소</button></div>
+      </div>
+    </div>`;
+  }
+  function gridMsg(text, kind) { const m = $("#gridMsg"); if (!m) return; m.hidden = !text; m.textContent = text || ""; if (kind) m.dataset.kind = kind; else m.removeAttribute("data-kind"); }
+  function gridRefreshStatus() {
+    S.grid.rows.forEach((_, i) => { const el = $("#gs_" + i); if (!el) return; const [cls, label] = gridStatus(i); el.className = "gstat " + cls; el.textContent = label; });
+    const b = $("#gSave"); if (b) b.textContent = `추가하기 (${gridCount()}개)`;
+  }
+  function gridRerender() { const tb = $("#gbody"); if (tb) tb.innerHTML = gridBody(); gridRefreshStatus(); }
+  function gridSyncHeader() { const g = S.grid; if (!g) return; const s1 = $("#g_src"); if (s1) g.src = s1.value; const sk = $("#g_skip"); if (sk) g.skipDup = sk.checked; }
+  function gridRedrawAll() { gridSyncHeader(); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  // 시트의 행들(첫 줄이 제목이면 제목으로 칸을 찾음)을 표 행으로 바꾼다
+  function sheetToRows(aoa) {
+    const rows = aoa.filter(r => r && r.some(v => String(v || "").trim()));
+    if (!rows.length) return [];
+    const head = rows[0].map(v => String(v || "").replace(/\s|\*/g, "").toLowerCase());
+    const find = tests => head.findIndex(h => tests.some(t => t(h)));
+    const map = {
+      w: find([h => h === "단어" || h === "word" || h === "漢字" || h === "単語"]),
+      r: find([h => h.includes("읽기") || h.includes("reading") || h.includes("よみ") || h.includes("読み")]),
+      pos: find([h => h.includes("품사")]),
+      exko: find([h => h.includes("해석") || h.includes("번역")]),
+      ex: find([h => h === "예문" || h.includes("example") || h === "例文"]),
+      en: find([h => h.includes("영어") || h === "english" || h === "en"]),
+      ko: find([h => h.includes("한국어") || h === "뜻" || h === "의미" || h.includes("meaning")]),
+      lv: find([h => h === "분류" || h.includes("급수") || h.includes("레벨") || h === "jlpt" || h === "level"]),
+    };
+    let body = rows;
+    if (map.w >= 0) body = rows.slice(1);
+    else ["w", "r", "pos", "ko", "en", "ex", "exko", "lv"].forEach((k, i) => { map[k] = i; });
+    return body.map(r => {
+      const o = newGridRow();
+      for (const k of Object.keys(o)) if (map[k] >= 0) o[k] = String(r[map[k]] == null ? "" : r[map[k]]).trim();
+      o.hasLv = map.lv >= 0 && String(r[map.lv] == null ? "" : r[map.lv]).trim() !== "";
+      o.lv = o.hasLv ? normLv(o.lv) : (S.grid && S.grid.level) || "mine";
+      return o;
+    }).filter(o => o.w);
+  }
+  function addRowsToGrid(rows) {
+    const g = gridState();
+    if (rows.some(r => r.hasLv)) g.levelMode = "row";
+    rows.forEach(r => delete r.hasLv);
+    const blank = r => !["w", "r", "pos", "ko", "en", "ex", "exko"].some(k => String(r[k] || "").trim());
+    let last = g.rows.length; while (last > 0 && blank(g.rows[last - 1])) last--;
+    g.rows = g.rows.slice(0, last).concat(rows);
+    while (g.rows.length < 10) g.rows.push(newGridRow());
+  }
+  const colIndex = ref => { let n = 0; for (const ch of ref.toUpperCase()) n = n * 26 + (ch.charCodeAt(0) - 64); return n - 1; };
+  // .xlsx(압축된 XML)를 라이브러리 없이 읽는다
+  async function readXlsx(buf) {
+    const dv = new DataView(buf), u8 = new Uint8Array(buf), td = new TextDecoder();
+    let eocd = -1;
+    for (let i = u8.length - 22; i >= Math.max(0, u8.length - 70000); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) throw new Error("엑셀 파일이 아니에요.");
+    const count = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+    const files = {};
+    for (let k = 0; k < count; k++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) break;
+      const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nlen = dv.getUint16(p + 28, true), xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), off = dv.getUint32(p + 42, true);
+      files[td.decode(u8.subarray(p + 46, p + 46 + nlen))] = { method, csize, off };
+      p += 46 + nlen + xlen + clen;
+    }
+    async function get(name) {
+      const f = files[name]; if (!f) return null;
+      const start = f.off + 30 + dv.getUint16(f.off + 26, true) + dv.getUint16(f.off + 28, true);
+      const data = u8.slice(start, start + f.csize);
+      if (f.method === 0) return td.decode(data);
+      const out = await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
+      return td.decode(out);
+    }
+    const xml = t => new DOMParser().parseFromString(t, "application/xml");
+    const shared = [];
+    const ss = await get("xl/sharedStrings.xml");
+    if (ss) for (const si of xml(ss).getElementsByTagName("si")) shared.push([...si.getElementsByTagName("t")].map(t => t.textContent).join(""));
+    let sheetPath = "xl/worksheets/sheet1.xml";
+    const wb = await get("xl/workbook.xml"), rels = await get("xl/_rels/workbook.xml.rels");
+    if (wb && rels) {
+      const first = xml(wb).getElementsByTagName("sheet")[0];
+      const rid = first && first.getAttribute("r:id");
+      for (const r of xml(rels).getElementsByTagName("Relationship")) if (r.getAttribute("Id") === rid) { const t = r.getAttribute("Target"); sheetPath = t.startsWith("/") ? t.slice(1) : "xl/" + t.replace(/^\.\//, ""); }
+    }
+    const sx = await get(sheetPath); if (!sx) throw new Error("시트를 찾지 못했어요.");
+    const out = [];
+    for (const row of xml(sx).getElementsByTagName("row")) {
+      const ri = (+row.getAttribute("r") || out.length + 1) - 1, arr = [];
+      for (const c of row.getElementsByTagName("c")) {
+        const col = colIndex((c.getAttribute("r") || "A").replace(/\d+/g, "")), t = c.getAttribute("t"), v = c.getElementsByTagName("v")[0];
+        arr[col] = t === "s" ? (v ? shared[+v.textContent] || "" : "") : t === "inlineStr" ? [...c.getElementsByTagName("t")].map(x => x.textContent).join("") : (v ? v.textContent : "");
+      }
+      out[ri] = Array.from(arr, x => x == null ? "" : x);
+    }
+    return Array.from(out, r => r || []);
+  }
+  function decodeText(buf) {
+    try { return new TextDecoder("utf-8", { fatal: true }).decode(buf); } catch (e) { return new TextDecoder("euc-kr").decode(buf); }
+  }
+  async function gridAiFill() {
+    const g = S.grid; gridSyncHeader();
+    if (!aiReady()) return gridMsg("⚙ 설정 → 'AI 자동 채우기'에서 API 키를 먼저 넣어 주세요.", "error");
+    const furiDone = r => r.exf && furiPlain(r.exf) === r.ex;
+    const todo = g.rows.map((r, i) => ({ r, i })).filter(x => x.r.w.trim() && (!x.r.r || !x.r.pos || !x.r.ko || !x.r.en || !x.r.ex || !x.r.exko || !furiDone(x.r)));
+    if (!todo.length) return gridMsg("채울 빈칸이 없어요.");
+    let done = 0, failed = 0;
+    for (let k = 0; k < todo.length; k += 8) {
+      const batch = todo.slice(k, k + 8);
+      gridMsg(`AI가 채우는 중… ${Math.min(k + batch.length, todo.length)}/${todo.length}`);
+      const prompt = `일본어 단어장 카드를 만든다. 아래 단어 각각에 대해 JSON 배열 하나로만 답한다. 배열 순서는 입력 순서와 같다.
+원소 키:
+- "w": 입력한 단어 그대로
+- "r": 히라가나 읽기 (단어가 가나뿐이면 빈 문자열)
+- "pos": 다음 중 하나 ${JSON.stringify(POS)} (동사는 자동사·타동사를 구분)
+- "ko": 한국어 뜻, 핵심 뜻 1~3개를 쉼표로
+- "en": 짧은 영어 뜻
+- "ex": 이 단어를 포함한 자연스러운 일본어 예문 한 문장, JLPT N2 수준
+- "exko": 예문의 자연스러운 한국어 번역
+- "exf": 예문 "ex"와 글자 하나 다르지 않게 똑같이 쓰되, 한자 덩어리마다 바로 뒤에 [히라가나 읽기]를 붙인 것. 예: 液晶[えきしょう]画面[がめん]は、見[み]にくいなぁ。
+입력에 "ex"가 이미 있으면 그 예문을 그대로 "ex"로 쓴다.
+입력: ${JSON.stringify(batch.map(x => x.r.ex.trim() ? { w: x.r.w.trim(), ex: x.r.ex.trim() } : { w: x.r.w.trim() }))}`;
+      try {
+        const v = parseJsonLoose(await aiAsk(prompt));
+        const arr = Array.isArray(v) ? v : (v && Array.isArray(v.items) ? v.items : []);
+        batch.forEach((x, j) => {
+          const a = arr.find(o => o && o.w === x.r.w.trim()) || arr[j];
+          if (!a || a.error) { failed++; return; }
+          for (const key of ["r", "ko", "en", "ex", "exko"]) if (!x.r[key] && a[key]) x.r[key] = String(a[key]);
+          if (!x.r.pos && POS.includes(a.pos)) x.r.pos = a.pos;
+          if (a.exf && furiPlain(String(a.exf)) === x.r.ex) x.r.exf = String(a.exf);
+          done++;
+        });
+      } catch (e) { failed += batch.length; gridMsg("AI 채우기 중 문제가 생겼어요: " + e.message, "error"); break; }
+      if (topPage() && topPage().t === "grid") gridRerender();
+    }
+    if (topPage() && topPage().t === "grid") { gridRerender(); if (!$("#gridMsg").dataset.kind) gridMsg(`${done}개를 채웠어요.${failed ? ` ${failed}개는 채우지 못했어요.` : ""} 내용을 확인하고 추가해 주세요.`); }
+  }
+  async function saveGrid() {
+    const g = S.grid; gridSyncHeader(); g.tried = true;
+    let rows = g.rows.map(r => ({ ...r, w: r.w.trim(), ko: r.ko.trim() })).filter(r => r.w);
+    if (!rows.length) { gridRefreshStatus(); return gridMsg("추가할 단어가 없어요.", "error"); }
+    if (rows.some(r => !r.ko)) { gridRefreshStatus(); return gridMsg("한국어 뜻이 빈 줄이 있어요. 채우거나 'AI로 채우기'를 눌러 주세요.", "error"); }
+    const seen = new Set(); rows = rows.filter(r => { if (seen.has(r.w)) return false; seen.add(r.w); return true; });
+    if (g.skipDup) { const have = new Set(S.cards.map(c => c.w)); rows = rows.filter(r => !have.has(r.w)); }
+    if (!rows.length) return gridMsg("새로 추가할 단어가 없어요. 모두 이미 있는 단어예요.", "error");
+    const direct = g.srcMode !== "named";
+    const src = direct ? "직접 추가" : (g.src || "").trim(), lv = g.level || "mine";
+    if (!src) return gridMsg("출처(책 이름)를 써 주세요. 책에 속하지 않으면 '직접 추가'를 고르세요.", "error");
+    if (!direct && src === "직접 추가") return gridMsg("'직접 추가'는 위 토글에서 골라 주세요.", "error");
+    const rowLv = r => g.levelMode === "row" ? (r.lv || "mine") : lv;
+    try {
+      if (direct) {
+        const now = Date.now();
+        rows.forEach((r, i) => S.words.push({ id: "m" + (now + i).toString(36) + Math.random().toString(36).slice(2, 5), w: r.w, r: r.r, pos: r.pos, ko: r.ko, en: r.en, ex: r.ex, exko: r.exko, exf: r.exf && furiPlain(r.exf) === r.ex ? r.exf : "", level: rowLv(r), createdAt: now + i }));
+        rebuild(); await S.store.saveWord();
+      } else {
+        let meta = importedMetas.find(m => m.name === src);
+        if (meta && meta.kind !== "words") return gridMsg(`'${src}'는 CSV로 가져온 출처라 여기에 더할 수 없어요. 다른 출처 이름을 써 주세요.`, "error");
+        if (!meta) { meta = { id: "d" + Date.now().toString(36), name: src, kind: "words", createdAt: Date.now(), count: 0, rows: [] }; if (g.levelMode !== "row" && lv !== "mine") { meta.base = true; meta.level = +lv; } importedMetas.push(meta); }
+        const baseLv = meta.base && meta.level ? String(meta.level) : "mine";
+        for (const r of rows) {
+          meta.rows.push([r.w, r.r, r.ko, r.en, r.pos, r.ex, r.exko, r.exf && furiPlain(r.exf) === r.ex ? r.exf : ""]);
+          if (rowLv(r) !== baseLv) S.levels[meta.id + "-" + (meta.rows.length - 1)] = rowLv(r);
+        }
+        meta.count = meta.rows.length;
+        rebuild(); await S.store.saveDeck(); await S.store.saveLevels();
+      }
+    } catch (e) { return gridMsg("저장하지 못했어요. 다시 시도해 주세요.", "error"); }
+    const n = rows.length; S.grid = null;
+    const lvs = [...new Set(rows.map(rowLv))];
+    S.stack = []; S.tab = "words"; S.wlevel = lvs.length === 1 ? lvs[0] : lv; S.wsrc = "all"; S.filter = "all"; S.q = "";
+    render(); window.scrollTo(0, 0);
+    toast(`${n}개를 '${src}'${lvs.length === 1 ? " · " + levelLabel(lvs[0]) : " · 분류 " + lvs.map(levelLabel).join("/")}에 추가했어요.`);
+  }
+
+  function exactDupCount(rows, kind) {
+    const have = new Set(S.cards.map(c => c.w));
+    return rows.filter(r => have.has(kind === "words" ? r[0] : htmlText(r[0]))).length;
+  }
+  function viewImport() {
+    const p = S.pendingImport;
+    const msg = S.importMsg ? `<div class="import-msg" ${S.importMsg.kind ? `data-kind="${S.importMsg.kind}"` : ""}>${esc(S.importMsg.text)}</div>` : "";
+    if (!p) {
+      return `<div class="stack">${pagebar("파일로 여러 개 추가")}
+        <div class="panel tools-one">
+          <h2>파일 고르기</h2>
+          <p class="note">넣을 수 있는 파일: 단어장 파일(.json, 칸별로 정리된 형식) · Anki용 CSV · '앞면,뒷면' 두 칸짜리 CSV. 단어장 파일은 한자 연결·쓰기 연습까지 다 돼요.</p>
+          <div><label class="btn primary" for="importFile">파일 선택</label></div>
+          ${msg}
+        </div>
+      </div>`;
+    }
+    const levelBtns = LEVELS.map(([k, l]) => `<button type="button" data-act="imp-level" data-v="${k}" aria-pressed="${p.level === k}"><b>${l}</b></button>`).join("");
+    return `<div class="stack">${pagebar("파일로 여러 개 추가")}
+      <div class="panel form">
+        <p class="note">파일: ${esc(p.file)}</p>
+        <dl class="facts">
+          <div><dt>단어 수</dt><dd>${p.rows.length}개</dd></div>
+          <div><dt>이미 있는 단어</dt><dd>${p.dups}개</dd></div>
+          <div><dt>형식</dt><dd>${p.kind === "words" ? "단어장 파일" : "CSV(앞면·뒷면)"}</dd></div>
+        </dl>
+        <div class="field"><label for="imp_name">출처 이름</label><input id="imp_name" type="text" value="${esc(p.name)}" autocomplete="off" placeholder="예: 한끝 N2, 급소공략 문법"></div>
+        <div class="field"><label>분류</label><div class="levels levels-sm" role="group" aria-label="분류">${levelBtns}</div></div>
+        ${p.dups ? `<label class="check"><input id="imp_skip" type="checkbox" ${p.skip ? "checked" : ""}> 이미 있는 단어 ${p.dups}개는 빼고 가져오기</label>` : ""}
+        ${msg}
+        <div class="formactions"><button class="btn primary" type="button" data-act="imp-go">가져오기</button><label class="btn ghost" for="importFile">다른 파일</label></div>
+      </div>
+    </div>`;
+  }
+  async function doImport() {
+    const p = S.pendingImport; if (!p) return;
+    const name = (($("#imp_name") || {}).value || "").trim() || p.name;
+    const skip = !!(($("#imp_skip") || {}).checked);
+    if (S.decks.some(d => d.name === name)) { S.importMsg = { text: `'${name}' 출처가 이미 있어요. 이름을 바꿔 주세요.`, kind: "error" }; p.name = name; return render(); }
+    let rows = p.rows;
+    if (skip) { const have = new Set(S.cards.map(c => c.w)); rows = rows.filter(r => !have.has(p.kind === "words" ? r[0] : htmlText(r[0]))); }
+    if (!rows.length) { S.importMsg = { text: "가져올 새 단어가 없어요.", kind: "error" }; return render(); }
+    const okId = p.id && /^[A-Za-z0-9_-]{1,40}$/.test(p.id) && !S.decks.some(d => d.id === p.id) && p.id !== "mine";
+    const meta = { id: okId ? p.id : "d" + Date.now().toString(36), name, kind: p.kind, createdAt: Date.now(), count: rows.length, rows };
+    if (p.level !== "mine") { meta.base = true; meta.level = +p.level; }
+    importedMetas.push(meta); rebuild();
+    try { await S.store.saveDeck(); } catch (e) {}
+    S.pendingImport = null; S.importMsg = null;
+    S.stack = []; S.tab = "words"; S.wlevel = p.level; S.wsrc = meta.id; S.filter = "all"; S.q = "";
+    render(); window.scrollTo(0, 0);
+    toast(`'${name}' ${rows.length}개를 ${levelLabel(p.level)}에 추가했어요.`);
+  }
+  function viewSources() {
+    const rows = S.decks.filter(d => d.cards.length || !d.mineDeck).map(d => {
+      const studied = d.cards.filter(c => S.states[c.key]).length;
+      const lvCount = {}; for (const c of d.cards) { const l = levelLabel(cardLevel(c)); lvCount[l] = (lvCount[l] || 0) + 1; }
+      const lv = Object.entries(lvCount).map(([k, n]) => `${k} ${n}`).join(" · ");
+      let actions = "";
+      if (d.mineDeck) actions = '<span class="note">단어마다 편집 화면에서 지울 수 있어요.</span>';
+      else if (S.confirmDel === d.id) actions = `<span class="confirm">이 출처의 단어 ${d.cards.length}개와 복습 기록을 모두 지울까요? <button class="btn danger" type="button" data-act="deldeck-yes" data-deck="${esc(d.id)}">삭제</button><button class="btn ghost" type="button" data-act="deldeck-no">취소</button></span>`;
+      else if (S.renaming === d.id) actions = `<input id="src_name" type="text" value="${esc(d.name)}" autocomplete="off" class="search" style="max-width:260px"><button class="btn primary small" type="button" data-act="src-rename-save" data-deck="${esc(d.id)}">저장</button><button class="btn ghost small" type="button" data-act="src-rename-no">취소</button>`;
+      else actions = `<button class="btn small" type="button" data-act="src-rename" data-deck="${esc(d.id)}">이름 바꾸기</button><button class="btn ghost small" type="button" data-act="deldeck" data-deck="${esc(d.id)}">삭제</button>`;
+      return `<article class="deck">
+        <div class="deck-head"><h3>${esc(d.mineDeck ? "직접 추가" : d.name)}</h3><p class="deck-meta num">${d.cards.length}개 · 공부한 단어 ${studied}개</p></div>
+        <p class="note num">${esc(lv)}</p>
+        <div class="deck-actions">${actions}</div>
+      </article>`;
+    }).join("");
+    return `<div class="stack">${pagebar("출처 관리")}
+      <div class="decks">${rows || '<p class="empty">아직 출처가 없어요.</p>'}</div>
+      <p class="note">출처는 단어를 어디서 가져왔는지(책·파일)예요. 학습 탭에서는 출처마다 덱으로 공부해요.</p>
     </div>`;
   }
 
@@ -814,16 +1338,18 @@ h2, h3 { text-wrap: balance; }
     if (!q) return true;
     return (c.w && c.w.includes(q)) || (c.r && c.r.includes(q)) || (c.ko && c.ko.includes(q)) || (c.en && c.en.toLowerCase().includes(q.toLowerCase()));
   }
-  const LEVELS = [["5", "N5"], ["4", "N4"], ["3", "N3"], ["2", "N2"], ["1", "N1"], ["mine", "내 단어"]];
-  const cardLevel = c => c.level ? String(c.level) : "mine";
-  function sourcesOfMine() {
-    return S.decks.filter(d => d.cards.length && d.cards.every(c => !c.level)).map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, n: d.cards.length }));
+  const LEVELS = [["5", "N5"], ["4", "N4"], ["3", "N3"], ["2", "N2"], ["1", "N1"], ["mine", "미분류"]];
+  const cardLevel = c => { const o = S.levels[c.key]; if (o) return String(o); return c.level ? String(c.level) : "mine"; };
+  const levelLabel = lv => lv && lv !== "mine" ? "N" + lv : "미분류";
+  const srcName = c => c.deck === "mine" ? "직접 추가" : deckName(c.deck);
+  function sourcesOfLevel(lv) {
+    return S.decks.map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, n: d.cards.filter(c => cardLevel(c) === lv).length })).filter(x => x.n);
   }
   function filteredCards() {
     const q = S.q.trim();
     return S.cards.filter(c => {
       if (cardLevel(c) !== S.wlevel) return false;
-      if (S.wlevel === "mine" && S.wsrc !== "all" && c.deck !== S.wsrc) return false;
+      if (S.wsrc !== "all" && c.deck !== S.wsrc) return false;
       if (!matchWord(c, q)) return false;
       const f = S.filter, s = S.states[c.key];
       if (f === "fav") return !!S.favs[c.key];
@@ -838,15 +1364,21 @@ h2, h3 { text-wrap: balance; }
     const w = hlK ? esc(c.w).split(esc(hlK)).join(`<mark>${esc(hlK)}</mark>`) : esc(c.w);
     return `<button class="row" type="button" data-act="word" data-key="${esc(c.key)}">
       <span class="dot ${st.cls}" title="${st.label}"></span>
-      <span style="min-width:0"><span class="w" lang="ja">${w}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}<div class="m">${esc(c.ko)}</div></span>
+      <span style="min-width:0"><span class="w" lang="ja">${w}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}<div class="m">${esc(c.ko)}</div><div class="src">${esc(srcName(c))}</div></span>
       <span>${S.favs[c.key] ? '<span class="star" aria-label="즐겨찾기">★</span>' : ""}</span>
     </button>`;
+  }
+  // 한자 페이지용: 단어 줄 오른쪽에 그 단어의 다른 한자를 둔다.
+  function kanjiWordRow(c, k) {
+    const others = kanjiOf(c.w).filter(x => x !== k);
+    const side = others.map(x => `<button class="kchip" type="button" data-act="kanji" data-k="${esc(x)}"><b lang="ja">${esc(x)}</b><span>${esc(((S.kanji[x] || {}).ko || "").split(",")[0])}</span></button>`).join("");
+    return `<div class="krow">${wordRow(c, k)}${side ? `<div class="kchips side">${side}</div>` : ""}</div>`;
   }
   function wordsResults() {
     const list = filteredCards();
     const shown = list.slice(0, S.wordLimit);
-    const levelEmpty = S.wlevel !== "mine" && !S.cards.some(c => cardLevel(c) === S.wlevel);
-    if (levelEmpty) return `<p class="empty">N${S.wlevel} 기본 단어는 아직 없어요. 앱 기본 단어를 넣으면 여기에 나와요.</p>`;
+    const levelEmpty = !S.cards.some(c => cardLevel(c) === S.wlevel);
+    if (levelEmpty) return S.wlevel === "mine" ? '<p class="empty">미분류 단어가 없어요.</p>' : `<p class="empty">N${S.wlevel}로 분류한 단어가 아직 없어요. 단어를 추가하거나 편집할 때 N${S.wlevel}를 고르면 여기에 모여요.</p>`;
     return `<p class="note num">${list.length}개 단어</p>
       ${shown.length ? `<div class="list">${shown.map(c => wordRow(c)).join("")}</div>` : '<p class="empty">조건에 맞는 단어가 없어요.</p>'}
       ${list.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-words">더 보기 (${list.length - shown.length}개 남음)</button></div>` : ""}`;
@@ -854,13 +1386,13 @@ h2, h3 { text-wrap: balance; }
   function viewWords() {
     const counts = {}; for (const c of S.cards) { const l = cardLevel(c); counts[l] = (counts[l] || 0) + 1; }
     const levels = LEVELS.map(([k, l]) => `<button type="button" data-act="wlevel" data-v="${k}" aria-pressed="${S.wlevel === k}"><b>${l}</b><span class="num">${counts[k] || 0}</span></button>`).join("");
-    const srcs = S.wlevel === "mine" ? sourcesOfMine() : [];
+    const srcs = sourcesOfLevel(S.wlevel);
     const srcChips = srcs.length > 1 ? `<div class="chips">${[{ id: "all", name: "모든 출처" }, ...srcs].map(x => `<button class="chip" type="button" data-act="wsrc" data-v="${esc(x.id)}" aria-pressed="${S.wsrc === x.id}">${esc(x.name)}${x.n ? ` <span class="num muted">${x.n}</span>` : ""}</button>`).join("")}</div>` : "";
     const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"]]
       .map(([k, l]) => `<button class="chip" type="button" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${l}</button>`).join("");
     return `<div class="stack">
       <div class="levels" role="group" aria-label="단어 급수">${levels}</div>
-      <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
+      <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn ghost" type="button" data-act="sources">출처</button><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
       ${srcChips}
       <div class="chips">${chips}</div>
       <div id="wresults" class="stack">${wordsResults()}</div>
@@ -868,7 +1400,7 @@ h2, h3 { text-wrap: balance; }
   }
 
   // ================= view: kanji list =================
-  const KFILTERS = [["all", "상용한자 전체"], ["mine", "내 단어에 쓰인"], ["5", "N5"], ["4", "N4"], ["3", "N3"], ["2", "N2"], ["1", "N1"], ["none", "급수 외"]];
+  const KFILTERS = [["all", "상용한자 전체"], ["mine", "단어장에 쓰인"], ["5", "N5"], ["4", "N4"], ["3", "N3"], ["2", "N2"], ["1", "N1"], ["none", "급수 외"]];
   function viewKanji() {
     const chips = KFILTERS.map(([k, l]) => `<button class="chip" type="button" data-act="kfilter" data-f="${k}" aria-pressed="${S.kfilter === k}">${l}</button>`).join("");
     return `<div class="stack">
@@ -897,7 +1429,7 @@ h2, h3 { text-wrap: balance; }
     if (f === "mine") ks.sort((a, b) => b.n - a.n || (a.i.freq || 9999) - (b.i.freq || 9999));
     else ks.sort((a, b) => (a.i.freq || 9999) - (b.i.freq || 9999) || a.k.localeCompare(b.k));
     const shown = ks.slice(0, S.kanjiLimit);
-    const label = f === "mine" ? "내 단어에 쓰인 한자" : f === "all" ? "전체 한자" : f === "none" ? "JLPT 급수 외 상용한자" : "N" + f + " 한자";
+    const label = f === "mine" ? "단어장에 쓰인 한자" : f === "all" ? "전체 한자" : f === "none" ? "JLPT 급수 외 상용한자" : "N" + f + " 한자";
     const tile = x => {
       const meta = [x.i.jlpt ? "N" + x.i.jlpt : "", x.n ? x.n + "단어" : ""].filter(Boolean).join(" · ");
       return `<button class="ktile" type="button" data-act="kanji" data-k="${esc(x.k)}"><span class="k" lang="ja">${esc(x.k)}</span><span class="ko">${esc(x.i.ko || "—")}</span><span class="n">${meta || "&nbsp;"}</span></button>`;
@@ -962,6 +1494,29 @@ h2, h3 { text-wrap: balance; }
       <div><dt>잊은 횟수</dt><dd>${s.lapses || 0}회</dd></div>
     </dl>`;
   }
+  function statusChips(key) {
+    const s = S.states[key], st = statusOf(key), now = Date.now();
+    let next = "", q = "";
+    if (s) {
+      if (s.due < nextCutoff(now)) next = "오늘 복습";
+      else { const d = Math.round((dayStart(s.due) - dayStart(now)) / DAY); next = d + "일 후 복습"; }
+      q = s.due < nextCutoff(now) ? `<button class="wchip" type="button" disabled>오늘 복습 예정</button>` : `<button class="wchip" type="button" data-act="queue" data-key="${esc(key)}">＋ 복습 대기열에 넣기</button>`;
+    }
+    return `<div class="wchips"><span class="wchip ${st.cls}">● ${st.label}</span>${next ? `<span class="wchip">${next}</span>` : ""}${q}</div>`;
+  }
+  function simSection(page, c) {
+    if (c.html) return "";
+    const list = similarCards(c.w, c.key, c.r);
+    if (!list.length) return `<section><h2 class="section-title">비슷한 단어</h2><p class="note">같은 한자나 같은 읽기를 쓰는 단어가 아직 없어요.</p></section>`;
+    const shown = page.simAll ? list : list.slice(0, 8);
+    return `<section><h2 class="section-title">비슷한 단어 ${list.length}개</h2>
+      <div class="simlist">${shown.map(x => `<button class="simrow" type="button" data-act="word" data-key="${esc(x.c.key)}">
+        <span class="w" lang="ja">${esc(x.c.w)}</span>${x.c.r ? `<span class="r" lang="ja">${esc(x.c.r)}</span>` : ""}
+        <span class="m">${esc(x.c.ko)}</span>
+        <span class="why">${esc(x.why)} · ${esc(levelLabel(cardLevel(x.c)))} · ${esc(srcName(x.c))}</span>
+      </button>`).join("")}</div>
+      ${list.length > shown.length ? `<button class="btn small ghost" type="button" data-act="sim-all" style="margin-top:8px">${list.length - shown.length}개 더 보기</button>` : ""}</section>`;
+  }
   function viewWord(page) {
     const c = S.byKey[page.key];
     if (!c) return pagebar("단어") + '<p class="empty">이 단어를 찾을 수 없어요.</p>';
@@ -970,19 +1525,21 @@ h2, h3 { text-wrap: balance; }
     let body;
     if (c.html) {
       body = `<div class="hero"><div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.w)}${favBtn}</div></div>
-        <div class="html-back" lang="ja">${sanitize(c.back)}</div>${myMeaningHtml(c.key)}<div><span class="decktag">${esc(deckName(c.deck))}</span></div></div>`;
+        <div class="html-back" lang="ja">${sanitize(c.back)}</div>${myMeaningHtml(c.key)}<div><span class="decktag">출처 · ${esc(srcName(c))}</span></div></div>`;
     } else {
       const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
       body = `<div class="hero">
+        <div class="wchips"><span class="decktag" style="margin:0">${esc(levelLabel(cardLevel(c)))}</span>${S.states[c.key] ? `<span class="ago">${agoLabel(c.key)}</span>` : ""}</div>
         <div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w)}${favBtn}</div></div>
         ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}</div>` : ""}
         <div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
         ${myMeaningHtml(c.key)}
-        <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">${esc(deckName(c.deck))}</span></div>
-        ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span>${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
+        <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">출처 · ${esc(srcName(c))}</span></div>
+        ${statusChips(c.key)}
+        ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span data-act="speak" data-text="${esc(c.ex)}" style="cursor:pointer">${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
       </div>`;
     }
-    const right = c.mine ? `<button class="btn small" type="button" data-act="edit" data-key="${esc(c.key)}">편집</button>` : "";
+    const right = !c.html ? `<button class="btn small" type="button" data-act="edit" data-key="${esc(c.key)}">편집</button>` : "";
     return `<div class="stack">${pagebar(c.w, right)}${body}
       ${noteSection(page, c)}
       <section><h2 class="section-title">한자</h2>${kanjiItems(c)}</section>
@@ -994,9 +1551,6 @@ h2, h3 { text-wrap: balance; }
   function viewKanjiPage(page) {
     const k = page.k, info = S.kanji[k] || {}, keys = S.kidx.get(k) || [];
     const cards = keys.map(key => S.byKey[key]).filter(Boolean);
-    const co = new Map();
-    for (const c of cards) for (const x of kanjiOf(c.w)) if (x !== k) co.set(x, (co.get(x) || 0) + 1);
-    const coList = [...co.entries()].sort((a, b) => b[1] - a[1]).slice(0, 16);
     const fact = (label, v) => `<div><dt>${label}</dt><dd lang="ja">${v ? esc(v) : '<span class="muted" style="font-weight:400">—</span>'}</dd></div>`;
     const hasDetail = (info.on && info.on.length) || (info.kun && info.kun.length) || info.strokes;
     return `<div class="stack">${pagebar(k + "  " + (info.ko || ""))}
@@ -1018,26 +1572,32 @@ h2, h3 { text-wrap: balance; }
         </div>
       </div>
       <section><h2 class="section-title num">이 한자가 들어간 단어 ${cards.length}개</h2>
-        ${cards.length ? `<div class="list">${cards.map(c => wordRow(c, k)).join("")}</div>` : '<p class="empty">내 단어 중에는 이 한자가 들어간 단어가 없어요.</p>'}
+        ${cards.length ? `<div class="list">${cards.map(c => kanjiWordRow(c, k)).join("")}</div>` : '<p class="empty">단어장에는 이 한자가 들어간 단어가 없어요.</p>'}
       </section>
-      ${coList.length ? `<section><h2 class="section-title">함께 쓰인 한자</h2><div class="kchips">${coList.map(([x, n]) => `<button class="kchip" type="button" data-act="kanji" data-k="${esc(x)}"><b lang="ja">${esc(x)}</b><span>${esc((S.kanji[x] || {}).ko || "")}</span></button>`).join("")}</div></section>` : ""}
     </div>`;
   }
 
   // ================= view: edit word =================
   const POS = ["명사", "동사·자동사", "동사·타동사", "い형용사", "な형용사", "부사", "접속사", "연체사", "표현", "기타"];
+  function openEdit(key) {
+    const c = S.byKey[key]; if (!c || c.html) return;
+    go({ t: "edit", key: c.key, draft: { w: c.w, r: c.r, pos: c.pos, ko: c.ko, en: c.en, ex: c.ex, exko: c.exko, level: cardLevel(c) } });
+  }
   function viewEdit(page) {
-    const isNew = !page.key;
-    const del = !isNew ? (page.confirmDel
+    const isNew = !page.key, cur = page.key ? S.byKey[page.key] : null;
+    const lv = (page.draft && page.draft.level) || (S.tab === "words" && isNew ? S.wlevel : "mine");
+    const del = cur && cur.mine ? (page.confirmDel
       ? `<span class="confirm">이 단어와 복습 기록을 지울까요? <button class="btn danger" type="button" data-act="delword-yes">삭제</button><button class="btn ghost" type="button" data-act="delword-no">취소</button></span>`
       : `<button class="btn ghost" type="button" data-act="delword">단어 삭제</button>`) : "";
+    const levelBtns = LEVELS.map(([k, l]) => `<button type="button" data-act="flevel" data-v="${k}" aria-pressed="${lv === k}"><b>${l}</b></button>`).join("");
     return `<div class="stack">${pagebar(isNew ? "단어 추가" : "단어 편집")}
+      <div class="editgrid">
       <form class="panel form" id="wordForm" novalidate>
         <div class="field"><label for="f_w">단어 *</label>
           <div class="searchrow"><input id="f_w" class="jpi" type="text" placeholder="예: 把握する" autocomplete="off" required>
           <button class="btn" type="button" data-act="aifill" id="aiBtn">AI로 채우기</button></div>
-          <p class="note" id="dupNote" hidden></p>
         </div>
+        <div class="field"><label>분류</label><div class="levels levels-sm" role="group" aria-label="분류">${levelBtns}</div><input id="f_level" type="hidden" value="${esc(lv)}"></div>
         <div class="grid2">
           <div class="field"><label for="f_r">읽기</label><input id="f_r" class="jpi" type="text" placeholder="はあくする" autocomplete="off"></div>
           <div class="field"><label for="f_pos">품사</label><select id="f_pos">${POS.map(p => `<option value="${p}">${p}</option>`).join("")}</select></div>
@@ -1048,26 +1608,57 @@ h2, h3 { text-wrap: balance; }
         </div>
         <div class="field"><label for="f_ex">예문</label><textarea id="f_ex" placeholder="状況を正確に把握することが大切だ。"></textarea></div>
         <div class="field"><label for="f_exko">예문 해석</label><input id="f_exko" type="text" autocomplete="off"></div>
+        <div class="field"><label for="f_exf">예문 후리가나 <span class="muted" style="font-weight:400">· AI로 채우기가 같이 채워요. 漢字[かんじ] 형식</span></label><textarea id="f_exf" placeholder="液晶[えきしょう]画面[がめん]は、見[み]にくいなぁ。"></textarea></div>
         <div id="formMsg" class="formmsg" hidden></div>
-        <div class="formactions"><button class="btn primary" type="submit">${isNew ? "저장하고 덱에 추가" : "저장"}</button><button class="btn ghost" type="button" data-act="back">취소</button>${del}</div>
+        <div class="formactions"><button class="btn primary" type="submit">${isNew ? "저장" : "수정 저장"}</button><button class="btn ghost" type="button" data-act="back">취소</button>${del}</div>
+        ${cur && !cur.mine ? `<p class="note">'${esc(deckName(cur.deck))}' 덱의 단어를 고치면 이 기기에 저장된 덱 내용이 바뀌어요.</p>` : ""}
       </form>
-      <p class="note">${aiReady() ? "단어를 입력하고 다음 칸으로 넘어가면 AI가 나머지 칸을 자동으로 채워요. 저장하기 전에 한 번 확인해 주세요." : "학습 탭의 'AI 자동 채우기'에 키를 넣으면 단어만 입력해도 나머지 칸이 채워져요."} 저장하면 '내 단어' 덱에 들어가고, 단어에 쓰인 한자의 페이지에도 연결돼요.</p>
+      <aside class="panel similar" id="similar" aria-live="polite"></aside>
+      </div>
+      <p class="note">${aiReady() ? "단어를 입력하고 다음 칸으로 넘어가면 AI가 나머지 칸을 자동으로 채워요. 저장하기 전에 한 번 확인해 주세요." : "학습 탭의 'AI 자동 채우기'에 키를 넣으면 단어만 입력해도 나머지 칸이 채워져요."} 새로 추가한 단어는 학습 탭의 '직접 추가한 단어' 덱으로 복습하고, 단어에 쓰인 한자의 페이지에도 연결돼요.</p>
     </div>`;
   }
-  const FIELDS = ["w", "r", "pos", "ko", "en", "ex", "exko"];
+  const FIELDS = ["w", "r", "pos", "ko", "en", "ex", "exko", "exf", "level"];
   function fillEdit(page) {
     const d = page.draft || {};
-    for (const f of FIELDS) { const el = document.getElementById("f_" + f); if (el && d[f] != null) el.value = d[f]; }
+    for (const f of FIELDS) { const el = document.getElementById("f_" + f); if (el && d[f] != null && d[f] !== "") el.value = d[f]; }
+    const lv = ($("#f_level") || {}).value;
+    document.querySelectorAll('[data-act="flevel"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.v === lv));
     if (!page.focused) { page.focused = true; const el = document.getElementById("f_w"); if (el && !d.w) el.focus(); }
     dupCheck();
   }
   function readForm() { const o = {}; for (const f of FIELDS) { const el = document.getElementById("f_" + f); o[f] = el ? el.value.trim() : ""; } return o; }
   function formMsg(text, kind) { const m = $("#formMsg"); if (!m) return; m.hidden = !text; m.textContent = text || ""; if (kind) m.dataset.kind = kind; else m.removeAttribute("data-kind"); }
+
+  // 입력 중인 단어와 겹치거나 같은 한자를 쓰는 기존 단어
+  function similarCards(q, selfKey, reading) {
+    q = q.trim(); if (!q) return [];
+    const ks = kanjiOf(q), qh = toHira(reading || q), out = [];
+    for (const c of S.cards) {
+      if (c.key === selfKey) continue;
+      let score = 0, why = "";
+      if (c.w === q) { score = 1000; why = "같은 단어"; }
+      else if (q.length >= 2 && (c.w.includes(q) || q.includes(c.w))) { score = 500; why = "단어 일부가 같아요"; }
+      else if (c.r && toHira(c.r) === qh) { score = 400; why = "읽기가 같아요"; }
+      const shared = ks.filter(k => c.w.includes(k));
+      if (shared.length) { score += shared.length * 10; if (!why) why = "같은 한자 " + shared.join("·"); }
+      if (score > 0) out.push({ c, score, why });
+    }
+    return out.sort((a, b) => b.score - a.score || a.c.w.length - b.c.w.length).slice(0, 40);
+  }
   function dupCheck() {
-    const el = $("#f_w"), note = $("#dupNote"); if (!el || !note) return;
-    const page = topPage(), v = el.value.trim();
-    const hit = v && S.cards.find(c => c.w === v && c.key !== page.key);
-    note.hidden = !hit; note.textContent = hit ? `이미 '${deckName(hit.deck)}' 덱에 있는 단어예요.` : "";
+    const box = $("#similar"), el = $("#f_w"); if (!box || !el) return;
+    const page = topPage(), q = el.value.trim();
+    if (!q) { box.innerHTML = '<h2 class="section-title">비슷한 단어</h2><p class="note">단어를 입력하면 이미 있는 단어 중에서 같은 단어나 같은 한자를 쓰는 단어를 여기 보여줘요.</p>'; return; }
+    const list = similarCards(q, page && page.key);
+    const exact = list.filter(x => x.score >= 1000).length;
+    box.innerHTML = `<h2 class="section-title">비슷한 단어 ${list.length}개</h2>
+      ${exact ? `<p class="dupwarn">「${esc(q)}」는 이미 있어요. 뜻을 더하려면 아래에서 눌러 바로 고칠 수 있어요.</p>` : ""}
+      ${list.length ? `<div class="simlist">${list.map(x => `<button class="simrow ${x.score >= 1000 ? "exact" : ""}" type="button" data-act="dup-open" data-key="${esc(x.c.key)}">
+        <span class="w" lang="ja">${esc(x.c.w)}</span>${x.c.r ? `<span class="r" lang="ja">${esc(x.c.r)}</span>` : ""}
+        <span class="m">${esc(x.c.ko)}</span>
+        <span class="why">${esc(x.why)} · ${esc(levelLabel(cardLevel(x.c)))} · ${esc(srcName(x.c))}</span>
+      </button>`).join("")}</div>` : '<p class="note">겹치는 단어가 없어요.</p>'}`;
   }
   async function aiFill(auto) {
     const page = topPage(); if (!page || page.t !== "edit") return;
@@ -1085,6 +1676,8 @@ JSON 객체 하나만 답한다. 키:
 - "en": 짧은 영어 뜻
 - "ex": 이 단어를 그대로(또는 자연스러운 활용형으로) 포함한 자연스러운 일본어 예문 한 문장, JLPT N2 수준
 - "exko": 예문의 자연스러운 한국어 번역
+- "exf": 예문 "ex"와 글자 하나 다르지 않게 똑같이 쓰되, 한자 덩어리마다 바로 뒤에 [히라가나 읽기]를 붙인 것. 예: 液晶[えきしょう]画面[がめん]は、見[み]にくいなぁ。 가나·문장부호에는 붙이지 않는다.
+${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 쓴다: ${page.draft.ex}` : ""}
 일본어에 없는 단어면 {"error":"이유"}만 답한다.`;
     try {
       const v = parseJsonLoose(await aiAsk(prompt));
@@ -1092,6 +1685,8 @@ JSON 객체 하나만 답한다. 키:
       if (!v || v.error) { formMsg(v && v.error ? "AI가 채우지 못했어요: " + v.error : "AI가 채우지 못했어요. 직접 입력해 주세요.", "error"); return; }
       const cur = readForm();
       page.draft = { ...cur, r: cur.r || v.r || "", pos: POS.includes(v.pos) ? v.pos : cur.pos, ko: cur.ko || v.ko || "", en: cur.en || v.en || "", ex: cur.ex || v.ex || "", exko: cur.exko || v.exko || "" };
+      const exNow = page.draft.ex, f = v.exf ? String(v.exf) : "";
+      if (f && furiPlain(f) === exNow && !(cur.exf && furiPlain(cur.exf) === exNow)) page.draft.exf = f;
       fillEdit(page);
       formMsg("채웠어요. 내용을 확인하고 저장해 주세요.");
     } catch (e) {
@@ -1102,16 +1697,32 @@ JSON 객체 하나만 답한다. 키:
     const page = topPage(), f = readForm();
     if (!f.w) return formMsg("단어를 입력해 주세요.", "error");
     if (!f.ko) return formMsg("한국어 뜻을 입력해 주세요.", "error");
+    const level = f.level || "mine";
     const existing = page.key ? S.byKey[page.key] : null;
-    const id = existing ? existing.id : "m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-    const word = { id, ...f, createdAt: existing ? existing.createdAt || Date.now() : Date.now() };
-    const i = S.words.findIndex(x => x.id === id);
-    if (i >= 0) S.words[i] = word; else S.words.push(word);
-    rebuild();
-    try { await S.store.saveWord(word); } catch (e) { formMsg("저장하지 못했어요. 연결을 확인해 주세요.", "error"); return; }
-    S.stack.pop();
-    if (!existing) { toast(`'${word.w}'를 내 단어에 추가했어요.`); go({ t: "word", key: "w-" + id }); }
-    else { toast("저장했어요."); render(); }
+    const fields = { w: f.w, r: f.r, pos: f.pos, ko: f.ko, en: f.en, ex: f.ex, exko: f.exko, exf: f.exf && furiPlain(f.exf) === f.ex ? f.exf : "" };
+    if (f.exf && !fields.exf) return formMsg("예문 후리가나에서 [읽기]를 빼면 예문과 똑같아야 해요. 고치거나 비워 주세요.", "error");
+    try {
+      if (existing && !existing.mine) {
+        const meta = importedMetas.find(m => m.id === existing.deck);
+        if (!meta || meta.kind !== "words") return formMsg("이 덱의 단어는 고칠 수 없어요.", "error");
+        meta.rows[existing.idx] = [fields.w, fields.r, fields.ko, fields.en, fields.pos, fields.ex, fields.exko, fields.exf];
+        const baseLv = meta.base && meta.level ? String(meta.level) : "mine";
+        if (level === baseLv) delete S.levels[existing.key]; else S.levels[existing.key] = level;
+        rebuild();
+        await S.store.saveDeck(); await S.store.saveLevels();
+        S.stack.pop(); toast("수정했어요."); render(); return;
+      }
+      const id = existing ? existing.id : "m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      const word = { id, ...fields, level, createdAt: existing ? existing.createdAt || Date.now() : Date.now() };
+      const i = S.words.findIndex(x => x.id === id);
+      if (i >= 0) S.words[i] = word; else S.words.push(word);
+      if (S.levels["w-" + id]) { delete S.levels["w-" + id]; await S.store.saveLevels(); }
+      rebuild();
+      await S.store.saveWord(word);
+      S.stack.pop();
+      if (!existing) { toast(`'${word.w}'를 ${levelLabel(level)}에 추가했어요.`); go({ t: "word", key: "w-" + id }); }
+      else { toast("수정했어요."); render(); }
+    } catch (e) { formMsg("저장하지 못했어요. 다시 시도해 주세요.", "error"); }
   }
   async function deleteWord() {
     const page = topPage(), c = S.byKey[page.key]; if (!c) return;
@@ -1144,39 +1755,176 @@ JSON 객체 하나만 답한다. 키:
       ${(noteOf(c.key).memo || "").trim() ? `<div class="memo"><span class="lbl">메모</span><div class="txt">${esc(noteOf(c.key).memo)}</div></div>` : ""}
       ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span>${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
       ${kanjiOf(c.w).length ? kanjiItems(c) : ""}
+      <p class="srcline">출처 · ${esc(srcName(c))}</p>
     </div>`;
   }
-  function viewStudy(page) {
-    const deck = S.decks.find(d => d.id === page.deck);
-    if (!deck) return pagebar("공부") + '<p class="empty">덱을 찾을 수 없어요.</p>';
-    const now = Date.now();
-    const st = S.study;
-    if (!st.card) { st.card = nextCard(deck, now); st.revealed = false; }
-    const c = deckCounts(deck, now), cur = st.card ? st.card.q : "";
-    const right = `<div style="display:flex;align-items:center;gap:12px"><div class="qcounts"><span class="n" data-cur="${cur === "n" ? 1 : 0}" title="새 카드">${c.newToday}</span><span class="l" data-cur="${cur === "l" ? 1 : 0}" title="학습 중">${c.learn}</span><span class="r" data-cur="${cur === "r" ? 1 : 0}" title="복습">${c.rev}</span></div><button class="btn ghost small" type="button" data-act="undo" ${S.undo && S.undo.deck === deck.id ? "" : "disabled"}>되돌리기</button></div>`;
-    const bar = `<div class="pagebar"><div class="left"><button class="btn ghost" type="button" data-act="back">← 덱 목록</button><h2>${esc(deck.name)}</h2></div>${right}</div>`;
-    if (!st.card) {
-      const later = nextLearnLater(deck, now);
-      let msg = "오늘 이 덱에서 볼 카드를 모두 끝냈어요.";
-      if (later && later < nextCutoff(now)) {
-        const m = Math.max(1, Math.round((later - now) / MIN));
-        msg = `학습 중인 카드가 ${m}분 뒤에 다시 나와요. 이 화면을 열어 두면 시간이 되면 이어서 보여 드려요.`;
-        S.waitTimer = setTimeout(() => { const p = topPage(); if (p && p.t === "study" && S.study && !S.study.card) render(); }, Math.max(1000, later - LEARN_AHEAD - now + 500));
+  // ================= 세션: 바퀴 방식 =================
+  // 고른 개수만큼 한 바퀴를 돌고, '다시 학습'을 누른 카드만 다음 바퀴에 다시 나온다.
+  // FSRS 기록에는 세션 안의 첫 답만 반영한다. 다시 → 나중에 통과하면 내일 복습.
+  const SS_MIN = 10, SS_STEP = 5;
+  const sessOf = mode => mode === "write" ? S.write : S.study;
+  function sessionPool(g, mode, now) {
+    const cut = nextCutoff(now), due = [], nw = [];
+    for (const c of qCards(g, mode)) {
+      const s = S.states[qKey(c, mode)];
+      if (!s) nw.push(c);
+      else if (s.due < cut && (s.st === "learning" || s.st === "relearning" || s.st === "review")) due.push(c);
+    }
+    due.sort((x, y) => S.states[qKey(x, mode)].due - S.states[qKey(y, mode)].due);
+    return { due, nw: nw.slice(0, deckCounts(g, now, mode).newToday) };
+  }
+  function knowState(p, now) {
+    if (!p || p.st === "new") { const o = { reps: 1, lapses: 0, first: now, last: now, s: initS(3), d: initD(3) }; toReview(o, now, ivl(o.s)); return o; }
+    if (p.st === "review") return schedule(p, 3, now);
+    const o = Object.assign({}, p); o.reps = (p.reps || 0) + 1; o.last = now; o.s = shortS(p.s, 3); o.d = nextD(p.d, 3); toReview(o, now, Math.max(1, ivl(o.s))); return o;
+  }
+  function againState(p, now) {
+    if (!p || p.st === "new") return { reps: 1, lapses: 0, first: now, last: now, s: initS(1), d: initD(1), st: "learning", step: 0, due: now };
+    const o = schedule(p, 1, now); o.due = now; return o;
+  }
+  function clearState(p, now) { const o = Object.assign({}, p); o.last = now; o.s = shortS(p.s, 3); toReview(o, now, 1); return o; }
+
+  function pickBounds(page) {
+    const g = groupById(page.deck); if (!g) return null;
+    const pool = sessionPool(g, page.mode, Date.now()), max = pool.due.length + pool.nw.length;
+    return { g, pool, max, min: Math.min(SS_MIN, max) };
+  }
+  function viewPick(page) {
+    const b = pickBounds(page);
+    if (!b) return pagebar("공부") + '<p class="empty">묶음을 찾을 수 없어요.</p>';
+    const { g, pool, max, min } = b, write = page.mode === "write";
+    if (!max) return `<div class="stack">${pagebar(g.name)}<p class="empty">오늘 이 묶음에서 볼 카드가 없어요.</p></div>`;
+    if (page.n == null) page.n = write ? S.settings.writeSessSize : S.settings.sessSize;
+    page.n = clamp(page.n, min, max);
+    const rmax = Math.ceil(max / SS_STEP) * SS_STEP;
+    return `<div class="stack">${pagebar(g.name)}
+      <article class="deck pick">
+        <div class="deck-head"><h3>몇 개 ${write ? "쓸까요" : "공부할까요"}?</h3><p class="deck-meta num">오늘 볼 수 있는 카드 ${max}장 · 복습 ${pool.due.length} · 새 카드 ${pool.nw.length}</p></div>
+        <div class="pickrow">
+          <div class="stepper big"><button type="button" data-act="pick-step" data-d="-1" aria-label="5개 줄이기" ${page.n <= min ? "disabled" : ""}>−</button><output class="num" id="pickN">${page.n}</output><button type="button" data-act="pick-step" data-d="1" aria-label="5개 늘리기" ${page.n >= max ? "disabled" : ""}>+</button></div>
+          <button class="chip" type="button" data-act="pick-max">최대 ${max}개</button>
+        </div>
+        ${max > min ? `<input type="range" id="pickRange" min="${min}" max="${rmax}" step="${SS_STEP}" value="${page.n >= max ? rmax : page.n}" aria-label="공부할 개수">` : ""}
+        <p class="note num" id="pickSplit">${pickSplit(b, page.n)}</p>
+        ${write ? "" : `<div class="dirwrap"><span class="dirhead">카드 앞면</span><div class="dirpick">
+          <button class="dircard" type="button" data-act="dir" data-v="w2m" aria-pressed="${S.settings.dir !== "m2w"}"><span class="mini"><span class="mw" lang="ja">単語</span><span class="mq">뜻 ?</span></span><b>단어 → 뜻</b><small>단어 보고 뜻 떠올리기</small></button>
+          <button class="dircard" type="button" data-act="dir" data-v="m2w" aria-pressed="${S.settings.dir === "m2w"}"><span class="mini"><span class="mw ko">단어</span><span class="mq" lang="ja">単語 ?</span></span><b>뜻 → 단어</b><small>뜻 보고 단어 떠올리기</small></button>
+        </div></div>`}
+        <button class="btn primary reveal" type="button" data-act="pick-go" id="pickGo">${page.n}개 시작</button>
+      </article>
+      <p class="note">다시 학습을 누른 카드는 한 바퀴를 다 돈 뒤에 다시 나와요. 알고있음을 누를 때까지 바퀴마다 계속 나와요. 복습 기록에는 처음 누른 답만 반영돼요.</p>
+    </div>`;
+  }
+  function pickSplit(b, n) { const nd = Math.min(n, b.pool.due.length); return `복습 ${nd}장${n - nd ? ` + 새 카드 ${n - nd}장` : ""}`; }
+  function pickSet(page, n) {
+    const b = pickBounds(page); if (!b) return;
+    page.n = clamp(n, b.min, b.max); page.touched = true;
+    const o = $("#pickN"); if (o) o.textContent = page.n;
+    const sp = $("#pickSplit"); if (sp) sp.textContent = pickSplit(b, page.n);
+    const go_ = $("#pickGo"); if (go_) go_.textContent = page.n + "개 시작";
+    const btns = document.querySelectorAll('[data-act="pick-step"]'); if (btns.length === 2) { btns[0].disabled = page.n <= b.min; btns[1].disabled = page.n >= b.max; }
+  }
+  function pickStep(page, d) {
+    const n = page.n;
+    pickSet(page, d > 0 ? Math.floor(n / SS_STEP) * SS_STEP + SS_STEP : Math.ceil(n / SS_STEP) * SS_STEP - SS_STEP);
+    const r = $("#pickRange"); if (r) r.value = page.n;
+  }
+  function startSession(page) {
+    const b = pickBounds(page); if (!b || !b.max) return;
+    const n = clamp(page.n, b.min, b.max);
+    if (page.touched) { if (page.mode === "write") S.settings.writeSessSize = n; else S.settings.sessSize = n; saveSettingsSoon(); }
+    const nd = Math.min(n, b.pool.due.length);
+    const keys = [...b.pool.due.slice(0, nd), ...b.pool.nw.slice(0, n - nd)].map(c => c.key);
+    for (let i = keys.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [keys[i], keys[j]] = [keys[j], keys[i]]; }
+    const sess = { mode: page.mode, deck: page.deck, name: b.g.name, queue: keys, next: [], lap: 1, total: keys.length, cleared: 0, first: {}, cur: null, last: null, revealed: false, hist: [] };
+    if (page.mode === "write") S.write = sess; else S.study = sess;
+    S.stack.pop(); go({ t: page.mode === "write" ? "write" : "study", deck: page.deck });
+  }
+  function sessCurrent(sess) {
+    while (!sess.cur) {
+      if (!sess.queue.length) {
+        if (!sess.next.length) break;
+        sess.lap++; sess.queue = sess.next; sess.next = [];
+        if (sess.queue.length > 1 && sess.queue[0] === sess.last) sess.queue.push(sess.queue.shift());
       }
-      return `<div class="stack">${bar}<div class="card"><div class="done"><h3>おつかれさま</h3><p>${esc(msg)}</p><button class="btn" type="button" data-act="back">덱 목록으로</button></div></div></div>`;
+      const k = sess.queue.shift();
+      if (S.byKey[k]) { sess.cur = k; sess.revealed = false; } else sess.total--;
     }
-    const card = st.card.c, dir = S.settings.dir;
-    const tag = { n: ["새 카드", "t-new"], l: ["학습 중", "t-learn"], r: ["복습", "t-rev"] }[st.card.q];
-    let actions;
-    if (!st.revealed) actions = `<button class="btn primary reveal" type="button" data-act="reveal">정답 보기</button><p class="hint">스페이스로 정답 보기</p>`;
-    else {
-      const prev = S.states[card.key] || null, names = ["다시", "어려움", "좋음", "쉬움"];
-      actions = `<div class="rates">${[1, 2, 3, 4].map(g => `<button class="rate" type="button" data-act="rate" data-g="${g}"><b>${names[g - 1]}</b><span>${fmtNext(schedule(prev, g, now), now)}</span><kbd>${g}</kbd></button>`).join("")}</div><p class="hint">숫자 1–4로 평가 · 한자를 누르면 한자 페이지로 가요</p>`;
-    }
-    const openBtn = st.revealed ? `<button class="iconbtn open" type="button" data-act="word" data-key="${esc(card.key)}" aria-label="단어 페이지 열기">${ICON.open}</button>` : "";
-    return `<div class="stack">${bar}
-      <div class="card"><span class="tag ${tag[1]}">${tag[0]}</span>${openBtn}<div class="front">${cardFront(card, dir)}</div>${st.revealed ? cardBack(card, dir) : ""}</div>
-      <div class="actions">${actions}</div></div>`;
+    return sess.cur ? S.byKey[sess.cur] : null;
+  }
+  function sessTop(sess) {
+    const pct = sess.total ? Math.round(sess.cleared / sess.total * 100) : 0;
+    if (!sess.t0) sess.t0 = Date.now();
+    return `<div class="pagebar"><div class="left"><button class="circ" type="button" data-act="back" aria-label="목록으로">${ICON.back}</button><h2>${esc(sess.name)}</h2></div><span class="stimer"><span id="stimer">${fmtClock(Date.now() - sess.t0)}</span>${ICON.clock}</span></div>
+      <div class="sessbar"><span>${sess.cleared}/${sess.total}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div><span>${sess.lap}바퀴째${sess.next.length ? ` · 다시 ${sess.next.length}` : ""}</span></div>`;
+  }
+  function sessTag(sess) {
+    if (sess.cur in sess.first) return ["다시 학습", "t-learn"];
+    const p = S.states[qKey({ key: sess.cur }, sess.mode)];
+    if (!p || p.st === "new") return ["새 카드", "t-new"];
+    if (p.st !== "review") return ["학습 중", "t-learn"];
+    return ["복습", "t-rev"];
+  }
+  function twoButtons(sess) {
+    const prev = S.states[qKey({ key: sess.cur }, sess.mode)] || null, act = sess.mode === "write" ? "wrate" : "rate";
+    const know = sess.cur in sess.first ? "내일 복습" : fmtDays(knowState(prev, Date.now()).ivl) + " 후 복습";
+    return `<div class="rates two"><button class="rate" type="button" data-act="${act}" data-g="1"><b>다시 학습</b><span>한 바퀴 뒤 다시</span><kbd>1</kbd></button><button class="rate" type="button" data-act="${act}" data-g="3"><b>알고있음</b><span>${know}</span><kbd>2</kbd></button></div>`;
+  }
+  function sessDone(sess) {
+    const g = groupById(sess.deck); let more = 0;
+    if (g) { const p = sessionPool(g, sess.mode, Date.now()); more = p.due.length + p.nw.length; }
+    return `<div class="card"><div class="done"><h3>おつかれさま</h3><p>${sess.total}개를 ${sess.lap}바퀴 만에 끝냈어요.</p>${more ? `<p>이 묶음에 오늘 볼 카드가 ${more}장 더 있어요.</p><button class="btn primary" type="button" data-act="sess-more">이어서 더 하기</button>` : ""}<button class="btn" type="button" data-act="back">목록으로</button></div></div>`;
+  }
+  const fmtClock = ms => { const t = Math.floor(ms / 1000), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, x = t % 60; return (h ? h + ":" : "") + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0"); };
+  function agoLabel(key) {
+    const s = S.states[key]; if (!s || !s.last) return "새 단어";
+    const d = Math.round((dayStart(Date.now()) - dayStart(s.last)) / DAY);
+    return d <= 0 ? "오늘" : d + "일 전";
+  }
+  // 예문 후리가나: 「液晶[えきしょう]画面[がめん]は」 형식. 괄호를 빼면 예문과 같아야 쓴다.
+  const FURI_RE = /([々〆ヵヶ㐀-䶿一-鿿豈-﫿]+)\[([^\]]+)\]/g;
+  const furiPlain = f => String(f || "").replace(FURI_RE, "$1");
+  const furiOk = c => !!(c.exf && c.ex && furiPlain(c.exf) === c.ex);
+  const furiHtml = f => { let out = "", i = 0; String(f).replace(FURI_RE, (m, k, r, at) => { out += esc(f.slice(i, at)) + `<ruby>${esc(k)}<rt>${esc(r)}</rt></ruby>`; i = at + m.length; return m; }); return out + esc(String(f).slice(i)); };
+  function exampleHtml(c, show, dir) {
+    if (!c.ex) return "";
+    if (show && furiOk(c)) return furiHtml(c.exf);
+    const t = baseTarget(c);
+    if (!show && dir === "m2w") { const rg = hlRange(c.ex, c.w, c.pos); return rg ? esc(c.ex.slice(0, rg[0])) + "＿＿" + esc(c.ex.slice(rg[1])) : esc(c.ex); }
+    if (!show || !t || t.fallback) return esc(c.ex);
+    const mid = t.parts.map(p => p.blank ? (p.reading ? `<ruby>${esc(p.blank)}<rt>${esc(p.reading)}</rt></ruby>` : esc(p.blank)) : esc(p.text)).join("");
+    return esc(t.before) + mid + esc(t.after);
+  }
+  function viewStudy() {
+    const sess = S.study;
+    if (!sess) return pagebar("공부") + '<p class="empty">세션이 끝났어요.</p>';
+    const card = sessCurrent(sess), top = sessTop(sess);
+    if (!card) return `<div class="stack">${top}${sessDone(sess)}</div>`;
+    const dir = S.settings.dir, show = sess.revealed, c = card, fav = !!S.favs[c.key];
+    const say = c.html ? htmlText(c.front) : (c.r || c.w);
+    let main;
+    if (c.html) main = `<div class="html-front" lang="ja">${sanitize(c.front)}</div>${show ? `<div class="html-back" lang="ja">${sanitize(c.back)}</div>` : ""}`;
+    else if (dir === "m2w") main = `<div class="bigword ko">${esc(c.ko)}</div>${show ? `${c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${esc(c.w)}</button>` : ""}${show ? myMeaningHtml(c.key) : ""}`;
+    else main = `${show && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${esc(c.w)}</button>${show ? `<div class="sc-mean">${esc(c.ko)}</div>${myMeaningHtml(c.key)}` : ""}`;
+    const ex = c.html || !c.ex ? "" : `<div class="sc-ex" lang="ja" role="button" tabindex="0" data-act="speak" data-text="${esc(c.ex)}" aria-label="예문 듣기">${exampleHtml(c, show, dir)}</div>${show && c.exko ? `<div class="sc-exko">${esc(c.exko)}</div>` : ""}`;
+    return `<div class="stack">${top}
+      <div class="scard">
+        <div class="sc-top">
+          <span class="ago">${agoLabel(c.key)}</span>
+          <button class="favplain" type="button" data-act="fav" data-key="${esc(c.key)}" aria-pressed="${fav}" aria-label="즐겨찾기">${ICON.star}</button>
+          <span class="grow"></span>
+          ${c.html ? "" : `<button class="pillbtn" type="button" data-act="edit" data-key="${esc(c.key)}">${ICON.edit}편집</button>`}
+          <button class="pillbtn" type="button" data-act="word" data-key="${esc(c.key)}">${ICON.detail}상세</button>
+        </div>
+        <div class="sc-main">${main}</div>
+        ${ex}
+        <div class="sc-bottom">
+          <button class="circ" type="button" data-act="undo" aria-label="되돌리기" ${sess.hist.length ? "" : "disabled"}>${ICON.undo}</button>
+          <button class="toggle" type="button" data-act="reveal" aria-pressed="${show}">${dir === "m2w" ? "단어·히라가나" : "의미·히라가나"}</button>
+        </div>
+      </div>
+      ${twoButtons(sess)}
+      <p class="hint">단어를 누르면 발음 · 스페이스 의미 보기/숨기기 · 1 다시 학습 · 2 알고있음 · Z 되돌리기</p></div>`;
   }
   function bumpDay(isNew, sign) {
     const k = dayKey(Date.now());
@@ -1184,52 +1932,40 @@ JSON 객체 하나만 답한다. 키:
     d.rev = Math.max(0, d.rev + sign); if (isNew) d.new = Math.max(0, d.new + sign);
     S.days[k] = d; persistDay(k);
   }
-  function rate(g) {
-    const st = S.study; if (!st || !st.card || !st.revealed) return;
-    const c = st.card.c, prev = S.states[c.key] || null, nxt = schedule(prev, g, Date.now());
-    S.states[c.key] = nxt;
-    S.undo = { key: c.key, prev, deck: topPage().deck, card: st.card };
-    persistState(c.key, nxt); bumpDay(!prev, 1);
-    st.card = null; st.revealed = false; render();
+  function sessRate(mode, know) {
+    const sess = sessOf(mode); if (!sess || !sess.cur) return;
+    const key = sess.cur, sk = qKey({ key }, mode), now = Date.now(), prev = S.states[sk] || null, isFirst = !(key in sess.first);
+    sess.hist.push({ key, sk, prev, isFirst, queue: sess.queue.slice(), next: sess.next.slice(), lap: sess.lap, cleared: sess.cleared, total: sess.total });
+    if (sess.hist.length > 60) sess.hist.shift();
+    let nxt = prev;
+    if (isFirst) { sess.first[key] = know ? 3 : 1; nxt = know ? knowState(prev, now) : againState(prev, now); bumpDay(!prev, 1); }
+    else if (know) nxt = clearState(prev, now);
+    if (nxt !== prev) { S.states[sk] = nxt; persistState(sk, nxt); }
+    if (know) sess.cleared++; else sess.next.push(key);
+    sess.last = key; sess.cur = null; sess.revealed = false;
+    render(); window.scrollTo(0, 0);
   }
+  function rate(g) { sessRate("read", g >= 3); }
   function undo() {
-    const u = S.undo; if (!u) return;
-    if (u.prev) S.states[u.key] = u.prev; else delete S.states[u.key];
-    persistState(u.key, u.prev); bumpDay(!u.prev, -1);
-    S.undo = null;
-    const sess = u.mode === "write" ? S.write : S.study;
-    if (sess) { sess.card = u.card; sess.revealed = false; }
+    const page = topPage(), mode = page && page.t === "write" ? "write" : "read", sess = sessOf(mode);
+    const h = sess && sess.hist.pop(); if (!h) return;
+    if (h.prev) S.states[h.sk] = h.prev; else delete S.states[h.sk];
+    persistState(h.sk, h.prev);
+    if (h.isFirst) { delete sess.first[h.key]; bumpDay(!h.prev, -1); }
+    Object.assign(sess, { queue: h.queue, next: h.next, lap: h.lap, cleared: h.cleared, total: h.total, cur: h.key, revealed: false });
     render();
   }
 
   // ================= view: writing =================
   function viewWriteTab() {
     if (!S.ready) return '<p class="empty">단어 목록을 불러오는 중이에요.</p>';
-    const now = Date.now();
-    const decks = S.decks.map(d => {
-      const c = deckCounts(d, now, "write");
-      if (!c.total) return "";
-      const due = c.newToday + c.learn + c.rev, pct = Math.round(c.seen / c.total * 100);
-      return `<article class="deck">
-        <div class="deck-head"><h3>${esc(d.name)}</h3><p class="deck-meta num">쓰기 카드 ${c.total}장 중 ${c.seen}장 연습 시작</p></div>
-        <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
-        <dl class="counts"><div class="c-new"><dt>새 카드</dt><dd>${c.newToday}</dd></div><div class="c-learn"><dt>학습 중</dt><dd>${c.learn}</dd></div><div class="c-rev"><dt>복습</dt><dd>${c.rev}</dd></div></dl>
-        <div class="deck-actions"><button class="btn primary" type="button" data-act="write" data-deck="${esc(d.id)}" ${due ? "" : "disabled"}>${due ? "쓰기 연습" : "오늘 분량 끝"}</button></div>
-      </article>`;
-    }).join("");
+    if (!S.cards.some(c => writeTarget(c))) return '<div class="stack"><p class="empty">쓰기 연습을 할 단어가 없어요. 단어 탭에서 단어를 먼저 추가해 주세요.</p></div>';
     return `<div class="stack">
-      <section><h2 class="section-title">쓰기 연습</h2>
-        <div class="decks">${decks || '<p class="empty">쓰기 연습을 할 단어가 없어요. 학습 탭에서 단어 데이터를 먼저 가져와 주세요.</p>'}</div>
-      </section>
+      ${studyHome("write")}
       <section class="tools">
-        <div class="panel">
-          <h2>하루 새 쓰기 카드</h2>
-          <p>덱마다 하루에 처음 써 보는 카드 수예요. 읽기 복습과 따로 세요.</p>
-          <div class="stepper"><button type="button" data-act="wnpd" data-d="-5" aria-label="줄이기">−</button><output class="num">${S.settings.writeNewPerDay}</output><button type="button" data-act="wnpd" data-d="5" aria-label="늘리기">+</button></div>
-        </div>
-        <div class="panel">
+        <div class="panel" style="grid-column:1/-1">
           <h2>어떻게 하나요</h2>
-          <p>예문에서 단어의 한자 부분만 □로 가려져요. 위에 달린 읽기를 보고 아래 칸에 한자를 써 보세요. 정답 보기를 누르면 칸 뒤에 정답이 옅게 깔려요. 부사·접속사·연체사는 빠져요.</p>
+          <p>예문에서 단어의 한자 부분만 □로 가려져요. 위에 달린 읽기를 보고 아래 칸에 한자를 써 보세요. 정답 보기를 누르면 칸 뒤에 정답이 옅게 깔려요. 부사·접속사·연체사는 빠져요. 쓸 개수는 쓰기 연습을 누르면 고를 수 있어요.</p>
         </div>
       </section>
     </div>`;
@@ -1242,38 +1978,21 @@ JSON 객체 하나만 답한다. 키:
     const mid = t.parts.map(p => p.blank ? blankHtml(p, revealed) : esc(p.text)).join("");
     return `${esc(t.before)}<span class="wtarget">${mid}</span>${esc(t.after)}${t.fullReading ? `<div class="wfull">읽기: ${esc(t.fullReading)}</div>` : ""}`;
   }
-  function rateButtons(act) {
-    const prev = S.states[qKey(S.write.card.c, "write")] || null, now = Date.now(), names = ["다시", "어려움", "좋음", "쉬움"];
-    return `<div class="rates">${[1, 2, 3, 4].map(g => `<button class="rate" type="button" data-act="${act}" data-g="${g}"><b>${names[g - 1]}</b><span>${fmtNext(schedule(prev, g, now), now)}</span><kbd>${g}</kbd></button>`).join("")}</div><p class="hint">숫자 1–4로 평가</p>`;
-  }
-  function viewWrite(page) {
-    const deck = S.decks.find(d => d.id === page.deck);
-    if (!deck) return pagebar("쓰기") + '<p class="empty">덱을 찾을 수 없어요.</p>';
-    const now = Date.now(), st = S.write;
-    if (!st.card) { st.card = nextCard(deck, now, "write"); st.revealed = false; }
-    const c = deckCounts(deck, now, "write"), cur = st.card ? st.card.q : "";
-    const right = `<div style="display:flex;align-items:center;gap:12px"><div class="qcounts"><span class="n" data-cur="${cur === "n" ? 1 : 0}" title="새 카드">${c.newToday}</span><span class="l" data-cur="${cur === "l" ? 1 : 0}" title="학습 중">${c.learn}</span><span class="r" data-cur="${cur === "r" ? 1 : 0}" title="복습">${c.rev}</span></div><button class="btn ghost small" type="button" data-act="undo" ${S.undo && S.undo.mode === "write" && S.undo.deck === deck.id ? "" : "disabled"}>되돌리기</button></div>`;
-    const bar = `<div class="pagebar"><div class="left"><button class="btn ghost" type="button" data-act="back">← 쓰기 목록</button><h2>${esc(deck.name)}</h2></div>${right}</div>`;
-    if (!st.card) {
-      const later = nextLearnLater(deck, now, "write");
-      let msg = "오늘 이 덱에서 쓸 카드를 모두 끝냈어요.";
-      if (later && later < nextCutoff(now)) {
-        const m = Math.max(1, Math.round((later - now) / MIN));
-        msg = `학습 중인 카드가 ${m}분 뒤에 다시 나와요. 이 화면을 열어 두면 시간이 되면 이어서 보여 드려요.`;
-        S.waitTimer = setTimeout(() => { const p = topPage(); if (p && p.t === "write" && S.write && !S.write.card) render(); }, Math.max(1000, later - LEARN_AHEAD - now + 500));
-      }
-      return `<div class="stack">${bar}<div class="card"><div class="done"><h3>おつかれさま</h3><p>${esc(msg)}</p><button class="btn" type="button" data-act="back">쓰기 목록으로</button></div></div></div>`;
-    }
-    const card = st.card.c, t = writeTarget(card);
-    const tag = { n: ["새 카드", "t-new"], l: ["학습 중", "t-learn"], r: ["복습", "t-rev"] }[st.card.q];
+  function viewWrite() {
+    const st = S.write;
+    if (!st) return pagebar("쓰기") + '<p class="empty">세션이 끝났어요.</p>';
+    const cardObj = sessCurrent(st), top = sessTop(st);
+    if (!cardObj) return `<div class="stack">${top}${sessDone(st)}</div>`;
+    const card = cardObj, t = writeTarget(card), tag = sessTag(st);
     const tr = S.settings.showTrans;
     const cells = t.answer.map(ch => `<div class="wcell"><span class="wans" lang="ja" ${st.revealed ? "" : "hidden"}>${esc(ch)}</span><canvas></canvas></div>`).join("");
-    return `<div class="stack">${bar}
+    return `<div class="stack">${top}
       <div class="card wcard"><span class="tag ${tag[1]}">${tag[0]}</span>
         <div class="wq" id="wq" lang="ja">${writeQuestion(t, st.revealed)}</div>
         ${t.fallback ? '<p class="note">예문에서 이 단어를 찾지 못해서 단어만 보여줘요.</p>' : ""}
         <div class="wtools">
           <button class="btn small" type="button" data-act="wtrans" aria-pressed="${tr}">${tr ? "해석 숨기기" : "해석 보기"}</button>
+          <button class="btn small ghost" type="button" data-act="undo" ${st.hist.length ? "" : "disabled"}>되돌리기</button>
           ${card.ex && !t.fallback ? speakBtn(card.ex, "예문 듣기") : ""}
         </div>
         <div class="wtrans" id="wtrans" ${tr ? "" : "hidden"}>${card.exko && !t.fallback ? `<div>${esc(card.exko)}</div>` : ""}<div class="muted">뜻: ${esc(card.ko)}</div></div>
@@ -1282,28 +2001,25 @@ JSON 객체 하나만 답한다. 키:
         <div class="wcells" style="--n:${t.answer.length}">${cells}</div>
         <div class="wpadtools"><button class="btn small ghost" type="button" data-act="wstroke">한 획 취소</button><button class="btn small ghost" type="button" data-act="wclear">모두 지우기</button></div>
       </div>
-      <div class="actions" id="wactions">${st.revealed ? writeRevealedActions(card) : `<button class="btn primary reveal" type="button" data-act="wreveal">정답 보기</button><p class="hint">스페이스로 정답 보기</p>`}</div>
+      <div class="actions" id="wactions">${writeActions(card)}</div>
     </div>`;
   }
-  function writeRevealedActions(card) {
-    return `<p class="wmeta"><b lang="ja">${esc(card.w)}</b> ${card.r ? `<span lang="ja">${esc(card.r)}</span> · ` : ""}${esc(card.ko)} <button class="btn small ghost" type="button" data-act="word" data-key="${esc(card.key)}">단어 페이지</button></p>${rateButtons("wrate")}`;
+  function writeActions(card) {
+    const st = S.write;
+    const head = st.revealed
+      ? `<p class="wmeta"><b lang="ja">${esc(card.w)}</b> ${card.r ? `<span lang="ja">${esc(card.r)}</span> · ` : ""}${esc(card.ko)} <span class="src">· ${esc(srcName(card))}</span> <button class="btn small ghost" type="button" data-act="word" data-key="${esc(card.key)}">단어 페이지</button></p>`
+      : `<button class="btn reveal soft" type="button" data-act="wreveal">정답 보기</button>`;
+    return head + twoButtons(st) + '<p class="hint">스페이스 정답 보기 · 1 다시 학습 · 2 알고있음 · Z 되돌리기</p>';
   }
   function writeReveal() {
-    const st = S.write; if (!st || !st.card || st.revealed) return;
+    const st = S.write; if (!st || !st.cur || st.revealed) return;
     st.revealed = true;
-    const t = writeTarget(st.card.c);
+    const card = S.byKey[st.cur], t = writeTarget(card);
     $("#wq").innerHTML = writeQuestion(t, true);
     document.querySelectorAll(".wans").forEach(el => { el.hidden = false; });
-    $("#wactions").innerHTML = writeRevealedActions(st.card.c);
+    $("#wactions").innerHTML = writeActions(card);
   }
-  function writeRate(g) {
-    const st = S.write; if (!st || !st.card || !st.revealed) return;
-    const key = qKey(st.card.c, "write"), prev = S.states[key] || null, nxt = schedule(prev, g, Date.now());
-    S.states[key] = nxt;
-    S.undo = { key, prev, deck: topPage().deck, card: st.card, mode: "write" };
-    persistState(key, nxt); bumpDay(!prev, 1);
-    st.card = null; st.revealed = false; render();
-  }
+  function writeRate(g) { sessRate("write", g >= 3); }
   function toggleTrans() {
     S.settings.showTrans = !S.settings.showTrans; saveSettingsSoon();
     const box = $("#wtrans"), btn = document.querySelector('[data-act="wtrans"]');
@@ -1422,15 +2138,23 @@ JSON 객체 하나만 답한다. 키:
     const a = t.dataset.act, page = topPage();
     switch (a) {
       case "back": if (page && page.t === "study") { S.study = null; } if (page && page.t === "write") { S.write = null; } back(); break;
-      case "write": S.write = { card: null, revealed: false }; go({ t: "write", deck: t.dataset.deck }); break;
+      case "write": go({ t: "pick", deck: t.dataset.deck, mode: "write" }); break;
       case "wreveal": writeReveal(); break;
       case "wrate": writeRate(+t.dataset.g); break;
       case "wtrans": toggleTrans(); break;
       case "wclear": clearPads(); break;
       case "wstroke": undoStroke(); break;
       case "wnpd": S.settings.writeNewPerDay = clamp(S.settings.writeNewPerDay + (+t.dataset.d), 0, 200); saveSettingsSoon(); render(); break;
-      case "study": S.study = { card: null, revealed: false }; go({ t: "study", deck: t.dataset.deck }); break;
-      case "reveal": if (S.study && S.study.card) { S.study.revealed = true; render(); } break;
+      case "study": go({ t: "pick", deck: t.dataset.deck, mode: "read" }); break;
+      case "pick-step": pickStep(page, +t.dataset.d); break;
+      case "pick-max": { const b = pickBounds(page); if (b) { pickSet(page, b.max); const r = $("#pickRange"); if (r) r.value = r.max; } break; }
+      case "pick-go": startSession(page); break;
+      case "sess-more": { const sess = page && page.t === "write" ? S.write : S.study; if (!sess) break; const m = sess.mode; S.study = null; S.write = null; S.stack.pop(); go({ t: "pick", deck: sess.deck, mode: m }); break; }
+      case "reveal": if (S.study && S.study.cur) { S.study.revealed = !S.study.revealed; render(); } break;
+      case "furi-go": furiFillAll(); break;
+      case "sim-all": { page.simAll = true; const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "furi-stop": if (S.furi) { S.furi.stop = true; S.furi.msg = "멈추는 중…"; furiRefresh(); } break;
+      case "queue": { const s0 = S.states[t.dataset.key]; if (s0) { const o = Object.assign({}, s0, { due: Date.now() }); S.states[t.dataset.key] = o; persistState(t.dataset.key, o); render(); toast("오늘 복습할 카드에 넣었어요."); } break; }
       case "rate": rate(+t.dataset.g); break;
       case "undo": undo(); break;
       case "word": go({ t: "word", key: t.dataset.key }); break;
@@ -1440,8 +2164,33 @@ JSON 객체 하나만 답한다. 키:
       case "note-save": saveNote(page.key); page.editNote = false; render(); toast("저장했어요."); break;
       case "fav": { const k = t.dataset.key; if (S.favs[k]) delete S.favs[k]; else S.favs[k] = true; persistFavs(); render(); break; }
       case "speak": speak(t.dataset.text); break;
-      case "add": go({ t: "edit", key: null, draft: S.tab === "words" && S.q && KANJI_RE.test(S.q) ? { w: S.q.trim() } : {} }); break;
-      case "edit": { const c = S.byKey[t.dataset.key]; go({ t: "edit", key: c.key, draft: { w: c.w, r: c.r, pos: c.pos, ko: c.ko, en: c.en, ex: c.ex, exko: c.exko } }); break; }
+      case "add": go({ t: "addmenu" }); break;
+      case "go-add": S.tab = "words"; S.stack = []; go({ t: "addmenu" }); break;
+      case "add-one": S.stack.pop(); go({ t: "edit", key: null, draft: S.tab === "words" && S.q && KANJI_RE.test(S.q) ? { w: S.q.trim() } : {} }); break;
+      case "add-file": S.stack.pop(); S.pendingImport = null; S.importMsg = null; go({ t: "import" }); break;
+      case "add-grid": S.stack.pop(); go({ t: "grid" }); break;
+      case "g-level": gridSyncHeader(); S.grid.level = t.dataset.v; document.querySelectorAll('[data-act="g-level"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.v === t.dataset.v)); break;
+      case "g-srcmode": S.grid.srcMode = t.dataset.v; gridRedrawAll(); if (t.dataset.v === "named") { const el = $("#g_src"); if (el) el.focus(); } break;
+      case "g-lvmode": { const g = S.grid; gridSyncHeader(); if (t.dataset.v === "row" && g.levelMode !== "row") g.rows.forEach(r => { r.lv = g.level; }); g.levelMode = t.dataset.v; gridRedrawAll(); break; }
+      case "g-more": gridSyncHeader(); for (let i = 0; i < 10; i++) S.grid.rows.push(newGridRow()); gridRerender(); break;
+      case "g-del": { S.grid.rows.splice(+t.dataset.r, 1); if (S.grid.rows.length < 1) S.grid.rows.push(newGridRow()); gridRerender(); break; }
+      case "g-clear": gridSyncHeader(); S.grid.rows = Array.from({ length: 10 }, newGridRow); S.grid.tried = false; gridRerender(); gridMsg(""); break;
+      case "g-ai": gridAiFill(); break;
+      case "g-save": saveGrid(); break;
+      case "g-json": gridSyncHeader(); S.pendingImport = null; S.importMsg = null; go({ t: "import" }); break;
+      case "imp-level": if (S.pendingImport) { S.pendingImport.name = (($("#imp_name") || {}).value || S.pendingImport.name); S.pendingImport.skip = !!(($("#imp_skip") || {}).checked); S.pendingImport.level = t.dataset.v; render(); } break;
+      case "imp-go": doImport(); break;
+      case "sources": S.confirmDel = null; S.renaming = null; go({ t: "sources" }); break;
+      case "learn-view": S.settings.learnView = t.dataset.v; saveSettingsSoon(); render(); break;
+      case "settings": if (!(page && page.t === "settings")) go({ t: "settings" }); break;
+      case "src-rename": S.renaming = t.dataset.deck; S.confirmDel = null; render(); { const el = $("#src_name"); if (el) el.focus(); } break;
+      case "src-rename-no": S.renaming = null; render(); break;
+      case "src-rename-save": { const nm = (($("#src_name") || {}).value || "").trim(); const m = importedMetas.find(x => x.id === t.dataset.deck);
+        if (m && nm && !S.decks.some(d => d.name === nm && d.id !== m.id)) { m.name = nm; rebuild(); serial("decks", () => S.store.saveDeck()); S.renaming = null; render(); toast("이름을 바꿨어요."); }
+        else toast(nm ? "같은 이름의 출처가 이미 있어요." : "이름을 입력해 주세요."); break; }
+      case "edit": openEdit(t.dataset.key); break;
+      case "flevel": { const v = t.dataset.v; const h = $("#f_level"); if (h) h.value = v; document.querySelectorAll('[data-act="flevel"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v)); break; }
+      case "dup-open": { if (page && page.t === "edit") page.draft = readForm(); const c = S.byKey[t.dataset.key]; if (!c) break; if (c.html) go({ t: "word", key: c.key, editNote: true }); else openEdit(c.key); break; }
       case "export": exportBackup(); break;
       case "aifill": aiFill(false); break;
       case "ai-provider": { const a = readAiForm(); const prev = aiConf(); aiSave({ provider: t.dataset.v, key: t.dataset.v === prev.provider ? a.key : "", model: "" }); render(); break; }
@@ -1459,7 +2208,7 @@ JSON 객체 하나만 답한다. 키:
       case "more-kanji": { S.kanjiLimit += 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); break; }
       case "npd": setNewPerDay(S.settings.newPerDay + (+t.dataset.d)); break;
       case "dir": S.settings.dir = t.dataset.v; saveSettingsSoon(); render(); break;
-      case "deldeck": S.confirmDel = t.dataset.deck; render(); break;
+      case "deldeck": S.confirmDel = t.dataset.deck; S.renaming = null; render(); break;
       case "deldeck-no": S.confirmDel = null; render(); break;
       case "deldeck-yes": deleteDeck(t.dataset.deck); break;
     }
@@ -1469,23 +2218,61 @@ JSON 객체 하나만 답한다. 키:
     if (t && t.classList && t.classList.contains("kj") && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); t.click(); return; }
     const page = topPage();
     if (page && page.t === "write" && S.write && !e.metaKey && !e.ctrlKey && !e.altKey && !/INPUT|TEXTAREA|SELECT/.test(t && t.tagName)) {
-      if ((e.key === " " || e.key === "Enter") && S.write.card && !S.write.revealed) { e.preventDefault(); writeReveal(); }
-      else if (S.write.revealed && /^[1-4]$/.test(e.key)) { e.preventDefault(); writeRate(+e.key); }
-      else if (e.key === "z" && S.undo) undo();
+      if ((e.key === " " || e.key === "Enter") && S.write.cur && !S.write.revealed) { e.preventDefault(); writeReveal(); }
+      else if (S.write.cur && (e.key === "1" || e.key === "2")) { e.preventDefault(); sessRate("write", e.key === "2"); }
+      else if (e.key === "z") undo();
       return;
     }
     if (!page || page.t !== "study" || !S.study || e.metaKey || e.ctrlKey || e.altKey) return;
     if (/INPUT|TEXTAREA|SELECT/.test(t && t.tagName)) return;
-    if ((e.key === " " || e.key === "Enter") && S.study.card && !S.study.revealed) { e.preventDefault(); S.study.revealed = true; render(); }
-    else if (S.study.revealed && /^[1-4]$/.test(e.key)) { e.preventDefault(); rate(+e.key); }
-    else if (e.key === "z" && S.undo) undo();
+    if ((e.key === " " || e.key === "Enter") && S.study.cur) { e.preventDefault(); S.study.revealed = !S.study.revealed; render(); }
+    else if (S.study.cur && (e.key === "1" || e.key === "2")) { e.preventDefault(); sessRate("read", e.key === "2"); }
+    else if (e.key === "z") undo();
   });
   document.addEventListener("input", e => {
+    if (e.target.id === "pickRange") { const pg = topPage(); if (pg && pg.t === "pick") pickSet(pg, +e.target.value); return; }
+    if (e.target.classList && e.target.classList.contains("gcell") && S.grid) {
+      const r = +e.target.dataset.r, k = gcols()[+e.target.dataset.c][0];
+      if (S.grid.rows[r]) { S.grid.rows[r][k] = e.target.value; if (k === "w" || k === "ko") gridRefreshStatus(); }
+      return;
+    }
     if (e.target.id === "wsearch") { S.q = e.target.value; S.wordLimit = 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); }
     else if (e.target.id === "ksearch") { S.kq = e.target.value; S.kanjiLimit = 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); }
     else if (e.target.id === "f_w") dupCheck();
   });
+  document.addEventListener("paste", e => {
+    const t = e.target;
+    if (!(t.classList && t.classList.contains("gcell")) || !S.grid) return;
+    const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+    if (!/[\t\n]/.test(text.replace(/\r?\n$/, ""))) return;
+    e.preventDefault();
+    let grid = parseDelimited(text.replace(/\r?\n$/, ""), "\t");
+    if (grid.length && /^단어\*?$/.test(String(grid[0][0] || "").trim())) grid = grid.slice(1);
+    const r0 = +t.dataset.r, c0 = +t.dataset.c;
+    grid.forEach((cells, i) => {
+      while (S.grid.rows.length <= r0 + i) S.grid.rows.push(newGridRow());
+      cells.forEach((v, j) => { const col = gcols()[c0 + j]; if (col) S.grid.rows[r0 + i][col[0]] = col[0] === "lv" ? normLv(v) : String(v).trim(); });
+    });
+    gridSyncHeader(); gridRerender();
+    gridMsg(`${grid.length}줄을 붙여 넣었어요.`);
+  });
+  $("#gridFile").addEventListener("change", async e => {
+    const file = e.target.files && e.target.files[0]; e.target.value = "";
+    if (!file || !S.grid) return;
+    gridSyncHeader();
+    try {
+      const buf = await file.arrayBuffer();
+      let aoa;
+      if (/\.xlsx$/i.test(file.name)) aoa = await readXlsx(buf);
+      else { const txt = decodeText(buf).replace(/^\uFEFF/, ""); aoa = parseDelimited(txt, txt.includes("\t") ? "\t" : ","); }
+      const rows = sheetToRows(aoa);
+      if (!rows.length) return gridMsg("파일에서 단어를 찾지 못했어요. 첫 줄이 '단어, 읽기, 품사, 한국어 뜻…' 제목인지 확인해 주세요.", "error");
+      addRowsToGrid(rows); gridRedrawAll();
+      gridMsg(`'${file.name}'에서 ${rows.length}개를 표에 넣었어요. 확인하고 추가해 주세요.`);
+    } catch (err) { gridMsg("파일을 읽지 못했어요: " + err.message + " (엑셀은 .xlsx로 저장해 주세요)", "error"); }
+  });
   document.addEventListener("change", e => {
+    if (e.target.classList && e.target.classList.contains("gsel") && S.grid) { const r = +e.target.dataset.r; if (S.grid.rows[r]) S.grid.rows[r].lv = e.target.value; return; }
     if (e.target.id !== "f_w" || !aiReady()) return;
     const f = readForm();
     if (f.w && !f.r && !f.ko && !f.ex) aiFill(true);
@@ -1498,6 +2285,10 @@ JSON 객체 하나만 답한다. 키:
     if (o.dir) S.settings.dir = o.dir;
     if (Number.isFinite(o.writeNewPerDay)) S.settings.writeNewPerDay = o.writeNewPerDay;
     if (typeof o.showTrans === "boolean") S.settings.showTrans = o.showTrans;
+    if (o.learnView === "level" || o.learnView === "source") S.settings.learnView = o.learnView;
+    if (Number.isFinite(o.sessSize)) S.settings.sessSize = o.sessSize;
+    if (typeof o.hideEx === "boolean") S.settings.hideEx = o.hideEx;
+    if (Number.isFinite(o.writeSessSize)) S.settings.writeSessSize = o.writeSessSize;
   }
   let settingsTimer = null;
   function saveSettingsSoon() {
@@ -1560,30 +2351,28 @@ JSON 객체 하나만 답한다. 키:
   }
   $("#importFile").addEventListener("change", async e => {
     const file = e.target.files && e.target.files[0]; e.target.value = "";
-    const say = (text, kind) => { S.importMsg = { text, kind }; if (!topPage() && S.tab === "learn") render(); };
     if (!file) return;
+    const say = (text, kind) => { S.importMsg = { text, kind }; render(); };
     if (!S.ready) return say("기록을 불러온 뒤에 다시 시도해 주세요.", "error");
+    const page = topPage();
+    if (!page || page.t !== "import") { S.stack = []; S.tab = "words"; S.stack.push({ t: "import" }); }
     try {
       const r = readDeckFile(await file.text(), file.name);
-      if (r.error) return say(r.error, "error");
-      const { name, rows, kind } = r;
-      if (!rows.length) return say("카드로 읽을 줄을 찾지 못했어요. 파일 내용을 확인해 주세요.", "error");
-      if (rows.length > 5000) return say("한 번에 5,000장까지 가져올 수 있어요. 파일을 나눠서 가져와 주세요.", "error");
-      if (S.decks.some(d => d.name === name)) return say(`'${name}' 덱이 이미 있어서 가져오지 않았어요.`, "error");
-      const okId = r.id && /^[A-Za-z0-9_-]{1,40}$/.test(r.id) && !S.decks.some(d => d.id === r.id) && r.id !== "mine";
-      const meta = { id: okId ? r.id : "d" + Date.now().toString(36), name, kind, createdAt: Date.now(), count: rows.length, rows };
-      if (r.base) { meta.base = true; meta.level = r.level; }
-      importedMetas.push(meta); rebuild();
-      await S.store.saveDeck();
-      say(`'${name}' 덱에 ${rows.length}장을 추가했어요.`);
+      if (r.error) { S.pendingImport = null; return say(r.error, "error"); }
+      if (!r.rows.length) { S.pendingImport = null; return say("단어로 읽을 줄을 찾지 못했어요. 파일 내용을 확인해 주세요.", "error"); }
+      if (r.rows.length > 5000) { S.pendingImport = null; return say("한 번에 5,000개까지 가져올 수 있어요. 파일을 나눠서 가져와 주세요.", "error"); }
+      const dups = exactDupCount(r.rows, r.kind);
+      S.importMsg = null;
+      S.pendingImport = { file: file.name, name: r.name, rows: r.rows, kind: r.kind, id: r.id, level: r.level ? String(r.level) : "mine", dups, skip: dups > 0 };
+      render();
     } catch (err) {
-      say("가져오는 중 문제가 생겼어요. 파일 형식을 확인한 뒤 다시 시도해 주세요.", "error");
+      S.pendingImport = null; say("파일을 읽지 못했어요. 형식을 확인한 뒤 다시 시도해 주세요.", "error");
     }
   });
 
   // ================= backup =================
   async function exportBackup() {
-    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, days: S.days, notes: S.notes, decks: importedMetas };
+    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, days: S.days, notes: S.notes, levels: S.levels, decks: importedMetas };
     const name = "FSRS단어장-백업-" + dayKey(Date.now()) + ".json";
     const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
     try {
@@ -1606,7 +2395,7 @@ JSON 객체 하나만 답한다. 키:
     try {
       const j = JSON.parse((await file.text()).replace(/^\uFEFF/, ""));
       if (!j || j.format !== "fsrs-backup") { toast("FSRS 단어장 백업 파일이 아니에요."); return; }
-      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.days = j.days || {}; S.notes = j.notes || {};
+      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {};
       importedMetas = Array.isArray(j.decks) ? j.decks : [];
       applySettings(j.settings);
       S.undo = null; S.stack = []; S.study = null;
@@ -1623,7 +2412,7 @@ JSON 객체 하나만 답한다. 키:
     const data = await S.store.loadAll();
     S.states = data.states || {};
     applySettings(data.settings);
-    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.days = data.days || {}; S.notes = data.notes || {};
+    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {};
     rebuild();
     S.ready = true;
     render();
