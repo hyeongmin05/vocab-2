@@ -2391,6 +2391,33 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     else if (e.target.id === "ksearch") { S.kq = e.target.value; S.kanjiLimit = 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); }
     else if (e.target.id === "f_w") dupCheck();
   });
+  // 표 입력: 엑셀처럼 방향키·엔터로 칸 이동 (일본어 입력 중 변환할 때는 건드리지 않음)
+  function gridFocus(r, c) {
+    const g = S.grid; if (!g) return;
+    const ncol = gcols().length;
+    c = clamp(c, 0, ncol - 1); if (r < 0) return;
+    if (r >= g.rows.length) { gridSyncHeader(); g.rows.push(newGridRow()); gridRerender(); }
+    const el = document.querySelector(`.gcell[data-r="${r}"][data-c="${c}"]`); if (!el) return;
+    el.focus(); if (el.select) el.select();
+    el.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+  document.addEventListener("keydown", e => {
+    const t = e.target;
+    if (!(t.classList && t.classList.contains("gcell")) || !S.grid || e.isComposing || e.keyCode === 229 || e.altKey || e.metaKey || e.ctrlKey) return;
+    const r = +t.dataset.r, c = +t.dataset.c, isSel = t.tagName === "SELECT";
+    const atStart = isSel || (t.selectionStart === 0 && t.selectionEnd === 0) || (t.selectionStart === 0 && t.selectionEnd === t.value.length);
+    const atEnd = isSel || (t.selectionStart === t.value.length && t.selectionEnd === t.value.length) || (t.selectionStart === 0 && t.selectionEnd === t.value.length);
+    let to = null;
+    if (e.key === "ArrowUp") to = [r - 1, c];
+    else if (e.key === "ArrowDown") to = [r + 1, c];
+    else if (e.key === "Enter") to = [e.shiftKey ? r - 1 : r + 1, c];
+    else if (e.key === "ArrowLeft" && atStart && !e.shiftKey) to = [r, c - 1];
+    else if (e.key === "ArrowRight" && atEnd && !e.shiftKey) to = [r, c + 1];
+    if (!to) return;
+    e.preventDefault(); e.stopPropagation();
+    if (to[1] < 0 || to[1] >= gcols().length) return;
+    gridFocus(to[0], to[1]);
+  }, true);
   document.addEventListener("paste", e => {
     const t = e.target;
     if (!(t.classList && t.classList.contains("gcell")) || !S.grid) return;

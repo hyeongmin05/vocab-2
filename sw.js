@@ -1,6 +1,6 @@
 // 오프라인에서도 열리도록 앱 파일을 기기에 저장해 둔다.
 // 앱을 고친 뒤에는 CACHE 이름의 숫자를 올리면 새 버전으로 바뀐다.
-const CACHE = "fsrs-v25";
+const CACHE = "fsrs-v26";
 const ASSETS = ["./", "./index.html", "./kanji.json", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png", "./vocab-template.xlsx"];
 
 self.addEventListener("install", e => {
