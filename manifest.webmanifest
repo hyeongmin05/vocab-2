@@ -1,6 +1,6 @@
 {
-  "name": "FSRS 단어장",
-  "short_name": "단어장",
+  "name": "나만의 단어장",
+  "short_name": "나만의 단어장",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
