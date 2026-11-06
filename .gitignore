@@ -1,0 +1,9 @@
+# 책 단어 데이터·원본 데이터·백업은 GitHub에 올리지 않음
+*-단어.json
+kanji-jouyou.json
+*백업*.json
+
+# 편집기·윈도우 파일
+.vscode/
+Thumbs.db
+desktop.ini

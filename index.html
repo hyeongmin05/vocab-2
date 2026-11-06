@@ -308,6 +308,7 @@ h2, h3 { text-wrap: balance; }
 .wchip.s-long { border-color: var(--accent); color: var(--accent); }
 .wchip.s-learn { border-color: var(--c-learn); color: var(--c-learn); }
 button.wchip { color: var(--ink); }
+.wchip.cnt { background: var(--sunken); color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 button.wchip:disabled { color: var(--muted); }
 .sessbar { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .sessbar .bar { flex: 1; }
@@ -1635,7 +1636,9 @@ a.btn { color: inherit; }
       else { const d = Math.round((dayStart(s.due) - dayStart(now)) / DAY); next = d + "일 후 복습"; }
       q = s.due < nextCutoff(now) ? `<button class="wchip" type="button" disabled>오늘 복습 예정</button>` : `<button class="wchip" type="button" data-act="queue" data-key="${esc(key)}">＋ 복습 대기열에 넣기</button>`;
     }
-    return `<div class="wchips"><span class="wchip ${st.cls}">● ${st.label}</span>${next ? `<span class="wchip">${next}</span>` : ""}${q}</div>`;
+    const w = S.states["wr:" + key];
+    const cnt = (s ? `<span class="wchip cnt">학습 ${s.reps || 0}회</span>` : "") + (w ? `<span class="wchip cnt">쓰기 ${w.reps || 0}회</span>` : "");
+    return `<div class="wchips">${cnt}<span class="wchip ${st.cls}">● ${st.label}</span>${next ? `<span class="wchip">${next}</span>` : ""}${q}</div>`;
   }
   function simSection(page, c) {
     if (c.html) return "";
