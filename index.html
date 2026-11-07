@@ -403,7 +403,20 @@ a.btn { color: inherit; }
 .gtable td + td { border-left: 1px solid var(--line); }
 .gcell { width: 100%; border: 0; background: transparent; padding: 9px 8px; font: inherit; color: inherit; min-width: 90px; }
 .gcell:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: var(--accent-soft); border-radius: 0; }
-.gtable th:nth-child(7), .gtable th:nth-child(8) { min-width: 220px; }
+.gtable th:nth-child(8), .gtable th:nth-child(9) { min-width: 220px; }
+.gtable th.gmemo, .gtable td.gmemo { width: 40px; text-align: center; padding: 0 !important; }
+.gmemobtn { border: 0; background: transparent; color: var(--line); width: 38px; height: 38px; font-size: 16px; border-radius: 8px; position: relative; }
+.gmemobtn:hover { color: var(--muted); }
+.gmemobtn[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
+.gmemobtn.has::after { content: ""; position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--star); }
+.gmemo-field { margin-top: 4px; }
+.modal-back { position: fixed; inset: 0; background: rgba(15, 20, 30, .45); display: grid; place-items: center; padding: 16px; z-index: 100; }
+.modal { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 18px; width: min(560px, 100%); max-height: 85vh; overflow: auto; display: grid; gap: 10px; }
+.modal h3 { margin: 0; font-size: 17px; }
+.modal textarea { width: 100%; font: inherit; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--bg); color: inherit; resize: vertical; }
+.mlist { display: grid; gap: 12px; }
+.mitem { display: grid; gap: 6px; }
+.mhead b { font-family: var(--f-word); font-size: 17px; }
 .gnum { width: 64px; padding: 4px 6px !important; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .gstat { display: block; font-size: 10.5px; font-weight: 600; }
 .gstat.dup, .gstat.err { color: var(--again); }
@@ -1164,7 +1177,7 @@ a.btn { color: inherit; }
   }
   function gridState() {
     if (!S.grid) {
-      S.grid = { rows: [], level: S.tab === "words" ? S.wlevel : "mine", srcMode: "direct", src: "", levelMode: "all", skipDup: true, tried: false };
+      S.grid = { rows: [], level: S.tab === "words" ? S.wlevel : "mine", srcMode: "direct", src: "", levelMode: "all", skipDup: true, tried: false, memoMode: S.settings.gridMemoMode === "now" ? "now" : "later" };
       S.grid.rows = Array.from({ length: 10 }, newGridRow);
     }
     return S.grid;
@@ -1180,10 +1193,42 @@ a.btn { color: inherit; }
   function gridBody() {
     return S.grid.rows.map((row, i) => {
       const [cls, label] = gridStatus(i);
-      return `<tr><td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}">${label}</span></td>${gcols().map(([k], j) => k === "lv"
+      return `<tr>${gridMemoCell(row, i)}<td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}">${label}</span></td>${gcols().map(([k], j) => k === "lv"
         ? `<td><select class="gcell gsel" data-r="${i}" data-c="${j}" aria-label="${i + 1}번 줄 분류">${LEVELS.map(([v, l]) => `<option value="${v}" ${row.lv === v ? "selected" : ""}>${l}</option>`).join("")}</select></td>`
         : `<td><input class="gcell ${k === "w" || k === "r" || k === "ex" ? "jpi" : ""}" data-r="${i}" data-c="${j}" ${k === "pos" ? 'list="posList"' : ""} value="${esc(row[k])}" autocomplete="off"></td>`).join("")}<td><button class="gdel" type="button" data-act="g-del" data-r="${i}" aria-label="${i + 1}번 줄 지우기">×</button></td></tr>`;
     }).join("");
+  }
+  function gridMemoCell(row, i) {
+    const has = !!(row.memo && row.memo.trim());
+    return `<td class="gmemo"><button class="gmemobtn${has ? " has" : ""}" type="button" data-act="g-memo" data-r="${i}" aria-pressed="${!!row.mflag}" aria-label="${i + 1}번 줄 메모" title="${has ? esc(row.memo) : "메모"}">✎</button></td>`;
+  }
+  function gridMemoRefresh(i) {
+    const btn = document.querySelector(`.gmemobtn[data-r="${i}"]`); if (!btn) return;
+    btn.closest("td").outerHTML = gridMemoCell(S.grid.rows[i], i);
+  }
+  // ---- 간단한 팝업 ----
+  function openModal(html, onClose) {
+    closeModal();
+    const el = document.createElement("div");
+    el.className = "modal-back"; el.id = "modal";
+    el.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+    el.addEventListener("click", e => { if (e.target === el) closeModal(); });
+    document.body.appendChild(el); S.modalClose = onClose || null;
+    const f = el.querySelector("textarea, input"); if (f) setTimeout(() => f.focus(), 30);
+  }
+  function closeModal() { const el = $("#modal"); if (el) el.remove(); const cb = S.modalClose; S.modalClose = null; if (cb) cb(); }
+  function gridMemoEdit(i) {
+    const row = S.grid.rows[i], w = (row.w || "").trim();
+    openModal(`<h3>메모${w ? ` · <span lang="ja">${esc(w)}</span>` : ""}</h3>
+      ${row.ko ? `<p class="note">${esc(row.ko)}</p>` : ""}
+      <textarea id="m_memo" rows="4" placeholder="이 단어에 남길 메모">${esc(row.memo || "")}</textarea>
+      <div class="formactions"><button class="btn primary" type="button" data-act="m-memo-ok" data-r="${i}">저장</button><button class="btn ghost" type="button" data-act="m-close">취소</button>${row.memo ? `<button class="btn ghost" type="button" data-act="m-memo-del" data-r="${i}">메모 지우기</button>` : ""}</div>`);
+  }
+  function gridMemoReview(list) {
+    openModal(`<h3>메모 쓰기 <span class="muted" style="font-weight:400;font-size:14px">${list.length}개</span></h3>
+      <p class="note">✎로 표시한 단어예요. 비워 두면 그 단어는 메모 없이 추가돼요.</p>
+      <div class="mlist">${list.map(i => { const r = S.grid.rows[i]; return `<div class="mitem"><div class="mhead"><b lang="ja">${esc(r.w.trim())}</b>${r.r ? ` <span lang="ja" class="muted">${esc(r.r)}</span>` : ""}${r.ko ? ` · <span class="muted">${esc(r.ko)}</span>` : ""}</div><textarea class="m_rv" data-r="${i}" rows="2" placeholder="메모">${esc(r.memo || "")}</textarea></div>`; }).join("")}</div>
+      <div class="formactions"><button class="btn primary" type="button" data-act="m-review-ok">메모 저장하고 추가하기</button><button class="btn ghost" type="button" data-act="m-close">돌아가서 고치기</button></div>`);
   }
   function gridCount() { return S.grid.rows.filter(r => r.w.trim()).length; }
   function viewGrid() {
@@ -1205,6 +1250,10 @@ a.btn { color: inherit; }
             <p class="note">${perRow ? "표 맨 끝 '분류' 칸에서 줄마다 골라요. 위 버튼은 새 줄의 기본값이에요." : "표의 모든 단어가 위에서 고른 분류로 들어가요."}</p>
           </div>
         </div>
+        <div class="field gmemo-field"><label>메모</label>
+          <div class="seg"><button type="button" data-act="g-memomode" data-v="now" aria-pressed="${g.memoMode === "now"}">누르면 바로 쓰기</button><button type="button" data-act="g-memomode" data-v="later" aria-pressed="${g.memoMode !== "now"}">추가할 때 한꺼번에</button></div>
+          <p class="note">${g.memoMode === "now" ? "표 맨 왼쪽 ✎를 누르면 그 자리에서 메모를 써요." : "표 맨 왼쪽 ✎로 메모할 단어만 표시해 두면, 추가하기를 누를 때 표시한 단어만 모아서 메모를 쓰게 해 줘요."}</p>
+        </div>
         <div class="gtools">
           <button class="btn small" type="button" data-act="g-ai">빈칸 AI로 채우기</button>
           <a class="btn small ghost" href="vocab-template.xlsx" download="단어장-양식.xlsx">엑셀 양식 받기</a>
@@ -1214,7 +1263,7 @@ a.btn { color: inherit; }
         </div>
         <p class="note">칸을 눌러 바로 쓰거나, 엑셀에서 여러 칸을 복사해 아무 칸에나 붙여 넣으면 그 자리부터 채워져요. 단어만 쓰고 '빈칸 AI로 채우기'를 눌러도 돼요.</p>
       </div>
-      <div class="gwrap"><table class="gtable"><thead><tr><th class="gnum">#</th>${gcols().map(([, l]) => `<th>${l}</th>`).join("")}<th></th></tr></thead><tbody id="gbody">${gridBody()}</tbody></table></div>
+      <div class="gwrap"><table class="gtable"><thead><tr><th class="gmemo" title="메모">✎</th><th class="gnum">#</th>${gcols().map(([, l]) => `<th>${l}</th>`).join("")}<th></th></tr></thead><tbody id="gbody">${gridBody()}</tbody></table></div>
       <datalist id="posList">${POS.map(p => `<option value="${p}"></option>`).join("")}</datalist>
       <div class="formactions"><button class="btn small" type="button" data-act="g-more">+ 10줄</button></div>
       <div class="panel form">
@@ -1357,7 +1406,7 @@ a.btn { color: inherit; }
   }
   async function saveGrid() {
     const g = S.grid; gridSyncHeader(); g.tried = true;
-    let rows = g.rows.map(r => ({ ...r, w: r.w.trim(), ko: r.ko.trim() })).filter(r => r.w);
+    let rows = g.rows.map((r, i) => ({ ...r, w: r.w.trim(), ko: r.ko.trim(), _i: i })).filter(r => r.w);
     if (!rows.length) { gridRefreshStatus(); return gridMsg("추가할 단어가 없어요.", "error"); }
     if (rows.some(r => !r.ko)) { gridRefreshStatus(); return gridMsg("한국어 뜻이 빈 줄이 있어요. 채우거나 'AI로 채우기'를 눌러 주세요.", "error"); }
     const seen = new Set(); rows = rows.filter(r => { if (seen.has(r.w)) return false; seen.add(r.w); return true; });
@@ -1368,10 +1417,18 @@ a.btn { color: inherit; }
     if (!src) return gridMsg("출처(책 이름)를 써 주세요. 책에 속하지 않으면 '직접 추가'를 고르세요.", "error");
     if (!direct && src === "직접 추가") return gridMsg("'직접 추가'는 위 토글에서 골라 주세요.", "error");
     const rowLv = r => g.levelMode === "row" ? (r.lv || "mine") : lv;
+    // 메모 표시한 단어: 한꺼번에 모드면 전부, 바로 쓰기 모드면 아직 메모가 빈 것만 모아서 마지막으로 묻는다.
+    if (!g.memoDone) {
+      const review = rows.filter(r => r.mflag && (g.memoMode !== "now" || !(r.memo || "").trim())).map(r => r._i);
+      if (review.length) return gridMemoReview(review);
+    }
+    g.memoDone = false;
+    rows.forEach(r => { r.memo = (g.rows[r._i].memo || "").trim(); });
+    const keys = [];
     try {
       if (direct) {
         const now = Date.now();
-        rows.forEach((r, i) => S.words.push({ id: "m" + (now + i).toString(36) + Math.random().toString(36).slice(2, 5), w: r.w, r: r.r, pos: r.pos, ko: r.ko, en: r.en, ex: r.ex, exko: r.exko, exf: r.exf && furiPlain(r.exf) === r.ex ? r.exf : "", level: rowLv(r), createdAt: now + i }));
+        rows.forEach((r, i) => { const id = "m" + (now + i).toString(36) + Math.random().toString(36).slice(2, 5); keys.push("w-" + id); S.words.push({ id, w: r.w, r: r.r, pos: r.pos, ko: r.ko, en: r.en, ex: r.ex, exko: r.exko, exf: r.exf && furiPlain(r.exf) === r.ex ? r.exf : "", level: rowLv(r), createdAt: now + i }); });
         rebuild(); await S.store.saveWord();
       } else {
         let meta = importedMetas.find(m => m.name === src);
@@ -1380,17 +1437,21 @@ a.btn { color: inherit; }
         const baseLv = meta.base && meta.level ? String(meta.level) : "mine";
         for (const r of rows) {
           meta.rows.push([r.w, r.r, r.ko, r.en, r.pos, r.ex, r.exko, r.exf && furiPlain(r.exf) === r.ex ? r.exf : ""]);
+          keys.push(meta.id + "-" + (meta.rows.length - 1));
           if (rowLv(r) !== baseLv) S.levels[meta.id + "-" + (meta.rows.length - 1)] = rowLv(r);
         }
         meta.count = meta.rows.length;
         rebuild(); await S.store.saveDeck(); await S.store.saveLevels();
       }
     } catch (e) { return gridMsg("저장하지 못했어요. 다시 시도해 주세요.", "error"); }
+    let memos = 0;
+    rows.forEach((r, i) => { if (r.memo && keys[i]) { S.notes[keys[i]] = { extra: (S.notes[keys[i]] || {}).extra || "", memo: r.memo, at: Date.now() }; memos++; } });
+    if (memos) serial("notes", () => S.store.saveNotes());
     const n = rows.length; S.grid = null;
     const lvs = [...new Set(rows.map(rowLv))];
     S.stack = []; S.tab = "words"; S.wlevel = lvs.length === 1 ? lvs[0] : lv; S.wsrc = "all"; S.filter = "all"; S.q = "";
     render(); window.scrollTo(0, 0);
-    toast(`${n}개를 '${src}'${lvs.length === 1 ? " · " + levelLabel(lvs[0]) : " · 분류 " + lvs.map(levelLabel).join("/")}에 추가했어요.`);
+    toast(`${n}개를 '${src}'${lvs.length === 1 ? " · " + levelLabel(lvs[0]) : " · 분류 " + lvs.map(levelLabel).join("/")}에 추가했어요.${memos ? ` 메모 ${memos}개도 같이 저장했어요.` : ""}`);
   }
 
   function exactDupCount(rows, kind) {
@@ -2327,6 +2388,15 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "g-clear": gridSyncHeader(); S.grid.rows = Array.from({ length: 10 }, newGridRow); S.grid.tried = false; gridRerender(); gridMsg(""); break;
       case "g-ai": gridAiFill(); break;
       case "g-save": saveGrid(); break;
+      case "g-memomode": S.grid.memoMode = t.dataset.v; S.settings.gridMemoMode = t.dataset.v; saveSettingsSoon(); gridRedrawAll(); break;
+      case "g-memo": { const i = +t.dataset.r, row = S.grid.rows[i]; if (!row) break;
+        if (S.grid.memoMode === "now") gridMemoEdit(i);
+        else { row.mflag = !row.mflag; gridMemoRefresh(i); }
+        break; }
+      case "m-close": closeModal(); break;
+      case "m-memo-ok": { const i = +t.dataset.r, row = S.grid.rows[i], v = ($("#m_memo").value || "").trim(); row.memo = v; row.mflag = !!v; closeModal(); gridMemoRefresh(i); break; }
+      case "m-memo-del": { const i = +t.dataset.r, row = S.grid.rows[i]; row.memo = ""; row.mflag = false; closeModal(); gridMemoRefresh(i); break; }
+      case "m-review-ok": { document.querySelectorAll(".m_rv").forEach(el => { const row = S.grid.rows[+el.dataset.r]; if (row) row.memo = el.value.trim(); }); closeModal(); S.grid.rows.forEach((r, i) => gridMemoRefresh(i)); S.grid.memoDone = true; saveGrid(); break; }
       case "g-json": gridSyncHeader(); S.pendingImport = null; S.importMsg = null; go({ t: "import" }); break;
       case "imp-level": if (S.pendingImport) { S.pendingImport.name = (($("#imp_name") || {}).value || S.pendingImport.name); S.pendingImport.skip = !!(($("#imp_skip") || {}).checked); S.pendingImport.level = t.dataset.v; render(); } break;
       case "imp-go": doImport(); break;
@@ -2394,6 +2464,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     else if (e.target.id === "ksearch") { S.kq = e.target.value; S.kanjiLimit = 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); }
     else if (e.target.id === "f_w") dupCheck();
   });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#modal")) { e.preventDefault(); e.stopPropagation(); closeModal(); } }, true);
   // 표 입력: 엑셀처럼 방향키·엔터로 칸 이동 (일본어 입력 중 변환할 때는 건드리지 않음)
   function gridFocus(r, c) {
     const g = S.grid; if (!g) return;
@@ -2468,6 +2539,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     if (typeof o.showTrans === "boolean") S.settings.showTrans = o.showTrans;
     if (o.learnView === "level" || o.learnView === "source") S.settings.learnView = o.learnView;
     if (o.lastMode === "read" || o.lastMode === "write") S.settings.lastMode = o.lastMode;
+    if (o.gridMemoMode === "now" || o.gridMemoMode === "later") S.settings.gridMemoMode = o.gridMemoMode;
     if (Number.isFinite(o.sessSize)) S.settings.sessSize = o.sessSize;
     if (typeof o.hideEx === "boolean") S.settings.hideEx = o.hideEx;
     if (typeof o.showKana === "boolean") S.settings.showKana = o.showKana;
