@@ -102,6 +102,7 @@ h2, h3 { text-wrap: balance; }
 .section-title { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; color: var(--muted); }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
 .stack { display: grid; gap: 18px; }
+.stack > * { min-width: 0; }
 .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 16px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .btn:hover:not(:disabled) { border-color: var(--accent); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
@@ -381,12 +382,20 @@ button.wchip:disabled { color: var(--muted); }
 .levels button b { font-size: 15px; color: var(--ink); font-weight: 600; white-space: nowrap; }
 .levels button span { font-size: 11.5px; }
 .levels button[aria-pressed="true"] { background: var(--accent); }
+.levels.seven { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+@media (max-width: 420px) { .levels.seven button { padding: 8px 1px; } .levels.seven button b { font-size: 13px; letter-spacing: -.02em; } }
+.levels button.dim { opacity: .45; }
+.levels.books { display: flex; overflow-x: auto; scrollbar-width: none; min-width: 0; max-width: 100%; }
+.stack > .levels, .stack > .seg { min-width: 0; }
+.levels.books button { flex: 0 0 auto; min-width: 88px; padding: 8px 14px; }
 .levels button[aria-pressed="true"] b, .levels button[aria-pressed="true"] span { color: var(--accent-ink); }
 
 /* study home */
 .allrev { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 14px; padding: 14px 18px; }
 .allrev > div { display: grid; gap: 2px; }
 .allrev b { font-size: 16px; }
+.allrev.rand { border-left-color: var(--star); }
+.practice-tag { font-size: 12px; font-weight: 700; color: var(--star); border: 1.5px dashed var(--star); border-radius: 999px; padding: 2px 9px; margin-left: 6px; vertical-align: middle; }
 .allrev span { font-size: 13px; color: var(--muted); }
 .seg.wide { display: grid; grid-template-columns: 1fr 1fr; align-self: stretch; }
 .seg.wide button { padding: 9px 12px; font-size: 14.5px; font-weight: 600; }
@@ -460,13 +469,16 @@ a.btn { color: inherit; }
 /* personal meaning + memo */
 .mymean { display: grid; gap: 4px; border: 1.5px dashed var(--star); border-radius: 12px; padding: 10px 14px; background: color-mix(in srgb, var(--star) 7%, transparent); }
 .mymean .lbl, .memo .lbl { font-size: 11.5px; font-weight: 700; letter-spacing: .04em; color: var(--star); }
+.memobtn { justify-self: center; border: 1.5px dashed var(--star); color: var(--star); background: color-mix(in srgb, var(--star) 7%, transparent); border-radius: 999px; padding: 6px 16px; font-size: 14px; font-weight: 700; margin-top: 4px; }
+.memobtn[aria-pressed="true"] { background: color-mix(in srgb, var(--star) 16%, transparent); }
+.sc-main .mymean { text-align: left; min-width: min(280px, 78vw); max-width: 420px; }
 .mymean .txt { font-size: 16.5px; font-weight: 500; white-space: pre-wrap; overflow-wrap: anywhere; }
 .memo { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px; }
 .memo .lbl { color: var(--muted); }
 .memo .txt { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; }
 .noteedit { display: grid; gap: 12px; }
 .noteedit textarea { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 12px; font: inherit; color: inherit; resize: vertical; }
-#n_extra { min-height: 64px; }
+#n_memo { min-height: 96px; }
 #n_memo { min-height: 120px; }
 
 /* writing practice */
@@ -672,7 +684,7 @@ a.btn { color: inherit; }
     states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, days: {}, notes: {}, levels: {}, words: [],
     store: null, ready: false, tab: "learn", stack: [],
     study: null, undo: null,
-    q: "", filter: "all", wlevel: "mine", wsrc: "all", wordLimit: 100, kq: "", kfilter: "all", kanjiLimit: 240, confirmDel: null, waitTimer: null,
+    q: "", filter: "all", wlevel: [], wsrc: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
   };
   const topPage = () => S.stack[S.stack.length - 1] || null;
 
@@ -904,17 +916,28 @@ a.btn { color: inherit; }
       if (!res.ok) throw new Error((data.error && data.error.message) || ("HTTP " + res.status));
       return (data.content || []).map(p => p.text || "").join("");
     }
-    res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": a.key },
-      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, responseMimeType: "application/json" } }),
-    });
-    data = await res.json().catch(() => ({}));
-    if (!res.ok) {
+    // 구글 서버가 붐비면(503 등) 잠깐 쉬고 다시, 그래도 안 되면 다른 Flash 모델로 한 번 더.
+    const alt = /lite/i.test(model) ? "gemini-flash-latest" : "gemini-flash-lite-latest";
+    const plan = [[model, 0], [model, 2500], [model, 6000], [alt, 0]];
+    let lastMsg = "";
+    for (const [m, wait] of plan) {
+      if (wait) await sleep(wait);
+      try {
+        res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(m) + ":generateContent", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-goog-api-key": a.key },
+          body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, responseMimeType: "application/json" } }),
+        });
+      } catch (e) { lastMsg = "인터넷 연결을 확인해 주세요."; continue; }
+      data = await res.json().catch(() => ({}));
+      if (res.ok) break;
       const msg = (data.error && data.error.message) || ("HTTP " + res.status);
-      if (res.status === 429) throw new Error("오늘 무료 사용량을 다 썼어요. 내일 다시 시도하거나 다른 모델을 써 보세요.");
-      throw new Error(msg);
+      const busy = res.status === 503 || res.status === 500 || res.status === 502 || /high demand|overloaded|unavailable/i.test(msg);
+      if (res.status === 429) throw new Error("무료 사용량을 다 썼거나 너무 자주 요청했어요. 잠시 뒤 다시 하거나 ⚙ 설정에서 다른 모델을 써 보세요.");
+      if (!busy) throw new Error(msg);
+      lastMsg = "구글 서버가 지금 붐벼요. 몇 분 뒤 다시 시도해 주세요.";
     }
+    if (!res || !res.ok) throw new Error(lastMsg || "AI 응답을 받지 못했어요.");
     const parts = (((data.candidates || [])[0] || {}).content || {}).parts || [];
     return parts.map(p => p.text || "").join("");
   }
@@ -961,6 +984,10 @@ a.btn { color: inherit; }
         <div><b>전체 복습</b><span class="num">오늘 다시 볼 카드 ${ac.learn + ac.rev}장 · 학습 중 ${ac.learn} · 복습 ${ac.rev}${wAll ? ` · 쓰기 ${wAll}` : ""}</span></div>
         <button class="btn primary" type="button" data-act="${act}" data-deck="all" ${dueAll ? "" : "disabled"}>${dueAll ? "모두 복습하기" : "복습할 카드 없음"}</button>
       </div>
+      ${(() => { const nR = studiedCards("read").length, nW = studiedCards("write").length; return `<div class="allrev rand">
+        <div><b>랜덤 복습</b><span class="num">공부한 단어 ${nR}개${nW ? ` · 쓰기 ${nW}개` : ""}에서 무작위로 · 복습 일정에 남지 않는 연습</span></div>
+        <button class="btn" type="button" data-act="random" ${nR || nW ? "" : "disabled"}>${nR || nW ? "랜덤 복습" : "공부한 단어 없음"}</button>
+      </div>`; })()}
       <div class="seg wide" role="tablist"><button type="button" data-act="learn-view" data-v="level" aria-pressed="${view === "level"}">급수별</button><button type="button" data-act="learn-view" data-v="source" aria-pressed="${view === "source"}">출처별</button></div>
       <div class="decks">${groups || '<p class="empty">아직 공부할 단어가 없어요.</p>'}</div>`;
   }
@@ -1177,7 +1204,7 @@ a.btn { color: inherit; }
   }
   function gridState() {
     if (!S.grid) {
-      S.grid = { rows: [], level: S.tab === "words" ? S.wlevel : "mine", srcMode: "direct", src: "", levelMode: "all", skipDup: true, tried: false, memoMode: S.settings.gridMemoMode === "now" ? "now" : "later" };
+      S.grid = { rows: [], level: S.tab === "words" && S.wlevel.length === 1 ? S.wlevel[0] : "mine", srcMode: "direct", src: "", levelMode: "all", skipDup: true, tried: false, memoMode: S.settings.gridMemoMode === "now" ? "now" : "later" };
       S.grid.rows = Array.from({ length: 10 }, newGridRow);
     }
     return S.grid;
@@ -1445,11 +1472,11 @@ a.btn { color: inherit; }
       }
     } catch (e) { return gridMsg("저장하지 못했어요. 다시 시도해 주세요.", "error"); }
     let memos = 0;
-    rows.forEach((r, i) => { if (r.memo && keys[i]) { S.notes[keys[i]] = { extra: (S.notes[keys[i]] || {}).extra || "", memo: r.memo, at: Date.now() }; memos++; } });
+    rows.forEach((r, i) => { if (r.memo && keys[i]) { S.notes[keys[i]] = { memo: r.memo, at: Date.now() }; memos++; } });
     if (memos) serial("notes", () => S.store.saveNotes());
     const n = rows.length; S.grid = null;
     const lvs = [...new Set(rows.map(rowLv))];
-    S.stack = []; S.tab = "words"; S.wlevel = lvs.length === 1 ? lvs[0] : lv; S.wsrc = "all"; S.filter = "all"; S.q = "";
+    S.stack = []; S.tab = "words"; S.wlevel = []; { const sid = direct ? "mine" : (importedMetas.find(m => m.name === src) || {}).id; S.wsrc = sid ? [sid] : []; } S.filter = "all"; S.q = ""; S.wordLimit = 100;
     render(); window.scrollTo(0, 0);
     toast(`${n}개를 '${src}'${lvs.length === 1 ? " · " + levelLabel(lvs[0]) : " · 분류 " + lvs.map(levelLabel).join("/")}에 추가했어요.${memos ? ` 메모 ${memos}개도 같이 저장했어요.` : ""}`);
   }
@@ -1502,7 +1529,7 @@ a.btn { color: inherit; }
     importedMetas.push(meta); rebuild();
     try { await S.store.saveDeck(); } catch (e) {}
     S.pendingImport = null; S.importMsg = null;
-    S.stack = []; S.tab = "words"; S.wlevel = p.level; S.wsrc = meta.id; S.filter = "all"; S.q = "";
+    S.stack = []; S.tab = "words"; S.wlevel = []; S.wsrc = [meta.id]; S.filter = "all"; S.q = "";
     render(); window.scrollTo(0, 0);
     toast(`'${name}' ${rows.length}개를 ${levelLabel(p.level)}에 추가했어요.`);
   }
@@ -1543,8 +1570,8 @@ a.btn { color: inherit; }
   function filteredCards() {
     const q = S.q.trim();
     return S.cards.filter(c => {
-      if (cardLevel(c) !== S.wlevel) return false;
-      if (S.wsrc !== "all" && c.deck !== S.wsrc) return false;
+      if (S.wlevel.length && !S.wlevel.includes(cardLevel(c))) return false;
+      if (S.wsrc.length && !S.wsrc.includes(c.deck)) return false;
       if (!matchWord(c, q)) return false;
       const f = S.filter, s = S.states[c.key];
       if (f === "fav") return !!S.favs[c.key];
@@ -1572,23 +1599,34 @@ a.btn { color: inherit; }
   function wordsResults() {
     const list = filteredCards();
     const shown = list.slice(0, S.wordLimit);
-    const levelEmpty = !S.cards.some(c => cardLevel(c) === S.wlevel);
-    if (levelEmpty) return S.wlevel === "mine" ? '<p class="empty">미분류 단어가 없어요.</p>' : `<p class="empty">N${S.wlevel}로 분류한 단어가 아직 없어요. 단어를 추가하거나 편집할 때 N${S.wlevel}를 고르면 여기에 모여요.</p>`;
+    if (!S.cards.length) return '<p class="empty">아직 단어가 없어요. + 추가로 단어를 넣어 보세요.</p>';
     return `<p class="note num">${list.length}개 단어</p>
       ${shown.length ? `<div class="list">${shown.map(c => wordRow(c)).join("")}</div>` : '<p class="empty">조건에 맞는 단어가 없어요.</p>'}
       ${list.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-words">더 보기 (${list.length - shown.length}개 남음)</button></div>` : ""}`;
   }
+  const bookName = d => d.mineDeck ? "직접 추가" : d.name;
   function viewWords() {
-    const counts = {}; for (const c of S.cards) { const l = cardLevel(c); counts[l] = (counts[l] || 0) + 1; }
-    const levels = LEVELS.map(([k, l]) => `<button type="button" data-act="wlevel" data-v="${k}" aria-pressed="${S.wlevel === k}"><b>${l}</b><span class="num">${counts[k] || 0}</span></button>`).join("");
-    const srcs = sourcesOfLevel(S.wlevel);
-    const srcChips = srcs.length > 1 ? `<div class="chips">${[{ id: "all", name: "모든 출처" }, ...srcs].map(x => `<button class="chip" type="button" data-act="wsrc" data-v="${esc(x.id)}" aria-pressed="${S.wsrc === x.id}">${esc(x.name)}${x.n ? ` <span class="num muted">${x.n}</span>` : ""}</button>`).join("")}</div>` : "";
+    // 1줄: 급수, 2줄: 출처. 둘 다 '전체'가 기본이고 서로 겹쳐서 거른다. 숫자는 다른 줄의 선택을 반영한다.
+    // 같은 줄은 여러 개 골라 '또는', 두 줄 사이는 '그리고'. 숫자는 다른 줄의 선택을 반영한다.
+    S.wsrc = S.wsrc.filter(id => S.decks.some(d => d.id === id && d.cards.length));
+    const lvCount = {}, srcCount = {};
+    let lvAll = 0, srcAll = 0;
+    for (const c of S.cards) {
+      const l = cardLevel(c);
+      if (!S.wsrc.length || S.wsrc.includes(c.deck)) { lvCount[l] = (lvCount[l] || 0) + 1; lvAll++; }
+      if (!S.wlevel.length || S.wlevel.includes(l)) { srcCount[c.deck] = (srcCount[c.deck] || 0) + 1; srcAll++; }
+    }
+    const lvBtn = (k, l, n) => `<button type="button" data-act="wlevel" data-v="${k}" aria-pressed="${k === "all" ? !S.wlevel.length : S.wlevel.includes(k)}" ${n || k === "all" ? "" : 'class="dim"'}><b>${l}</b><span class="num">${n}</span></button>`;
+    const srcBtn = (k, l, n) => `<button type="button" data-act="wsrc" data-v="${esc(k)}" aria-pressed="${k === "all" ? !S.wsrc.length : S.wsrc.includes(k)}" ${n || k === "all" ? "" : 'class="dim"'}><b>${esc(l)}</b><span class="num">${n}</span></button>`;
+    const top = `<div class="levels seven" role="group" aria-label="급수">${lvBtn("all", "전체", lvAll)}${LEVELS.map(([k, l]) => lvBtn(k, l, lvCount[k] || 0)).join("")}</div>
+      <div class="levels books" role="group" aria-label="출처">${srcBtn("all", "전체", srcAll)}${S.decks.filter(d => d.cards.length).map(d => srcBtn(d.id, bookName(d), srcCount[d.id] || 0)).join("")}</div>`;
+    const subChips = "";
     const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"]]
       .map(([k, l]) => `<button class="chip" type="button" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${l}</button>`).join("");
     return `<div class="stack">
-      <div class="levels" role="group" aria-label="단어 급수">${levels}</div>
+      ${top}
       <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn ghost" type="button" data-act="sources">출처</button><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
-      ${srcChips}
+      ${subChips}
       <div class="chips">${chips}</div>
       <div id="wresults" class="stack">${wordsResults()}</div>
     </div>`;
@@ -1597,7 +1635,7 @@ a.btn { color: inherit; }
   // ================= view: kanji list =================
   const KFILTERS = [["all", "상용한자 전체"], ["mine", "단어장에 쓰인"], ["5", "N5"], ["4", "N4"], ["3", "N3"], ["2", "N2"], ["1", "N1"], ["none", "급수 외"]];
   function viewKanji() {
-    const chips = KFILTERS.map(([k, l]) => `<button class="chip" type="button" data-act="kfilter" data-f="${k}" aria-pressed="${S.kfilter === k}">${l}</button>`).join("");
+    const chips = KFILTERS.map(([k, l]) => `<button class="chip" type="button" data-act="kfilter" data-f="${k}" aria-pressed="${k === "all" ? !S.kfilter.length : S.kfilter.includes(k)}">${l}</button>`).join("");
     return `<div class="stack">
       <div class="searchrow"><input id="ksearch" class="search" type="search" placeholder="한자, 음훈, 읽기로 검색 (예: 相, 서로, そう)" value="${esc(S.kq)}" autocomplete="off"></div>
       <div class="chips">${chips}</div>
@@ -1612,24 +1650,25 @@ a.btn { color: inherit; }
     return [...set];
   }
   function kanjiResults() {
-    const q = S.kq.trim(), f = S.kfilter;
+    // 여러 개 고르기: '단어장에 쓰인'은 그리고(AND), 급수(N5~N1·급수 외)끼리는 또는(OR)
+    const q = S.kq.trim(), sel = S.kfilter, mine = sel.includes("mine"), lvs = sel.filter(x => x !== "mine");
     let ks = allKanjiKeys().map(k => ({ k, i: S.kanji[k] || {}, n: (S.kidx.get(k) || []).length }));
-    if (f === "mine") ks = ks.filter(x => x.n > 0);
-    else if (f === "none") ks = ks.filter(x => x.i.joyo && !x.i.jlpt);
-    else if (f !== "all") ks = ks.filter(x => String(x.i.jlpt) === f);
+    if (mine) ks = ks.filter(x => x.n > 0);
+    if (lvs.length) ks = ks.filter(x => lvs.some(l => l === "none" ? (x.i.joyo && !x.i.jlpt) : String(x.i.jlpt) === l));
     if (q) {
       const qk = toKata(q), ql = q.toLowerCase();
       ks = ks.filter(x => q.includes(x.k) || (x.i.ko || "").includes(q) || (x.i.on || []).some(o => o.includes(qk)) || (x.i.kun || []).some(u => u.replace(/[().\-]/g, "").includes(q)) || (x.i.en || "").toLowerCase().includes(ql));
     }
-    if (f === "mine") ks.sort((a, b) => b.n - a.n || (a.i.freq || 9999) - (b.i.freq || 9999));
+    if (mine) ks.sort((a, b) => b.n - a.n || (a.i.freq || 9999) - (b.i.freq || 9999));
     else ks.sort((a, b) => (a.i.freq || 9999) - (b.i.freq || 9999) || a.k.localeCompare(b.k));
     const shown = ks.slice(0, S.kanjiLimit);
-    const label = f === "mine" ? "단어장에 쓰인 한자" : f === "all" ? "전체 한자" : f === "none" ? "JLPT 급수 외 상용한자" : "N" + f + " 한자";
+    const lvName = l => l === "none" ? "급수 외" : "N" + l;
+    const label = !sel.length ? "전체 한자" : [mine ? "단어장에 쓰인" : "", KFILTERS.filter(([k]) => lvs.includes(k)).map(([k]) => lvName(k)).join("·")].filter(Boolean).join(" · ") + " 한자";
     const tile = x => {
       const meta = [x.i.jlpt ? "N" + x.i.jlpt : "", x.n ? x.n + "단어" : ""].filter(Boolean).join(" · ");
       return `<button class="ktile" type="button" data-act="kanji" data-k="${esc(x.k)}"><span class="k" lang="ja">${esc(x.k)}</span><span class="ko">${esc(x.i.ko || "—")}</span><span class="n">${meta || "&nbsp;"}</span></button>`;
     };
-    return `<p class="note num">${label} ${ks.length}자 · ${f === "mine" ? "단어 많은 순" : "자주 쓰이는 순"}</p>
+    return `<p class="note num">${label} ${ks.length}자 · ${mine ? "단어 많은 순" : "자주 쓰이는 순"}</p>
       ${shown.length ? `<div class="kgrid">${shown.map(tile).join("")}</div>` : '<p class="empty">찾는 한자가 없어요.</p>'}
       ${ks.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-kanji">더 보기 (${ks.length - shown.length}자 남음)</button></div>` : ""}`;
   }
@@ -1647,28 +1686,41 @@ a.btn { color: inherit; }
     }).join("")}</div>`;
   }
   function noteOf(key) { return S.notes[key] || {}; }
-  function myMeaningHtml(key) {
-    const x = (noteOf(key).extra || "").trim();
-    return x ? `<div class="mymean"><span class="lbl">✎ 내가 추가한 뜻</span><div class="txt">${esc(x)}</div></div>` : "";
+  // 공부 카드: 메모가 있으면 뜻 보기 후 노란 메모 버튼, 누르면 펼침
+  function memoToggleHtml(sess, key) {
+    const m = (noteOf(key).memo || "").trim(); if (!m) return "";
+    const open = sess.memoKey === key;
+    return `<button class="memobtn" type="button" data-act="tg-memo" aria-pressed="${open}">✎ 메모${open ? " 접기" : ""}</button>${open ? `<div class="mymean"><div class="txt">${esc(m)}</div></div>` : ""}`;
+  }
+  // 예전 '내가 추가한 뜻'(extra)은 메모 맨 앞으로 옮기고 없앤다. 바뀐 게 있으면 true.
+  function migrateNotes() {
+    let changed = false;
+    for (const [k, n] of Object.entries(S.notes || {})) {
+      if (!n || !("extra" in n)) continue;
+      const ex = (n.extra || "").trim(), memo = (n.memo || "").trim();
+      const merged = ex ? ("뜻 추가: " + ex + (memo ? "\n" + memo : "")) : memo;
+      if (merged) S.notes[k] = { memo: merged, at: n.at || Date.now() }; else delete S.notes[k];
+      changed = true;
+    }
+    return changed;
   }
   function noteSection(page, c) {
     const n = noteOf(c.key);
     if (page.editNote) {
-      return `<section><h2 class="section-title">내 뜻 · 메모 편집</h2>
+      return `<section><h2 class="section-title">메모 편집</h2>
         <div class="panel noteedit">
-          <div class="field"><label for="n_extra">내가 추가한 뜻</label><textarea id="n_extra" placeholder="기본 뜻 아래에 따로 표시돼요. 예: (문어체) 파악해 두다">${esc(n.extra || "")}</textarea></div>
-          <div class="field"><label for="n_memo">메모</label><textarea id="n_memo" placeholder="외우는 요령, 헷갈리는 단어, 들었던 문장 등을 자유롭게 적어 두세요.">${esc(n.memo || "")}</textarea></div>
+          <div class="field"><label for="n_memo">메모</label><textarea id="n_memo" placeholder="추가 뜻, 외우는 요령, 헷갈리는 단어, 들었던 문장 등을 자유롭게 적어 두세요. 공부 카드에서 뜻 보기를 누르면 볼 수 있어요.">${esc(n.memo || "")}</textarea></div>
           <div class="formactions"><button class="btn primary" type="button" data-act="note-save">저장</button><button class="btn ghost" type="button" data-act="note-cancel">취소</button></div>
         </div></section>`;
     }
     const memo = (n.memo || "").trim();
-    return `<section><div class="pagebar" style="margin-bottom:10px"><h2 class="section-title" style="margin:0">메모</h2><button class="btn small" type="button" data-act="note-edit">✎ 뜻 추가 · 메모 편집</button></div>
-      ${memo ? `<div class="memo"><div class="txt">${esc(memo)}</div></div>` : '<p class="note">아직 메모가 없어요. 위 버튼을 눌러 이 단어만의 메모나 내 뜻을 적어 보세요.</p>'}
+    return `<section><div class="pagebar" style="margin-bottom:10px"><h2 class="section-title" style="margin:0">메모</h2><button class="btn small" type="button" data-act="note-edit">✎ 메모 편집</button></div>
+      ${memo ? `<div class="memo"><div class="txt">${esc(memo)}</div></div>` : '<p class="note">아직 메모가 없어요. 위 버튼을 눌러 이 단어만의 메모를 적어 보세요.</p>'}
     </section>`;
   }
   function saveNote(key) {
-    const extra = ($("#n_extra") || {}).value || "", memo = ($("#n_memo") || {}).value || "";
-    if (extra.trim() || memo.trim()) S.notes[key] = { extra: extra.trim(), memo: memo.trim(), at: Date.now() };
+    const memo = ($("#n_memo") || {}).value || "";
+    if (memo.trim()) S.notes[key] = { memo: memo.trim(), at: Date.now() };
     else delete S.notes[key];
     serial("notes", () => S.store.saveNotes());
   }
@@ -1722,7 +1774,7 @@ a.btn { color: inherit; }
     let body;
     if (c.html) {
       body = `<div class="hero"><div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.w)}${favBtn}</div></div>
-        <div class="html-back" lang="ja">${sanitize(c.back)}</div>${myMeaningHtml(c.key)}<div><span class="decktag">출처 · ${esc(srcName(c))}</span></div></div>`;
+        <div class="html-back" lang="ja">${sanitize(c.back)}</div><div><span class="decktag">출처 · ${esc(srcName(c))}</span></div></div>`;
     } else {
       const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
       body = `<div class="hero">
@@ -1730,7 +1782,7 @@ a.btn { color: inherit; }
         <div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w)}${favBtn}</div></div>
         ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}</div>` : ""}
         <div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
-        ${myMeaningHtml(c.key)}
+        
         <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">출처 · ${esc(srcName(c))}</span></div>
         ${statusChips(c.key)}
         ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span data-act="speak" data-text="${esc(c.ex)}" style="cursor:pointer">${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
@@ -1782,7 +1834,7 @@ a.btn { color: inherit; }
   }
   function viewEdit(page) {
     const isNew = !page.key, cur = page.key ? S.byKey[page.key] : null;
-    const lv = (page.draft && page.draft.level) || (S.tab === "words" && isNew ? S.wlevel : "mine");
+    const lv = (page.draft && page.draft.level) || (S.tab === "words" && isNew && S.wlevel.length === 1 ? S.wlevel[0] : "mine");
     const del = cur && cur.mine ? (page.confirmDel
       ? `<span class="confirm">이 단어와 복습 기록을 지울까요? <button class="btn danger" type="button" data-act="delword-yes">삭제</button><button class="btn ghost" type="button" data-act="delword-no">취소</button></span>`
       : `<button class="btn ghost" type="button" data-act="delword">단어 삭제</button>`) : "";
@@ -1941,13 +1993,13 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     return `<div class="word" lang="ja">${esc(c.w)}</div>`;
   }
   function cardBack(c, dir) {
-    if (c.html) return `<div class="back"><div class="html-back" lang="ja">${sanitize(c.back)}</div>${myMeaningHtml(c.key)}<div style="display:flex;gap:6px">${speakBtn(htmlText(c.front))}</div>${kanjiOf(c.w).length ? kanjiItems(c) : ""}</div>`;
+    if (c.html) return `<div class="back"><div class="html-back" lang="ja">${sanitize(c.back)}</div><div style="display:flex;gap:6px">${speakBtn(htmlText(c.front))}</div>${kanjiOf(c.w).length ? kanjiItems(c) : ""}</div>`;
     const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
     return `<div class="back">
       ${dir === "m2w" ? `<div class="word-inline" lang="ja">${linkText(c.w)}</div>` : ""}
       ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}${speakBtn(c.r)}</div>` : ""}
       ${dir === "m2w" ? "" : `<div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>`}
-      ${myMeaningHtml(c.key)}
+      
       ${dir === "m2w" ? "" : `<div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}</div>`}
       ${(noteOf(c.key).memo || "").trim() ? `<div class="memo"><span class="lbl">메모</span><div class="txt">${esc(noteOf(c.key).memo)}</div></div>` : ""}
       ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span>${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
@@ -1981,7 +2033,28 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   }
   function clearState(p, now) { const o = Object.assign({}, p); o.last = now; o.s = shortS(p.s, 3); toReview(o, now, 1); return o; }
 
+  // 랜덤 복습: 한 번 이상 공부한 단어 중 고른 급수·출처에서 날짜와 상관없이 뽑는다
+  function studiedCards(mode) { const all = groupById("all"); return all ? qCards(all, mode).filter(c => { const s = S.states[qKey(c, mode)]; return s && s.st && s.st !== "new"; }) : []; }
+  function randFiltered(mode) {
+    const lv = S.settings.rlv || [], src = S.settings.rsrc || [];
+    return studiedCards(mode).filter(c => (!S.settings.rfav || S.favs[c.key]) && (!lv.length || lv.includes(cardLevel(c))) && (!src.length || src.includes(c.deck)));
+  }
+  function randRows(mode) {
+    const lv = S.settings.rlv || [], src = S.settings.rsrc || [], fav = !!S.settings.rfav, base = studiedCards(mode).filter(c => !fav || S.favs[c.key]);
+    const nFav = studiedCards(mode).filter(c => S.favs[c.key]).length;
+    const lc = {}, sc = {}; let la = 0, sa = 0;
+    for (const c of base) { const l = cardLevel(c); if (!src.length || src.includes(c.deck)) { lc[l] = (lc[l] || 0) + 1; la++; } if (!lv.length || lv.includes(l)) { sc[c.deck] = (sc[c.deck] || 0) + 1; sa++; } }
+    const btn = (act, k, l, n, sel) => `<button type="button" data-act="${act}" data-v="${esc(k)}" aria-pressed="${k === "all" ? !sel.length : sel.includes(k)}" ${n || k === "all" ? "" : 'class="dim"'}><b>${esc(l)}</b><span class="num">${n}</span></button>`;
+    return `<div class="dirwrap"><span class="dirhead">범위 <span class="muted" style="font-weight:400">· 여러 개 고를 수 있어요</span></span>
+      <div class="levels seven" role="group" aria-label="급수">${btn("rlv", "all", "전체", la, lv)}${LEVELS.map(([k, l]) => btn("rlv", k, l, lc[k] || 0, lv)).join("")}</div>
+      <div class="levels books" role="group" aria-label="출처">${btn("rsrc", "all", "전체", sa, src)}${S.decks.filter(d => d.cards.length).map(d => btn("rsrc", d.id, d.mineDeck ? "직접 추가" : d.name, sc[d.id] || 0, src)).join("")}</div>
+      <div class="chips"><button class="chip" type="button" data-act="rfav" aria-pressed="${fav}" ${nFav || fav ? "" : "disabled"}>★ 즐겨찾기만 <span class="num muted">${nFav}</span></button></div></div>`;
+  }
   function pickBounds(page) {
+    if (page.rand) {
+      const list = randFiltered(page.mode);
+      return { g: { name: "랜덤 복습" }, pool: { due: list, nw: [] }, max: list.length, min: Math.min(SS_MIN, list.length), rand: true };
+    }
     const g = groupById(page.deck); if (!g) return null;
     const pool = sessionPool(g, page.mode, Date.now()), max = pool.due.length + pool.nw.length;
     return { g, pool, max, min: Math.min(SS_MIN, max) };
@@ -1991,7 +2064,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const b = pickBounds(page);
     if (!b) return pagebar("공부") + '<p class="empty">묶음을 찾을 수 없어요.</p>';
     const { g, pool, max, min } = b, write = page.mode === "write";
-    if (page.n == null) page.n = write ? S.settings.writeSessSize : S.settings.sessSize;
+    if (page.n == null) page.n = page.rand ? (S.settings.randSize || 20) : write ? S.settings.writeSessSize : S.settings.sessSize;
     page.n = clamp(page.n, min, max);
     const rmax = Math.ceil(max / SS_STEP) * SS_STEP, dir = S.settings.dir === "m2w" ? "m2w" : "w2m";
     const count = max ? `
@@ -2001,10 +2074,11 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
         </div>
         ${max > min ? `<input type="range" id="pickRange" min="${min}" max="${rmax}" step="${SS_STEP}" value="${page.n >= max ? rmax : page.n}" aria-label="공부할 개수">` : ""}
         <p class="note num" id="pickSplit">${pickSplit(b, page.n)}</p>`
-      : `<p class="empty">${write ? "오늘 이 묶음에서 쓸 카드가 없어요." : "오늘 이 묶음에서 볼 카드가 없어요."}</p>`;
+      : `<p class="empty">${page.rand ? (write ? "고른 범위에 쓰기로 공부한 단어가 없어요." : "고른 범위에 공부한 단어가 없어요.") : write ? "오늘 이 묶음에서 쓸 카드가 없어요." : "오늘 이 묶음에서 볼 카드가 없어요."}</p>`;
     return `<div class="stack">${pagebar(g.name)}
       <article class="deck pick">
-        <div class="deck-head"><h3>몇 개 ${write ? "쓸까요" : "공부할까요"}?</h3><p class="deck-meta num">${write ? "오늘 쓸 수 있는 카드" : "오늘 볼 수 있는 카드"} ${max}장 · 복습 ${pool.due.length} · 새 카드 ${pool.nw.length}</p></div>
+        <div class="deck-head"><h3>몇 개 ${write ? "쓸까요" : "공부할까요"}?</h3><p class="deck-meta num">${page.rand ? `고른 범위에서 ${write ? "쓰기로 " : ""}공부한 단어 ${max}개` : `${write ? "오늘 쓸 수 있는 카드" : "오늘 볼 수 있는 카드"} ${max}장 · 복습 ${pool.due.length} · 새 카드 ${pool.nw.length}`}</p></div>
+        ${page.rand ? randRows(page.mode) : ""}
         ${count}
         <div class="dirwrap"><span class="dirhead">공부 방식</span><div class="dirpick three">
           <button class="dircard" type="button" data-act="dir" data-v="w2m" aria-pressed="${!write && dir === "w2m"}"><span class="mini"><span class="mw" lang="ja">単語</span><span class="mq">뜻 ?</span></span><b>단어 → 뜻</b><small>단어 보고 뜻 떠올리기</small></button>
@@ -2014,10 +2088,10 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
         ${write ? '<p class="note">예문에서 단어의 한자 부분만 □로 가려져요. 위에 달린 읽기를 보고 칸에 한자를 써 보세요. 부사·접속사·연체사는 빠져요.</p>' : ""}</div>
         <button class="btn primary reveal" type="button" data-act="pick-go" id="pickGo" ${max ? "" : "disabled"}>${max ? page.n + "개 시작" : "시작할 카드 없음"}</button>
       </article>
-      <p class="note">다시 학습을 누른 카드는 한 바퀴를 다 돈 뒤에 다시 나와요. 알고있음을 누를 때까지 바퀴마다 계속 나와요. 복습 기록에는 처음 누른 답만 반영돼요. 쓰기 기록은 읽기와 따로 쌓여요.</p>
+      <p class="note">${page.rand ? "랜덤 복습은 연습이라 복습 일정에 남지 않아요. 끝나면 다시 학습을 누른 단어만 오늘 복습에 넣을 수 있어요." : "다시 학습을 누른 카드는 한 바퀴를 다 돈 뒤에 다시 나와요. 알고있음을 누를 때까지 바퀴마다 계속 나와요. 복습 기록에는 처음 누른 답만 반영돼요. 쓰기 기록은 읽기와 따로 쌓여요."}</p>
     </div>`;
   }
-  function pickSplit(b, n) { const nd = Math.min(n, b.pool.due.length); return `복습 ${nd}장${n - nd ? ` + 새 카드 ${n - nd}장` : ""}`; }
+  function pickSplit(b, n) { if (b.rand) return `무작위 ${n}개`; const nd = Math.min(n, b.pool.due.length); return `복습 ${nd}장${n - nd ? ` + 새 카드 ${n - nd}장` : ""}`; }
   function pickSet(page, n) {
     const b = pickBounds(page); if (!b) return;
     page.n = clamp(n, b.min, b.max); page.touched = true;
@@ -2034,11 +2108,11 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   function startSession(page) {
     const b = pickBounds(page); if (!b || !b.max) return;
     const n = clamp(page.n, b.min, b.max);
-    if (page.touched) { if (page.mode === "write") S.settings.writeSessSize = n; else S.settings.sessSize = n; saveSettingsSoon(); }
+    if (page.touched) { if (page.rand) S.settings.randSize = n; else if (page.mode === "write") S.settings.writeSessSize = n; else S.settings.sessSize = n; saveSettingsSoon(); }
     const nd = Math.min(n, b.pool.due.length);
     const keys = [...b.pool.due.slice(0, nd), ...b.pool.nw.slice(0, n - nd)].map(c => c.key);
     for (let i = keys.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [keys[i], keys[j]] = [keys[j], keys[i]]; }
-    const sess = { mode: page.mode, deck: page.deck, name: b.g.name, queue: keys, next: [], lap: 1, total: keys.length, cleared: 0, first: {}, cur: null, last: null, revealed: false, hist: [] };
+    const sess = { mode: page.mode, deck: page.rand ? "random" : page.deck, practice: !!page.rand, name: b.g.name, queue: keys, next: [], lap: 1, total: keys.length, cleared: 0, first: {}, cur: null, last: null, revealed: false, hist: [] };
     if (page.mode === "write") S.write = sess; else S.study = sess;
     S.stack.pop(); go({ t: page.mode === "write" ? "write" : "study", deck: page.deck });
   }
@@ -2057,7 +2131,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   function sessTop(sess) {
     const pct = sess.total ? Math.round(sess.cleared / sess.total * 100) : 0;
     if (!sess.t0) sess.t0 = Date.now();
-    return `<div class="pagebar"><div class="left"><button class="circ" type="button" data-act="back" aria-label="목록으로">${ICON.back}</button><h2>${esc(sess.name)}</h2></div><span class="stimer"><span id="stimer">${fmtClock(Date.now() - sess.t0)}</span>${ICON.clock}</span></div>
+    return `<div class="pagebar"><div class="left"><button class="circ" type="button" data-act="back" aria-label="목록으로">${ICON.back}</button><h2>${esc(sess.name)}${sess.practice ? '<span class="practice-tag">연습</span>' : ""}</h2></div><span class="stimer"><span id="stimer">${fmtClock(Date.now() - sess.t0)}</span>${ICON.clock}</span></div>
       <div class="sessbar"><span>${sess.cleared}/${sess.total}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div><span>${sess.lap}바퀴째${sess.next.length ? ` · 다시 ${sess.next.length}` : ""}</span></div>`;
   }
   function sessTag(sess) {
@@ -2069,10 +2143,16 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   }
   function twoButtons(sess) {
     const prev = S.states[qKey({ key: sess.cur }, sess.mode)] || null, act = sess.mode === "write" ? "wrate" : "rate";
-    const know = sess.cur in sess.first ? "내일 복습" : fmtDays(knowState(prev, Date.now()).ivl) + " 후 복습";
+    const know = sess.practice ? "기록 안 함" : sess.cur in sess.first ? "내일 복습" : fmtDays(knowState(prev, Date.now()).ivl) + " 후 복습";
     return `<div class="rates two"><button class="rate" type="button" data-act="${act}" data-g="1"><b>다시 학습</b><span>한 바퀴 뒤 다시</span><kbd>1</kbd></button><button class="rate" type="button" data-act="${act}" data-g="3"><b>알고있음</b><span>${know}</span><kbd>2</kbd></button></div>`;
   }
   function sessDone(sess) {
+    if (sess.practice) {
+      const again = Object.keys(sess.first).filter(k => sess.first[k] === 1).length;
+      return `<div class="card"><div class="done"><h3>おつかれさま</h3><p>${sess.total}개를 ${sess.lap}바퀴 만에 끝냈어요. 연습이라 복습 일정은 그대로예요.</p>
+        ${again ? (sess.queued ? `<p>다시 학습을 누른 ${again}개를 오늘 복습에 넣었어요.</p>` : `<p>다시 학습을 누른 단어가 ${again}개 있어요.</p><button class="btn primary" type="button" data-act="rand-queue">${again}개를 오늘 복습에 넣기</button>`) : ""}
+        <button class="btn" type="button" data-act="sess-more">랜덤 복습 한 번 더</button><button class="btn ghost" type="button" data-act="back">목록으로</button></div></div>`;
+    }
     const g = groupById(sess.deck); let more = 0;
     if (g) { const p = sessionPool(g, sess.mode, Date.now()); more = p.due.length + p.nw.length; }
     return `<div class="card"><div class="done"><h3>おつかれさま</h3><p>${sess.total}개를 ${sess.lap}바퀴 만에 끝냈어요.</p>${more ? `<p>이 묶음에 오늘 볼 카드가 ${more}장 더 있어요.</p><button class="btn primary" type="button" data-act="sess-more">이어서 더 하기</button>` : ""}<button class="btn" type="button" data-act="back">목록으로</button></div></div>`;
@@ -2108,8 +2188,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const say = c.html ? htmlText(c.front) : (c.r || c.w);
     let main;
     if (c.html) main = `<div class="html-front" lang="ja">${sanitize(c.front)}</div>${show ? `<div class="html-back" lang="ja">${sanitize(c.back)}</div>` : ""}`;
-    else if (m2w) main = `<div class="bigword ko">${esc(c.ko)}</div>${show ? `${kana && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${esc(c.w)}</button>` : ""}${show ? myMeaningHtml(c.key) : ""}`;
-    else main = `${kana && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${esc(c.w)}</button>${show ? `<div class="sc-mean">${esc(c.ko)}</div>${myMeaningHtml(c.key)}` : ""}`;
+    else if (m2w) main = `<div class="bigword ko">${esc(c.ko)}</div>${show ? `${kana && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${esc(c.w)}</button>` : ""}${show ? memoToggleHtml(sess, c.key) : ""}`;
+    else main = `${kana && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${esc(c.w)}</button>${show ? `<div class="sc-mean">${esc(c.ko)}</div>${memoToggleHtml(sess, c.key)}` : ""}`;
     const ex = c.html || !c.ex || !showEx ? "" : `<div class="sc-ex" lang="ja" role="button" tabindex="0" data-act="speak" data-text="${esc(c.ex)}" aria-label="예문 듣기">${exampleHtml(c, kana, m2w && !show)}</div>${show && c.exko ? `<div class="sc-exko">${esc(c.exko)}</div>` : ""}`;
     return `<div class="stack">${top}
       <div class="scard">
@@ -2142,8 +2222,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     sess.hist.push({ key, sk, prev, isFirst, queue: sess.queue.slice(), next: sess.next.slice(), lap: sess.lap, cleared: sess.cleared, total: sess.total });
     if (sess.hist.length > 60) sess.hist.shift();
     let nxt = prev;
-    if (isFirst) { sess.first[key] = know ? 3 : 1; nxt = know ? knowState(prev, now) : againState(prev, now); bumpDay(!prev, 1); }
-    else if (know) nxt = clearState(prev, now);
+    if (isFirst) { sess.first[key] = know ? 3 : 1; if (!sess.practice) { nxt = know ? knowState(prev, now) : againState(prev, now); bumpDay(!prev, 1); } }
+    else if (know && !sess.practice) nxt = clearState(prev, now);
     if (nxt !== prev) { S.states[sk] = nxt; persistState(sk, nxt); }
     if (know) sess.cleared++; else sess.next.push(key);
     sess.last = key; sess.cur = null; sess.revealed = false;
@@ -2155,7 +2235,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const h = sess && sess.hist.pop(); if (!h) return;
     if (h.prev) S.states[h.sk] = h.prev; else delete S.states[h.sk];
     persistState(h.sk, h.prev);
-    if (h.isFirst) { delete sess.first[h.key]; bumpDay(!h.prev, -1); }
+    if (h.isFirst) { delete sess.first[h.key]; if (!sess.practice) bumpDay(!h.prev, -1); }
     Object.assign(sess, { queue: h.queue, next: h.next, lap: h.lap, cleared: h.cleared, total: h.total, cur: h.key, revealed: false });
     render();
   }
@@ -2354,9 +2434,16 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "pick-step": pickStep(page, +t.dataset.d); break;
       case "pick-max": { const b = pickBounds(page); if (b) { pickSet(page, b.max); const r = $("#pickRange"); if (r) r.value = r.max; } break; }
       case "pick-go": startSession(page); break;
-      case "sess-more": { const sess = page && page.t === "write" ? S.write : S.study; if (!sess) break; const m = sess.mode; S.study = null; S.write = null; S.stack.pop(); go({ t: "pick", deck: sess.deck, mode: m }); break; }
+      case "sess-more": { const sess = page && page.t === "write" ? S.write : S.study; if (!sess) break; const m = sess.mode; S.study = null; S.write = null; S.stack.pop(); go(sess.practice ? { t: "pick", rand: true, mode: m } : { t: "pick", deck: sess.deck, mode: m }); break; }
+      case "random": go({ t: "pick", rand: true }); break;
+      case "rfav": { S.settings.rfav = !S.settings.rfav; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "rlv": case "rsrc": { const k = a, v = t.dataset.v, cur = S.settings[k] || []; S.settings[k] = v === "all" ? [] : (cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v]); saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "rand-queue": { const sess = page && page.t === "write" ? S.write : S.study; if (!sess || sess.queued) break; const now = Date.now(), cut = nextCutoff(now); let n = 0;
+        for (const k of Object.keys(sess.first)) { if (sess.first[k] !== 1) continue; const sk = qKey({ key: k }, sess.mode), st0 = S.states[sk]; if (!st0) continue; if (st0.due >= cut) { const o = Object.assign({}, st0, { due: now }); S.states[sk] = o; persistState(sk, o); } n++; }
+        sess.queued = true; render(); toast(`${n}개를 오늘 복습에 넣었어요.`); break; }
       case "reveal": if (S.study && S.study.cur) { S.study.revealed = !S.study.revealed; render(); } break;
       case "furi-go": furiFillAll(); break;
+      case "tg-memo": if (S.study && S.study.cur) { S.study.memoKey = S.study.memoKey === S.study.cur ? null : S.study.cur; render(); } break;
       case "tg-ex": S.settings.hideEx = !S.settings.hideEx; saveSettingsSoon(); render(); break;
       case "tg-kana": S.settings.showKana = !S.settings.showKana; saveSettingsSoon(); render(); break;
       case "tts-engine": { const tt = ttsReadForm(); tt.engine = t.dataset.v; ttsSave(tt); ttsWarned = false; const y = window.scrollY; render(); window.scrollTo(0, y); break; }
@@ -2370,7 +2457,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "undo": undo(); break;
       case "word": go({ t: "word", key: t.dataset.key }); break;
       case "kanji": e.preventDefault(); if (!(page && page.t === "kanji" && page.k === t.dataset.k)) go({ t: "kanji", k: t.dataset.k }); break;
-      case "note-edit": page.editNote = true; render(); { const el = $("#n_extra"); if (el) el.focus(); } break;
+      case "note-edit": page.editNote = true; render(); { const el = $("#n_memo"); if (el) el.focus(); } break;
       case "note-cancel": page.editNote = false; render(); break;
       case "note-save": saveNote(page.key); page.editNote = false; render(); toast("저장했어요."); break;
       case "fav": { const k = t.dataset.key; if (S.favs[k]) delete S.favs[k]; else S.favs[k] = true; persistFavs(); render(); break; }
@@ -2421,14 +2508,13 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "delword-no": page.draft = readForm(); page.confirmDel = false; render(); break;
       case "delword-yes": deleteWord(); break;
       case "filter": S.filter = t.dataset.f; S.wordLimit = 100; render(); break;
-      case "wlevel": S.wlevel = t.dataset.v; S.wsrc = "all"; S.wordLimit = 100; render(); break;
-      case "wsrc": S.wsrc = t.dataset.v; S.wordLimit = 100; render(); break;
+      case "wlevel": case "wsrc": { const key = a === "wlevel" ? "wlevel" : "wsrc", v = t.dataset.v; S[key] = v === "all" ? [] : (S[key].includes(v) ? S[key].filter(x => x !== v) : [...S[key], v]); S.wordLimit = 100; render(); break; }
       case "more-words": { S.wordLimit += 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); break; }
-      case "kfilter": S.kfilter = t.dataset.f; S.kanjiLimit = 240; render(); break;
+      case "kfilter": { const f = t.dataset.f; S.kfilter = f === "all" ? [] : (S.kfilter.includes(f) ? S.kfilter.filter(x => x !== f) : [...S.kfilter, f]); S.kanjiLimit = 240; render(); break; }
       case "more-kanji": { S.kanjiLimit += 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); break; }
       case "npd": setNewPerDay(S.settings.newPerDay + (+t.dataset.d)); break;
       case "dir": { const v = t.dataset.v, m = v === "write" ? "write" : "read";
-        if (page && page.t === "pick" && page.mode !== m) { page.mode = m; page.n = null; page.touched = false; }
+        if (page && page.t === "pick" && page.mode !== m) { page.mode = m; if (!page.rand) { page.n = null; page.touched = false; } }
         S.settings.lastMode = m; if (v !== "write") S.settings.dir = v; saveSettingsSoon(); render(); break; }
       case "deldeck": S.confirmDel = t.dataset.deck; S.renaming = null; render(); break;
       case "deldeck-no": S.confirmDel = null; render(); break;
@@ -2455,6 +2541,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   });
   document.addEventListener("input", e => {
     if (e.target.id === "pickRange") { const pg = topPage(); if (pg && pg.t === "pick") pickSet(pg, +e.target.value); return; }
+    if (S.grid && (e.target.id === "g_src" || e.target.id === "g_skip")) gridSyncHeader();
     if (e.target.classList && e.target.classList.contains("gcell") && S.grid) {
       const r = +e.target.dataset.r, k = gcols()[+e.target.dataset.c][0];
       if (S.grid.rows[r]) { S.grid.rows[r][k] = e.target.value; if (k === "w" || k === "ko") gridRefreshStatus(); }
@@ -2539,6 +2626,10 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     if (typeof o.showTrans === "boolean") S.settings.showTrans = o.showTrans;
     if (o.learnView === "level" || o.learnView === "source") S.settings.learnView = o.learnView;
     if (o.lastMode === "read" || o.lastMode === "write") S.settings.lastMode = o.lastMode;
+    if (Array.isArray(o.rlv)) S.settings.rlv = o.rlv.filter(x => typeof x === "string");
+    if (Array.isArray(o.rsrc)) S.settings.rsrc = o.rsrc.filter(x => typeof x === "string");
+    if (Number.isFinite(o.randSize)) S.settings.randSize = o.randSize;
+    if (typeof o.rfav === "boolean") S.settings.rfav = o.rfav;
     if (o.gridMemoMode === "now" || o.gridMemoMode === "later") S.settings.gridMemoMode = o.gridMemoMode;
     if (Number.isFinite(o.sessSize)) S.settings.sessSize = o.sessSize;
     if (typeof o.hideEx === "boolean") S.settings.hideEx = o.hideEx;
@@ -2650,7 +2741,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     try {
       const j = JSON.parse((await file.text()).replace(/^\uFEFF/, ""));
       if (!j || j.format !== "fsrs-backup") { toast("나만의 단어장 백업 파일이 아니에요."); return; }
-      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {};
+      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; migrateNotes();
       importedMetas = Array.isArray(j.decks) ? j.decks : [];
       applySettings(j.settings);
       S.undo = null; S.stack = []; S.study = null;
@@ -2668,6 +2759,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     S.states = data.states || {};
     applySettings(data.settings);
     importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {};
+    if (migrateNotes()) S.store.saveNotes();
     rebuild();
     S.ready = true;
     render();
