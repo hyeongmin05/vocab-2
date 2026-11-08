@@ -283,6 +283,13 @@ h2, h3 { text-wrap: balance; }
 .pillbtn.tg[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 @media (max-width: 420px) { .sc-top { gap: 5px; } .pillbtn { padding: 7px 10px; font-size: 13px; } .ago { padding: 4px 9px; font-size: 12px; } }
 .sc-main { flex: 1; display: grid; place-content: center; justify-items: center; text-align: center; gap: 8px; padding: 36px 0 28px; min-height: 250px; }
+.pitch { display: inline-flex; align-items: flex-start; }
+.pitch > span { position: relative; padding: 4px .07em 0; border-top: 2px solid transparent; }
+.pitch > .h { border-top-color: var(--accent); }
+.pitch > .up::before, .pitch > .dn::after { content: ""; position: absolute; top: -2px; width: 2px; height: calc(.85em + 2px); background: var(--accent); }
+.pitch > .up::before { left: -1px; }
+.pitch > .dn::after { right: -1px; }
+.accnum { font-family: var(--f-ui); font-size: .62em; color: var(--muted); margin-left: 6px; vertical-align: .35em; font-variant-numeric: tabular-nums; }
 .sc-reading { font-family: var(--f-jp); color: var(--muted); font-size: 20px; letter-spacing: .04em; }
 .bigword { font-family: var(--f-word); font-weight: 600; font-size: clamp(3rem, 15vw, 5.2rem); line-height: 1.15; border: 0; background: transparent; color: inherit; padding: 0; overflow-wrap: anywhere; }
 .bigword.ko { font-family: var(--f-ui); font-weight: 700; font-size: clamp(1.8rem, 8vw, 2.6rem); }
@@ -382,6 +389,13 @@ button.wchip:disabled { color: var(--muted); }
 .levels button b { font-size: 15px; color: var(--ink); font-weight: 600; white-space: nowrap; }
 .levels button span { font-size: 11.5px; }
 .levels button[aria-pressed="true"] { background: var(--accent); }
+.chips.posrow { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; align-items: center; margin-top: -8px; }
+.chips.posrow .chip { flex: 0 0 auto; }
+.chips.posrow .rowlbl { flex: 0 0 auto; font-size: 12.5px; color: var(--muted); margin-right: 2px; }
+.chips.posrow.sub { margin-top: -10px; padding-left: 10px; }
+.chip.dim { opacity: .45; }
+.selmode { display: flex; align-items: center; justify-content: flex-end; gap: 8px; font-size: 12.5px; color: var(--muted); margin-bottom: -10px; }
+.seg.mini button { padding: 4px 10px; font-size: 12.5px; min-height: 0; }
 .levels.seven { grid-template-columns: repeat(7, minmax(0, 1fr)); }
 @media (max-width: 420px) { .levels.seven button { padding: 8px 1px; } .levels.seven button b { font-size: 13px; letter-spacing: -.02em; } }
 .levels button.dim { opacity: .45; }
@@ -684,7 +698,7 @@ a.btn { color: inherit; }
     states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, days: {}, notes: {}, levels: {}, words: [],
     store: null, ready: false, tab: "learn", stack: [],
     study: null, undo: null,
-    q: "", filter: "all", wlevel: [], wsrc: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
+    q: "", filter: "all", wlevel: [], wsrc: [], wpos: [], wvt: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
   };
   const topPage = () => S.stack[S.stack.length - 1] || null;
 
@@ -793,6 +807,58 @@ a.btn { color: inherit; }
   // 예문 속 단어에서 한자 부분만 가리고, 각 한자 덩어리 위에 읽기를 단다.
   const NO_WRITE = new Set(["부사", "접속사", "연체사"]);
   const isKj = ch => KANJI_RE.test(ch) || ch === "々";
+  // ---- 높낮이(피치 악센트): Kanjium accents.txt (CC BY-SA 4.0) ----
+  // 한 줄 = 단어 \t 읽기(가나 단어면 빈칸) \t 악센트 번호(여러 개면 쉼표, 품사 표시가 붙기도 함)
+  let ACC = null, ACCR = null;
+  async function loadAccents() {
+    try {
+      const txt = await fetch("accents.txt").then(r => r.ok ? r.text() : "");
+      const m = new Map(), byR = new Map();
+      for (const line of txt.split("\n")) {
+        const [w, r, a0] = line.split("\t"); if (!w || !a0) continue;
+        const a = a0.trim(), k = w + "\t" + (r || "");
+        if (!m.has(k)) m.set(k, a);
+        if (!m.has(w)) m.set(w, a);
+        if (!byR.has(r || w)) byR.set(r || w, a);
+      }
+      ACC = m; ACCR = byR;
+    } catch (e) { ACC = new Map(); ACCR = new Map(); }
+  }
+  function accentNums(c) {
+    if (!ACC || !c || c.html) return null;
+    const look = (w, r) => {
+      const a = ACC.get(w + "\t" + r) || (!r || r === w ? ACC.get(w + "\t") : null) || (!kanjiOf(w).length ? (ACC.get(w) || ACCR.get(w)) : null);
+      if (a) return a;
+      // 「徐々に」「動揺する」처럼 뒤에 붙은 말을 떼고 한 번 더
+      for (const suf of ["として", "する", "に", "と"]) if (w.length > suf.length && w.endsWith(suf)) { const x = look(w.slice(0, -suf.length), r.endsWith(suf) ? r.slice(0, -suf.length) : r); if (x) return x; }
+      return null;
+    };
+    const raw = look((c.w || "").trim(), toHira((c.r || "").trim()));
+    if (!raw) return null;
+    const nums = [...new Set(raw.replace(/\([^)]*\)/g, "").split(",").map(x => x.trim()).filter(x => /^\d+$/.test(x)).map(Number))];
+    return nums.length ? nums : null;
+  }
+  const SMALL = "ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ";
+  function morae(r) { const out = []; for (const ch of r) { if (SMALL.includes(ch) && out.length) out[out.length - 1] += ch; else out.push(ch); } return out; }
+  // 읽기 위에 높낮이 선을 그린다. 0=평판, 1=두고, n=n번째 박 뒤에서 내려감
+  function pitchHtml(reading, n) {
+    const ms = morae(reading), len = ms.length;
+    const high = i => n === 0 ? i > 0 : n === 1 ? i === 0 : (i > 0 && i < n);
+    return `<span class="pitch" title="악센트 ${n}">${ms.map((m, i) => {
+      const h = high(i), cls = [h ? "h" : "l"];
+      if (h && i > 0 && !high(i - 1)) cls.push("up");
+      if (h && ((i < len - 1 && !high(i + 1)) || (i === len - 1 && n === len && n > 0))) cls.push("dn");
+      return `<span class="${cls.join(" ")}">${esc(m)}</span>`;
+    }).join("")}</span>`;
+  }
+  // 읽기 표시: 악센트를 알면 선 + 번호, 모르면 글자만
+  function readingHtml(c, withNum = true) {
+    const r = c.r || (!kanjiOf(c.w || "").length ? c.w : "");
+    if (!r) return "";
+    const nums = accentNums(c);
+    if (!nums) return esc(c.r || "");
+    return pitchHtml(toHira(r) === r ? r : r, nums[0]) + (withNum ? `<span class="accnum" title="높낮이 악센트 번호">${nums.map(x => "[" + x + "]").join("")}</span>` : "");
+  }
   const toHira = s => String(s || "").replace(/[\u30A1-\u30F6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
   const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const WT = new Map();
@@ -1178,7 +1244,7 @@ a.btn { color: inherit; }
         ${ttsPanel()}
         ${aiPanel()}
       </section>
-      <p class="note">복습 일정은 FSRS-5 기본 매개변수(목표 기억률 90%)로 계산해요. 하루는 새벽 4시에 바뀌어요. 한자 읽기·획수는 KANJIDIC(EDRDG, CC BY-SA 4.0) 기반이에요.</p>
+      <p class="note">복습 일정은 FSRS-5 기본 매개변수(목표 기억률 90%)로 계산해요. 하루는 새벽 4시에 바뀌어요. 한자 읽기·획수는 KANJIDIC(EDRDG, CC BY-SA 4.0) 기반이에요. 단어 높낮이(악센트)는 Kanjium(github.com/mifunetoshiro/kanjium)의 accents.txt(CC BY-SA 4.0)를 그대로 썼어요: "The pitch accent notation, verb particle data, phonetics, homonyms and other additions or modifications to EDICT, KANJIDIC or KRADFILE were provided by Uros O. through his free database."</p>
     </div>`;
   }
 
@@ -1572,6 +1638,7 @@ a.btn { color: inherit; }
     return S.cards.filter(c => {
       if (S.wlevel.length && !S.wlevel.includes(cardLevel(c))) return false;
       if (S.wsrc.length && !S.wsrc.includes(c.deck)) return false;
+      if (S.wpos.length) { const g = posGroup(c); if (!S.wpos.includes(g)) return false; if (g === "verb" && S.wvt.length && !S.wvt.some(v => (c.pos || "").includes(v))) return false; }
       if (!matchWord(c, q)) return false;
       const f = S.filter, s = S.states[c.key];
       if (f === "fav") return !!S.favs[c.key];
@@ -1605,6 +1672,24 @@ a.btn { color: inherit; }
       ${list.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-words">더 보기 (${list.length - shown.length}개 남음)</button></div>` : ""}`;
   }
   const bookName = d => d.mineDeck ? "직접 추가" : d.name;
+  const POS_GROUPS = [["noun", "명사"], ["verb", "동사"], ["iadj", "い형용사"], ["naadj", "な형용사"], ["adv", "부사"], ["etc", "기타"], ["none", "품사 없음"]];
+  function posGroup(c) {
+    const p = (c.pos || "").trim();
+    if (!p) return "none";
+    if (p.startsWith("동사")) return "verb";
+    return { "명사": "noun", "い형용사": "iadj", "な형용사": "naadj", "부사": "adv" }[p] || "etc";
+  }
+  function posRow() {
+    // 숫자는 위 급수·출처 선택을 반영
+    const base = S.cards.filter(c => (!S.wlevel.length || S.wlevel.includes(cardLevel(c))) && (!S.wsrc.length || S.wsrc.includes(c.deck)));
+    const n = {}; let vi = 0, vt = 0;
+    for (const c of base) { const g = posGroup(c); n[g] = (n[g] || 0) + 1; if (g === "verb") { if ((c.pos || "").includes("자동사")) vi++; if ((c.pos || "").includes("타동사")) vt++; } }
+    const chip = (act, k, l, cnt, sel) => `<button class="chip${cnt || k === "all" || sel.includes(k) ? "" : " dim"}" type="button" data-act="${act}" data-v="${k}" aria-pressed="${k === "all" ? !sel.length : sel.includes(k)}">${l}${k === "all" ? "" : ` <span class="num muted">${cnt}</span>`}</button>`;
+    const groups = POS_GROUPS.filter(([k]) => k !== "none" || n.none);
+    let html = `<div class="chips posrow"><span class="rowlbl">품사</span>${chip("wpos", "all", "전체", 0, S.wpos)}${groups.map(([k, l]) => chip("wpos", k, l, n[k] || 0, S.wpos)).join("")}</div>`;
+    if (S.wpos.includes("verb")) html += `<div class="chips posrow sub"><span class="rowlbl">동사</span>${chip("wvt", "all", "전체", 0, S.wvt)}${chip("wvt", "자동사", "자동사", vi, S.wvt)}${chip("wvt", "타동사", "타동사", vt, S.wvt)}</div>`;
+    return html;
+  }
   function viewWords() {
     // 1줄: 급수, 2줄: 출처. 둘 다 '전체'가 기본이고 서로 겹쳐서 거른다. 숫자는 다른 줄의 선택을 반영한다.
     // 같은 줄은 여러 개 골라 '또는', 두 줄 사이는 '그리고'. 숫자는 다른 줄의 선택을 반영한다.
@@ -1618,7 +1703,9 @@ a.btn { color: inherit; }
     }
     const lvBtn = (k, l, n) => `<button type="button" data-act="wlevel" data-v="${k}" aria-pressed="${k === "all" ? !S.wlevel.length : S.wlevel.includes(k)}" ${n || k === "all" ? "" : 'class="dim"'}><b>${l}</b><span class="num">${n}</span></button>`;
     const srcBtn = (k, l, n) => `<button type="button" data-act="wsrc" data-v="${esc(k)}" aria-pressed="${k === "all" ? !S.wsrc.length : S.wsrc.includes(k)}" ${n || k === "all" ? "" : 'class="dim"'}><b>${esc(l)}</b><span class="num">${n}</span></button>`;
-    const top = `<div class="levels seven" role="group" aria-label="급수">${lvBtn("all", "전체", lvAll)}${LEVELS.map(([k, l]) => lvBtn(k, l, lvCount[k] || 0)).join("")}</div>
+    const multi = S.settings.wMulti !== false;
+    const top = `<div class="selmode"><span>선택</span><div class="seg mini"><button type="button" data-act="wmulti" data-v="0" aria-pressed="${!multi}">하나씩</button><button type="button" data-act="wmulti" data-v="1" aria-pressed="${multi}">여러 개</button></div></div>
+      <div class="levels seven" role="group" aria-label="급수">${lvBtn("all", "전체", lvAll)}${LEVELS.map(([k, l]) => lvBtn(k, l, lvCount[k] || 0)).join("")}</div>
       <div class="levels books" role="group" aria-label="출처">${srcBtn("all", "전체", srcAll)}${S.decks.filter(d => d.cards.length).map(d => srcBtn(d.id, bookName(d), srcCount[d.id] || 0)).join("")}</div>`;
     const subChips = "";
     const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"]]
@@ -1628,6 +1715,7 @@ a.btn { color: inherit; }
       <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn ghost" type="button" data-act="sources">출처</button><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
       ${subChips}
       <div class="chips">${chips}</div>
+      ${posRow()}
       <div id="wresults" class="stack">${wordsResults()}</div>
     </div>`;
   }
@@ -1780,7 +1868,7 @@ a.btn { color: inherit; }
       body = `<div class="hero">
         <div class="wchips"><span class="decktag" style="margin:0">${esc(levelLabel(cardLevel(c)))}</span>${S.states[c.key] ? `<span class="ago">${agoLabel(c.key)}</span>` : ""}</div>
         <div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w)}${favBtn}</div></div>
-        ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}</div>` : ""}
+        ${readingHtml(c) ? `<div class="reading" lang="ja">${readingHtml(c)}</div>` : ""}
         <div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
         
         <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">출처 · ${esc(srcName(c))}</span></div>
@@ -1997,7 +2085,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
     return `<div class="back">
       ${dir === "m2w" ? `<div class="word-inline" lang="ja">${linkText(c.w)}</div>` : ""}
-      ${c.r ? `<div class="reading" lang="ja">${esc(c.r)}${speakBtn(c.r)}</div>` : ""}
+      ${c.r ? `<div class="reading" lang="ja">${readingHtml(c)}${speakBtn(c.r)}</div>` : ""}
       ${dir === "m2w" ? "" : `<div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>`}
       
       ${dir === "m2w" ? "" : `<div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}</div>`}
@@ -2188,8 +2276,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const say = c.html ? htmlText(c.front) : (c.r || c.w);
     let main;
     if (c.html) main = `<div class="html-front" lang="ja">${sanitize(c.front)}</div>${show ? `<div class="html-back" lang="ja">${sanitize(c.back)}</div>` : ""}`;
-    else if (m2w) main = `<div class="bigword ko">${esc(c.ko)}</div>${show ? `${kana && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${esc(c.w)}</button>` : ""}${show ? memoToggleHtml(sess, c.key) : ""}`;
-    else main = `${kana && c.r ? `<div class="sc-reading" lang="ja">${esc(c.r)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${esc(c.w)}</button>${show ? `<div class="sc-mean">${esc(c.ko)}</div>${memoToggleHtml(sess, c.key)}` : ""}`;
+    else if (m2w) main = `<div class="bigword ko">${esc(c.ko)}</div>${show ? `${kana && c.r ? `<div class="sc-reading" lang="ja">${readingHtml(c)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${esc(c.w)}</button>` : ""}${show ? memoToggleHtml(sess, c.key) : ""}`;
+    else main = `${kana && readingHtml(c) ? `<div class="sc-reading" lang="ja">${readingHtml(c)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${esc(c.w)}</button>${show ? `<div class="sc-mean">${esc(c.ko)}</div>${memoToggleHtml(sess, c.key)}` : ""}`;
     const ex = c.html || !c.ex || !showEx ? "" : `<div class="sc-ex" lang="ja" role="button" tabindex="0" data-act="speak" data-text="${esc(c.ex)}" aria-label="예문 듣기">${exampleHtml(c, kana, m2w && !show)}</div>${show && c.exko ? `<div class="sc-exko">${esc(c.exko)}</div>` : ""}`;
     return `<div class="stack">${top}
       <div class="scard">
@@ -2508,7 +2596,13 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "delword-no": page.draft = readForm(); page.confirmDel = false; render(); break;
       case "delword-yes": deleteWord(); break;
       case "filter": S.filter = t.dataset.f; S.wordLimit = 100; render(); break;
-      case "wlevel": case "wsrc": { const key = a === "wlevel" ? "wlevel" : "wsrc", v = t.dataset.v; S[key] = v === "all" ? [] : (S[key].includes(v) ? S[key].filter(x => x !== v) : [...S[key], v]); S.wordLimit = 100; render(); break; }
+      case "wlevel": case "wsrc": case "wpos": case "wvt": { const key = a, v = t.dataset.v, multi = S.settings.wMulti !== false;
+        S[key] = v === "all" ? [] : multi ? (S[key].includes(v) ? S[key].filter(x => x !== v) : [...S[key], v]) : (S[key].length === 1 && S[key][0] === v ? [] : [v]);
+        if (!S.wpos.includes("verb")) S.wvt = [];
+        S.wordLimit = 100; const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "wmulti": { const m = t.dataset.v === "1"; S.settings.wMulti = m; saveSettingsSoon();
+        if (!m) { S.wlevel = S.wlevel.slice(-1); S.wsrc = S.wsrc.slice(-1); S.wpos = S.wpos.slice(-1); S.wvt = S.wvt.slice(-1); if (!S.wpos.includes("verb")) S.wvt = []; }
+        S.wordLimit = 100; render(); break; }
       case "more-words": { S.wordLimit += 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); break; }
       case "kfilter": { const f = t.dataset.f; S.kfilter = f === "all" ? [] : (S.kfilter.includes(f) ? S.kfilter.filter(x => x !== f) : [...S.kfilter, f]); S.kanjiLimit = 240; render(); break; }
       case "more-kanji": { S.kanjiLimit += 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); break; }
@@ -2630,6 +2724,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     if (Array.isArray(o.rsrc)) S.settings.rsrc = o.rsrc.filter(x => typeof x === "string");
     if (Number.isFinite(o.randSize)) S.settings.randSize = o.randSize;
     if (typeof o.rfav === "boolean") S.settings.rfav = o.rfav;
+    if (typeof o.wMulti === "boolean") S.settings.wMulti = o.wMulti;
     if (o.gridMemoMode === "now" || o.gridMemoMode === "later") S.settings.gridMemoMode = o.gridMemoMode;
     if (Number.isFinite(o.sessSize)) S.settings.sessSize = o.sessSize;
     if (typeof o.hideEx === "boolean") S.settings.hideEx = o.hideEx;
@@ -2763,6 +2858,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     rebuild();
     S.ready = true;
     render();
+    loadAccents().then(() => { const pg = topPage(); if (!pg || !["grid", "edit", "settings"].includes(pg.t)) render(); });
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
     if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("sw.js"); } catch (e) {} }
   }
