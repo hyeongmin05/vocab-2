@@ -426,7 +426,13 @@ a.btn { color: inherit; }
 .gtable td + td { border-left: 1px solid var(--line); }
 .gcell { width: 100%; border: 0; background: transparent; padding: 9px 8px; font: inherit; color: inherit; min-width: 90px; }
 .gcell:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: var(--accent-soft); border-radius: 0; }
-.gtable th:nth-child(8), .gtable th:nth-child(9) { min-width: 220px; }
+.gtable th:nth-child(9), .gtable th:nth-child(10) { min-width: 220px; }
+.gtable th.gtags, .gtable td.gtags { width: 86px; padding: 0 4px !important; white-space: nowrap; }
+.gtagbtn { border: 1.5px solid transparent; background: transparent; color: var(--line); width: 25px; height: 28px; border-radius: 7px; font-size: 12.5px; font-weight: 700; padding: 0; }
+.gtagbtn:hover { color: var(--muted); }
+.gtagbtn.tg-p[aria-pressed="true"] { color: var(--t-p); border-color: var(--t-p); background: color-mix(in srgb, var(--t-p) 12%, transparent); }
+.gtagbtn.tg-m[aria-pressed="true"] { color: var(--t-m); border-color: var(--t-m); background: color-mix(in srgb, var(--t-m) 12%, transparent); }
+.gtagbtn.tg-k[aria-pressed="true"] { color: var(--t-k); border-color: var(--t-k); background: color-mix(in srgb, var(--t-k) 12%, transparent); }
 .gtable th.gmemo, .gtable td.gmemo { width: 40px; text-align: center; padding: 0 !important; }
 .gmemobtn { border: 0; background: transparent; color: var(--line); width: 38px; height: 38px; font-size: 16px; border-radius: 8px; position: relative; }
 .gmemobtn:hover { color: var(--muted); }
@@ -483,6 +489,30 @@ a.btn { color: inherit; }
 /* personal meaning + memo */
 .mymean { display: grid; gap: 4px; border: 1.5px dashed var(--star); border-radius: 12px; padding: 10px 14px; background: color-mix(in srgb, var(--star) 7%, transparent); }
 .mymean .lbl, .memo .lbl { font-size: 11.5px; font-weight: 700; letter-spacing: .04em; color: var(--star); }
+.wchip.grad { border-color: var(--star); color: var(--star); font-weight: 700; }
+.wchip.gradbtn.sug, .pillbtn.gradpill.sug { border-color: var(--star); color: var(--star); background: color-mix(in srgb, var(--star) 10%, transparent); font-weight: 700; }
+.pillbtn.gradpill { padding: 7px 10px; }
+.pillbtn.gradpill[aria-pressed="true"] { border-color: var(--star); color: var(--star); }
+.gradask { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border: 1.5px dashed var(--star); border-radius: 12px; background: color-mix(in srgb, var(--star) 8%, transparent); font-size: 14px; }
+.gradask .gbtns { display: flex; gap: 6px; }
+.sc-top .pillbtn { white-space: nowrap; flex: none; }
+.sc-top .favplain { flex: none; }
+@media (max-width: 420px) { .sc-top .pillbtn { padding: 6px 9px; font-size: 12.5px; } .sc-top .pillbtn .pl { display: none; } .sc-top .favplain { width: 28px; } }
+:root { --t-p: #e5484d; --t-m: #2f9e5b; --t-k: #3b82f6; }
+/* 형광펜: 글자 아래쪽 절반쯤에 옅은 색 */
+.ul { --hl: transparent; background: linear-gradient(transparent 45%, color-mix(in srgb, var(--hl) 28%, transparent) 45%); border-radius: 3px; padding: 0 .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ul-p { --hl: var(--t-p); } .ul-m { --hl: var(--t-m); } .ul-k { --hl: var(--t-k); }
+.sc-reading .ul, .hero .reading .ul { display: inline-block; }
+.tagbtns { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+.tagbtn { border: 1.5px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 600; }
+.tagbtn.tg-p[aria-pressed="true"] { border-color: var(--t-p); color: var(--t-p); background: color-mix(in srgb, var(--t-p) 10%, transparent); }
+.tagbtn.tg-m[aria-pressed="true"] { border-color: var(--t-m); color: var(--t-m); background: color-mix(in srgb, var(--t-m) 10%, transparent); }
+.tagbtn.tg-k[aria-pressed="true"] { border-color: var(--t-k); color: var(--t-k); background: color-mix(in srgb, var(--t-k) 10%, transparent); }
+.hero .tagbtns { justify-content: flex-start; }
+.tdots { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
+.tdots i, .cdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; }
+.cdot { margin-right: 5px; vertical-align: middle; }
+.td-p { background: var(--t-p); } .td-m { background: var(--t-m); } .td-k { background: var(--t-k); }
 .memobtn { justify-self: center; border: 1.5px dashed var(--star); color: var(--star); background: color-mix(in srgb, var(--star) 7%, transparent); border-radius: 999px; padding: 6px 16px; font-size: 14px; font-weight: 700; margin-top: 4px; }
 .memobtn[aria-pressed="true"] { background: color-mix(in srgb, var(--star) 16%, transparent); }
 .sc-main .mymean { text-align: left; min-width: min(280px, 78vw); max-width: 420px; }
@@ -695,10 +725,10 @@ a.btn { color: inherit; }
   // ================= state =================
   const S = {
     decks: [], cards: [], byKey: {}, kanji: {}, kidx: new Map(),
-    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, days: {}, notes: {}, levels: {}, words: [],
+    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, grad: {}, tags: {}, days: {}, notes: {}, levels: {}, words: [],
     store: null, ready: false, tab: "learn", stack: [],
     study: null, undo: null,
-    q: "", filter: "all", wlevel: [], wsrc: [], wpos: [], wvt: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
+    q: "", filter: "all", wlevel: [], wsrc: [], wpos: [], wvt: [], wnt: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
   };
   const topPage = () => S.stack[S.stack.length - 1] || null;
 
@@ -710,7 +740,7 @@ a.btn { color: inherit; }
     const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("기기 저장 공간에 저장하지 못했어요."); } };
     return {
       kind: "local",
-      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}) }; },
+      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), grad: get("fsrs.grad", {}), tags: get("fsrs.tags", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}) }; },
       async saveState() { put("fsrs.states", S.states); },
       async deleteState() { put("fsrs.states", S.states); },
       async saveSettings(o) { put("fsrs.settings", o); },
@@ -719,12 +749,14 @@ a.btn { color: inherit; }
       async saveWord() { put("fsrs.words", S.words); },
       async deleteWord() { put("fsrs.words", S.words); put("fsrs.states", S.states); put("fsrs.favs", S.favs); },
       async saveFavs() { put("fsrs.favs", S.favs); },
+      async saveGrad() { put("fsrs.grad", S.grad); },
+      async saveTags() { put("fsrs.tags", S.tags); },
       async saveDay() { put("fsrs.days", S.days); },
       async saveNotes() { put("fsrs.notes", S.notes); },
       async saveLevels() { put("fsrs.levels", S.levels); },
       async saveAll() {
         put("fsrs.states", S.states); put("fsrs.settings", S.settings);
-        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels);
+        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.grad", S.grad); put("fsrs.tags", S.tags); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels);
       },
     };
   }
@@ -766,7 +798,31 @@ a.btn { color: inherit; }
 
   // ================= queue =================
   const qKey = (c, mode) => mode === "write" ? "wr:" + c.key : c.key;
-  const qCards = (deck, mode) => mode === "write" ? deck.cards.filter(c => writeTarget(c)) : deck.cards;
+  // 졸업한 단어는 학습·복습·쓰기·랜덤 복습 어디에도 안 나온다(기록은 그대로)
+  const isGrad = c => !!S.grad[c.key];
+  const qCards = (deck, mode) => deck.cards.filter(c => !isGrad(c) && (mode !== "write" || writeTarget(c)));
+  // 졸업 추천: 복습 간격이 180일 이상으로 길어진 단어
+  const GRAD_DAYS = 180;
+  const gradSuggest = key => { const s = S.states[key]; return !S.grad[key] && s && s.st === "review" && (s.ivl || 0) >= GRAD_DAYS; };
+  // 어려움 표시: p=발음(빨강), m=뜻(초록), k=한자(파랑). 종이에 긋던 밑줄처럼 해당 부분에 색 밑줄.
+  const TAGS = [["p", "발음"], ["m", "뜻"], ["k", "한자"]];
+  const tagOf = key => S.tags[key] || {};
+  function toggleTag(key, t) {
+    const o = Object.assign({}, S.tags[key] || {});
+    if (o[t]) delete o[t]; else o[t] = 1;
+    if (Object.keys(o).length) S.tags[key] = o; else delete S.tags[key];
+    serial("tags", () => S.store.saveTags());
+  }
+  const ul = (html, key, t) => tagOf(key)[t] ? `<span class="ul ul-${t}">${html}</span>` : html;
+  function tagButtons(key) {
+    const g = tagOf(key);
+    return `<div class="tagbtns" role="group" aria-label="어려움 표시">${TAGS.map(([t, l]) => `<button class="tagbtn tg-${t}" type="button" data-act="tag" data-t="${t}" data-key="${esc(key)}" aria-pressed="${!!g[t]}">${l}</button>`).join("")}</div>`;
+  }
+  const tagDots = key => { const g = tagOf(key); const d = TAGS.filter(([t]) => g[t]); return d.length ? `<span class="tdots">${d.map(([t, l]) => `<i class="td-${t}" title="${l}"></i>`).join("")}</span>` : ""; };
+  function setGrad(key, on) {
+    if (on) S.grad[key] = Date.now(); else delete S.grad[key];
+    serial("grad", () => S.store.saveGrad());
+  }
   function deckCounts(deck, now, mode) {
     const cut = nextCutoff(now), start = dayStart(now), cards = qCards(deck, mode);
     const limit = deck.noNew ? 0 : Infinity;
@@ -1286,7 +1342,7 @@ a.btn { color: inherit; }
   function gridBody() {
     return S.grid.rows.map((row, i) => {
       const [cls, label] = gridStatus(i);
-      return `<tr>${gridMemoCell(row, i)}<td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}">${label}</span></td>${gcols().map(([k], j) => k === "lv"
+      return `<tr>${gridMemoCell(row, i)}${gridTagCell(row, i)}<td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}">${label}</span></td>${gcols().map(([k], j) => k === "lv"
         ? `<td><select class="gcell gsel" data-r="${i}" data-c="${j}" aria-label="${i + 1}번 줄 분류">${LEVELS.map(([v, l]) => `<option value="${v}" ${row.lv === v ? "selected" : ""}>${l}</option>`).join("")}</select></td>`
         : `<td><input class="gcell ${k === "w" || k === "r" || k === "ex" ? "jpi" : ""}" data-r="${i}" data-c="${j}" ${k === "pos" ? 'list="posList"' : ""} value="${esc(row[k])}" autocomplete="off"></td>`).join("")}<td><button class="gdel" type="button" data-act="g-del" data-r="${i}" aria-label="${i + 1}번 줄 지우기">×</button></td></tr>`;
     }).join("");
@@ -1294,6 +1350,12 @@ a.btn { color: inherit; }
   function gridMemoCell(row, i) {
     const has = !!(row.memo && row.memo.trim());
     return `<td class="gmemo"><button class="gmemobtn${has ? " has" : ""}" type="button" data-act="g-memo" data-r="${i}" aria-pressed="${!!row.mflag}" aria-label="${i + 1}번 줄 메모" title="${has ? esc(row.memo) : "메모"}">✎</button></td>`;
+  }
+  // 표에서도 발음·뜻·한자 표시를 미리 해 둘 수 있게
+  const g_tags = r => { const g = r.tags || {}; const o = {}; for (const [t] of TAGS) if (g[t]) o[t] = 1; return Object.keys(o).length ? o : null; };
+  function gridTagCell(row, i) {
+    const g = row.tags || {};
+    return `<td class="gtags">${TAGS.map(([t, l]) => `<button class="gtagbtn tg-${t}" type="button" data-act="g-tag" data-r="${i}" data-t="${t}" aria-pressed="${!!g[t]}" aria-label="${i + 1}번 줄 ${l} 표시" title="${l}">${l[0]}</button>`).join("")}</td>`;
   }
   function gridMemoRefresh(i) {
     const btn = document.querySelector(`.gmemobtn[data-r="${i}"]`); if (!btn) return;
@@ -1356,7 +1418,7 @@ a.btn { color: inherit; }
         </div>
         <p class="note">칸을 눌러 바로 쓰거나, 엑셀에서 여러 칸을 복사해 아무 칸에나 붙여 넣으면 그 자리부터 채워져요. 단어만 쓰고 '빈칸 AI로 채우기'를 눌러도 돼요.</p>
       </div>
-      <div class="gwrap"><table class="gtable"><thead><tr><th class="gmemo" title="메모">✎</th><th class="gnum">#</th>${gcols().map(([, l]) => `<th>${l}</th>`).join("")}<th></th></tr></thead><tbody id="gbody">${gridBody()}</tbody></table></div>
+      <div class="gwrap"><table class="gtable"><thead><tr><th class="gmemo" title="메모">✎</th><th class="gtags" title="어려움 표시: 발음·뜻·한자">표시</th><th class="gnum">#</th>${gcols().map(([, l]) => `<th>${l}</th>`).join("")}<th></th></tr></thead><tbody id="gbody">${gridBody()}</tbody></table></div>
       <datalist id="posList">${POS.map(p => `<option value="${p}"></option>`).join("")}</datalist>
       <div class="formactions"><button class="btn small" type="button" data-act="g-more">+ 10줄</button></div>
       <div class="panel form">
@@ -1540,6 +1602,9 @@ a.btn { color: inherit; }
     let memos = 0;
     rows.forEach((r, i) => { if (r.memo && keys[i]) { S.notes[keys[i]] = { memo: r.memo, at: Date.now() }; memos++; } });
     if (memos) serial("notes", () => S.store.saveNotes());
+    let tagged = 0;
+    rows.forEach((r, i) => { const g = g_tags(r); if (g && keys[i]) { S.tags[keys[i]] = g; tagged++; } });
+    if (tagged) serial("tags", () => S.store.saveTags());
     const n = rows.length; S.grid = null;
     const lvs = [...new Set(rows.map(rowLv))];
     S.stack = []; S.tab = "words"; S.wlevel = []; { const sid = direct ? "mine" : (importedMetas.find(m => m.name === src) || {}).id; S.wsrc = sid ? [sid] : []; } S.filter = "all"; S.q = ""; S.wordLimit = 100;
@@ -1633,15 +1698,18 @@ a.btn { color: inherit; }
   function sourcesOfLevel(lv) {
     return S.decks.map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, n: d.cards.filter(c => cardLevel(c) === lv).length })).filter(x => x.n);
   }
+  // 단어 탭: 기본은 졸업 안 한 단어, '졸업' 칩을 고르면 졸업한 단어만
+  const wordPool = () => S.cards.filter(c => (S.filter === "grad") === isGrad(c));
   function filteredCards() {
     const q = S.q.trim();
-    return S.cards.filter(c => {
+    return wordPool().filter(c => {
       if (S.wlevel.length && !S.wlevel.includes(cardLevel(c))) return false;
       if (S.wsrc.length && !S.wsrc.includes(c.deck)) return false;
-      if (S.wpos.length) { const g = posGroup(c); if (!S.wpos.includes(g)) return false; if (g === "verb" && S.wvt.length && !S.wvt.some(v => (c.pos || "").includes(v))) return false; }
+      if (S.wpos.length) { const g = posGroup(c); if (!S.wpos.includes(g)) return false; if (g === "verb" && S.wvt.length && !S.wvt.some(v => (c.pos || "").includes(v))) return false; if (g === "noun" && S.wnt.length && !S.wnt.includes(isSuru(c) ? "suru" : "plain")) return false; }
       if (!matchWord(c, q)) return false;
       const f = S.filter, s = S.states[c.key];
       if (f === "fav") return !!S.favs[c.key];
+      if (f.startsWith("tag-")) return !!tagOf(c.key)[f.slice(4)];
       if (f === "new") return !s;
       if (f === "learn") return s && (s.st === "learning" || s.st === "relearning");
       if (f === "rev") return s && s.st === "review";
@@ -1653,7 +1721,7 @@ a.btn { color: inherit; }
     const w = hlK ? esc(c.w).split(esc(hlK)).join(`<mark>${esc(hlK)}</mark>`) : esc(c.w);
     return `<button class="row" type="button" data-act="word" data-key="${esc(c.key)}">
       <span class="dot ${st.cls}" title="${st.label}"></span>
-      <span style="min-width:0"><span class="w" lang="ja">${w}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}<div class="m">${esc(c.ko)}</div><div class="src">${esc(srcName(c))}</div></span>
+      <span style="min-width:0"><span class="w" lang="ja">${w}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}${tagDots(c.key)}<div class="m">${esc(c.ko)}</div><div class="src">${esc(srcName(c))}</div></span>
       <span>${S.favs[c.key] ? '<span class="star" aria-label="즐겨찾기">★</span>' : ""}</span>
     </button>`;
   }
@@ -1673,30 +1741,36 @@ a.btn { color: inherit; }
   }
   const bookName = d => d.mineDeck ? "직접 추가" : d.name;
   const POS_GROUPS = [["noun", "명사"], ["verb", "동사"], ["iadj", "い형용사"], ["naadj", "な형용사"], ["adv", "부사"], ["etc", "기타"], ["none", "품사 없음"]];
+  // する동사(サ変): 한자로만 된 단어인데 품사가 동사로 적혔거나, 품사에 'する'가 들어간 것 → 명사 쪽으로 본다(저장된 품사는 그대로)
+  const KANJI_ONLY = /^[\u4e00-\u9fff々〆ヵヶ]+$/;
+  function isSuru(c) { const p = (c.pos || "").trim(), w = (c.w || "").trim(); return /する|サ변|サ変/.test(p) || (p.startsWith("동사") && KANJI_ONLY.test(w)); }
   function posGroup(c) {
     const p = (c.pos || "").trim();
     if (!p) return "none";
+    if (isSuru(c)) return "noun";
     if (p.startsWith("동사")) return "verb";
     return { "명사": "noun", "い형용사": "iadj", "な형용사": "naadj", "부사": "adv" }[p] || "etc";
   }
   function posRow() {
     // 숫자는 위 급수·출처 선택을 반영
-    const base = S.cards.filter(c => (!S.wlevel.length || S.wlevel.includes(cardLevel(c))) && (!S.wsrc.length || S.wsrc.includes(c.deck)));
-    const n = {}; let vi = 0, vt = 0;
-    for (const c of base) { const g = posGroup(c); n[g] = (n[g] || 0) + 1; if (g === "verb") { if ((c.pos || "").includes("자동사")) vi++; if ((c.pos || "").includes("타동사")) vt++; } }
+    const base = wordPool().filter(c => (!S.wlevel.length || S.wlevel.includes(cardLevel(c))) && (!S.wsrc.length || S.wsrc.includes(c.deck)));
+    const n = {}; let vi = 0, vt = 0, ns = 0, nn = 0;
+    for (const c of base) { const g = posGroup(c); n[g] = (n[g] || 0) + 1; if (g === "verb") { if ((c.pos || "").includes("자동사")) vi++; if ((c.pos || "").includes("타동사")) vt++; } if (g === "noun") { if (isSuru(c)) ns++; else nn++; } }
     const chip = (act, k, l, cnt, sel) => `<button class="chip${cnt || k === "all" || sel.includes(k) ? "" : " dim"}" type="button" data-act="${act}" data-v="${k}" aria-pressed="${k === "all" ? !sel.length : sel.includes(k)}">${l}${k === "all" ? "" : ` <span class="num muted">${cnt}</span>`}</button>`;
     const groups = POS_GROUPS.filter(([k]) => k !== "none" || n.none);
     let html = `<div class="chips posrow"><span class="rowlbl">품사</span>${chip("wpos", "all", "전체", 0, S.wpos)}${groups.map(([k, l]) => chip("wpos", k, l, n[k] || 0, S.wpos)).join("")}</div>`;
+    if (S.wpos.includes("noun")) html += `<div class="chips posrow sub"><span class="rowlbl">명사</span>${chip("wnt", "all", "전체", 0, S.wnt)}${chip("wnt", "plain", "일반 명사", nn, S.wnt)}${chip("wnt", "suru", "する동사", ns, S.wnt)}</div>`;
     if (S.wpos.includes("verb")) html += `<div class="chips posrow sub"><span class="rowlbl">동사</span>${chip("wvt", "all", "전체", 0, S.wvt)}${chip("wvt", "자동사", "자동사", vi, S.wvt)}${chip("wvt", "타동사", "타동사", vt, S.wvt)}</div>`;
     return html;
   }
   function viewWords() {
+    if (S.filter === "grad" && !Object.keys(S.grad).some(k => S.byKey[k])) S.filter = "all";
     // 1줄: 급수, 2줄: 출처. 둘 다 '전체'가 기본이고 서로 겹쳐서 거른다. 숫자는 다른 줄의 선택을 반영한다.
     // 같은 줄은 여러 개 골라 '또는', 두 줄 사이는 '그리고'. 숫자는 다른 줄의 선택을 반영한다.
     S.wsrc = S.wsrc.filter(id => S.decks.some(d => d.id === id && d.cards.length));
     const lvCount = {}, srcCount = {};
     let lvAll = 0, srcAll = 0;
-    for (const c of S.cards) {
+    for (const c of wordPool()) {
       const l = cardLevel(c);
       if (!S.wsrc.length || S.wsrc.includes(c.deck)) { lvCount[l] = (lvCount[l] || 0) + 1; lvAll++; }
       if (!S.wlevel.length || S.wlevel.includes(l)) { srcCount[c.deck] = (srcCount[c.deck] || 0) + 1; srcAll++; }
@@ -1708,7 +1782,9 @@ a.btn { color: inherit; }
       <div class="levels seven" role="group" aria-label="급수">${lvBtn("all", "전체", lvAll)}${LEVELS.map(([k, l]) => lvBtn(k, l, lvCount[k] || 0)).join("")}</div>
       <div class="levels books" role="group" aria-label="출처">${srcBtn("all", "전체", srcAll)}${S.decks.filter(d => d.cards.length).map(d => srcBtn(d.id, bookName(d), srcCount[d.id] || 0)).join("")}</div>`;
     const subChips = "";
-    const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"]]
+    const nGrad = Object.keys(S.grad).filter(k => S.byKey[k]).length;
+    const tagN = t => Object.entries(S.tags).filter(([k, g]) => g[t] && S.byKey[k]).length;
+    const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"], ...TAGS.filter(([t]) => tagN(t)).map(([t, l]) => ["tag-" + t, `<i class="cdot td-${t}"></i>${l} ${tagN(t)}`]), ...(nGrad ? [["grad", "🎓 졸업 " + nGrad]] : [])]
       .map(([k, l]) => `<button class="chip" type="button" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${l}</button>`).join("");
     return `<div class="stack">
       ${top}
@@ -1839,7 +1915,11 @@ a.btn { color: inherit; }
     }
     const w = S.states["wr:" + key];
     const cnt = (s ? `<span class="wchip cnt">학습 ${s.reps || 0}회</span>` : "") + (w ? `<span class="wchip cnt">쓰기 ${w.reps || 0}회</span>` : "");
-    return `<div class="wchips">${cnt}<span class="wchip ${st.cls}">● ${st.label}</span>${next ? `<span class="wchip">${next}</span>` : ""}${q}</div>`;
+    if (S.grad[key]) return `<div class="wchips">${cnt}<span class="wchip grad">🎓 졸업한 단어</span><button class="wchip" type="button" data-act="grad-off" data-key="${esc(key)}">졸업 취소</button></div>
+      <p class="note">학습·복습·쓰기에 나오지 않아요. 졸업을 취소하면 원래 복습 일정대로 다시 나와요.</p>`;
+    const sug = gradSuggest(key);
+    const gbtn = `<button class="wchip gradbtn${sug ? " sug" : ""}" type="button" data-act="grad-on" data-key="${esc(key)}">🎓 ${sug ? "졸업할까요?" : "졸업"}</button>`;
+    return `<div class="wchips">${cnt}<span class="wchip ${st.cls}">● ${st.label}</span>${next ? `<span class="wchip">${next}</span>` : ""}${q}${gbtn}</div>`;
   }
   function simSection(page, c) {
     if (c.html) return "";
@@ -1867,9 +1947,10 @@ a.btn { color: inherit; }
       const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
       body = `<div class="hero">
         <div class="wchips"><span class="decktag" style="margin:0">${esc(levelLabel(cardLevel(c)))}</span>${S.states[c.key] ? `<span class="ago">${agoLabel(c.key)}</span>` : ""}</div>
-        <div class="hero-top"><div class="word" lang="ja">${linkText(c.w)}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w)}${favBtn}</div></div>
-        ${readingHtml(c) ? `<div class="reading" lang="ja">${readingHtml(c)}</div>` : ""}
-        <div class="meaning">${esc(c.ko)} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
+        <div class="hero-top"><div class="word" lang="ja">${ul(linkText(c.w), c.key, "k")}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w)}${favBtn}</div></div>
+        ${readingHtml(c) ? `<div class="reading" lang="ja">${ul(readingHtml(c), c.key, "p")}</div>` : ""}
+        <div class="meaning">${ul(esc(c.ko), c.key, "m")} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
+        ${tagButtons(c.key)}
         
         <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">출처 · ${esc(srcName(c))}</span></div>
         ${statusChips(c.key)}
@@ -2125,10 +2206,12 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   function studiedCards(mode) { const all = groupById("all"); return all ? qCards(all, mode).filter(c => { const s = S.states[qKey(c, mode)]; return s && s.st && s.st !== "new"; }) : []; }
   function randFiltered(mode) {
     const lv = S.settings.rlv || [], src = S.settings.rsrc || [];
-    return studiedCards(mode).filter(c => (!S.settings.rfav || S.favs[c.key]) && (!lv.length || lv.includes(cardLevel(c))) && (!src.length || src.includes(c.deck)));
+    const rt = S.settings.rtags || [];
+    return studiedCards(mode).filter(c => (!S.settings.rfav || S.favs[c.key]) && (!rt.length || rt.some(t => tagOf(c.key)[t])) && (!lv.length || lv.includes(cardLevel(c))) && (!src.length || src.includes(c.deck)));
   }
   function randRows(mode) {
-    const lv = S.settings.rlv || [], src = S.settings.rsrc || [], fav = !!S.settings.rfav, base = studiedCards(mode).filter(c => !fav || S.favs[c.key]);
+    const rt = S.settings.rtags || [];
+    const lv = S.settings.rlv || [], src = S.settings.rsrc || [], fav = !!S.settings.rfav, base = studiedCards(mode).filter(c => (!fav || S.favs[c.key]) && (!rt.length || rt.some(t => tagOf(c.key)[t])));
     const nFav = studiedCards(mode).filter(c => S.favs[c.key]).length;
     const lc = {}, sc = {}; let la = 0, sa = 0;
     for (const c of base) { const l = cardLevel(c); if (!src.length || src.includes(c.deck)) { lc[l] = (lc[l] || 0) + 1; la++; } if (!lv.length || lv.includes(l)) { sc[c.deck] = (sc[c.deck] || 0) + 1; sa++; } }
@@ -2136,7 +2219,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     return `<div class="dirwrap"><span class="dirhead">범위 <span class="muted" style="font-weight:400">· 여러 개 고를 수 있어요</span></span>
       <div class="levels seven" role="group" aria-label="급수">${btn("rlv", "all", "전체", la, lv)}${LEVELS.map(([k, l]) => btn("rlv", k, l, lc[k] || 0, lv)).join("")}</div>
       <div class="levels books" role="group" aria-label="출처">${btn("rsrc", "all", "전체", sa, src)}${S.decks.filter(d => d.cards.length).map(d => btn("rsrc", d.id, d.mineDeck ? "직접 추가" : d.name, sc[d.id] || 0, src)).join("")}</div>
-      <div class="chips"><button class="chip" type="button" data-act="rfav" aria-pressed="${fav}" ${nFav || fav ? "" : "disabled"}>★ 즐겨찾기만 <span class="num muted">${nFav}</span></button></div></div>`;
+      <div class="chips"><button class="chip" type="button" data-act="rfav" aria-pressed="${fav}" ${nFav || fav ? "" : "disabled"}>★ 즐겨찾기만 <span class="num muted">${nFav}</span></button>${TAGS.map(([t, l]) => { const n = studiedCards(mode).filter(c => tagOf(c.key)[t]).length; return `<button class="chip" type="button" data-act="rtag" data-t="${t}" aria-pressed="${rt.includes(t)}" ${n || rt.includes(t) ? "" : "disabled"}><i class="cdot td-${t}"></i>${l} <span class="num muted">${n}</span></button>`; }).join("")}</div></div>`;
   }
   function pickBounds(page) {
     if (page.rand) {
@@ -2276,8 +2359,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const say = c.html ? htmlText(c.front) : (c.r || c.w);
     let main;
     if (c.html) main = `<div class="html-front" lang="ja">${sanitize(c.front)}</div>${show ? `<div class="html-back" lang="ja">${sanitize(c.back)}</div>` : ""}`;
-    else if (m2w) main = `<div class="bigword ko">${esc(c.ko)}</div>${show ? `${kana && c.r ? `<div class="sc-reading" lang="ja">${readingHtml(c)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${esc(c.w)}</button>` : ""}${show ? memoToggleHtml(sess, c.key) : ""}`;
-    else main = `${kana && readingHtml(c) ? `<div class="sc-reading" lang="ja">${readingHtml(c)}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${esc(c.w)}</button>${show ? `<div class="sc-mean">${esc(c.ko)}</div>${memoToggleHtml(sess, c.key)}` : ""}`;
+    else if (m2w) main = `<div class="bigword ko">${ul(esc(c.ko), c.key, "m")}</div>${show ? `${kana && c.r ? `<div class="sc-reading" lang="ja">${ul(readingHtml(c), c.key, "p")}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja">${ul(esc(c.w), c.key, "k")}</button>` : ""}${show ? memoToggleHtml(sess, c.key) + tagButtons(c.key) : ""}`;
+    else main = `${kana && readingHtml(c) ? `<div class="sc-reading" lang="ja">${ul(readingHtml(c), c.key, "p")}</div>` : ""}<button class="bigword" type="button" data-act="speak" data-text="${esc(say)}" lang="ja" aria-label="발음 듣기">${ul(esc(c.w), c.key, "k")}</button>${show ? `<div class="sc-mean">${ul(esc(c.ko), c.key, "m")}</div>${memoToggleHtml(sess, c.key)}${tagButtons(c.key)}` : ""}`;
     const ex = c.html || !c.ex || !showEx ? "" : `<div class="sc-ex" lang="ja" role="button" tabindex="0" data-act="speak" data-text="${esc(c.ex)}" aria-label="예문 듣기">${exampleHtml(c, kana, m2w && !show)}</div>${show && c.exko ? `<div class="sc-exko">${esc(c.exko)}</div>` : ""}`;
     return `<div class="stack">${top}
       <div class="scard">
@@ -2286,8 +2369,10 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
           <button class="favplain" type="button" data-act="fav" data-key="${esc(c.key)}" aria-pressed="${fav}" aria-label="즐겨찾기">${ICON.star}</button>
           <span class="grow"></span>
           ${c.html ? "" : `${c.ex ? `<button class="pillbtn tg" type="button" data-act="tg-ex" aria-pressed="${showEx}">예문</button>` : ""}${c.r ? `<button class="pillbtn tg" type="button" data-act="tg-kana" aria-pressed="${kana}">히라가나</button>` : ""}`}
-          <button class="pillbtn" type="button" data-act="word" data-key="${esc(c.key)}">${ICON.detail}상세</button>
+          <button class="pillbtn gradpill${gradSuggest(c.key) ? " sug" : ""}" type="button" data-act="grad-ask" aria-pressed="${sess.gradAsk === c.key}" aria-label="졸업" title="${gradSuggest(c.key) ? "복습 간격이 반년을 넘었어요. 졸업할까요?" : "졸업: 이제 안 봐도 되는 단어"}">🎓${gradSuggest(c.key) ? "?" : ""}</button>
+          <button class="pillbtn" type="button" data-act="word" data-key="${esc(c.key)}" aria-label="상세">${ICON.detail}<span class="pl">상세</span></button>
         </div>
+        ${sess.gradAsk === c.key ? `<div class="gradask" role="alertdialog" aria-label="졸업 확인"><span>🎓 이 단어를 졸업시킬까요? 앞으로 공부에 안 나와요.</span><span class="gbtns"><button class="btn small primary" type="button" data-act="grad-now">졸업</button><button class="btn small ghost" type="button" data-act="grad-cancel">취소</button></span></div>` : ""}
         <div class="sc-main">${main}</div>
         ${ex}
         <div class="sc-bottom">
@@ -2380,7 +2465,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   function writeActions(card) {
     const st = S.write;
     const head = st.revealed
-      ? `<p class="wmeta"><b lang="ja">${esc(card.w)}</b> ${card.r ? `<span lang="ja">${esc(card.r)}</span> · ` : ""}${esc(card.ko)} <span class="src">· ${esc(srcName(card))}</span> <button class="btn small ghost" type="button" data-act="word" data-key="${esc(card.key)}">단어 페이지</button></p>`
+      ? tagButtons(card.key) + `<p class="wmeta"><b lang="ja">${esc(card.w)}</b> ${card.r ? `<span lang="ja">${esc(card.r)}</span> · ` : ""}${esc(card.ko)} <span class="src">· ${esc(srcName(card))}</span> <button class="btn small ghost" type="button" data-act="word" data-key="${esc(card.key)}">단어 페이지</button></p>`
       : `<button class="btn reveal soft" type="button" data-act="wreveal">정답 보기</button>`;
     return head + twoButtons(st) + '<p class="hint">스페이스 정답 보기 · 1 다시 학습 · 2 알고있음 · Z 되돌리기</p>';
   }
@@ -2481,7 +2566,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     let streak = 0; { let t = now; if (!(S.days[todayK] && S.days[todayK].rev)) t = addDays(now, -1); for (;;) { const d = S.days[dayKey(t)]; if (d && d.rev > 0) { streak++; t = addDays(t, -1); } else break; } }
     const today = S.days[todayK] || { rev: 0, new: 0 };
     let nNew = 0, nLearn = 0, nRev = 0, nLong = 0;
-    for (const c of S.cards) { const s = S.states[c.key]; if (!s) nNew++; else if (s.st === "learning" || s.st === "relearning") nLearn++; else if (s.s >= 21) nLong++; else nRev++; }
+    let nGrad = 0;
+    for (const c of S.cards) { const s = S.states[c.key]; if (S.grad[c.key]) { nGrad++; continue; } if (!s) nNew++; else if (s.st === "learning" || s.st === "relearning") nLearn++; else if (s.s >= 21) nLong++; else nRev++; }
     const total = S.cards.length || 1;
     const cols = []; let max = 1;
     for (let i = 13; i >= 0; i--) { const t = addDays(now, -i), k = dayKey(t), d = S.days[k] || { rev: 0 }; max = Math.max(max, d.rev); cols.push({ k, v: d.rev, day: new Date(dayStart(t)).getDate(), today: i === 0 }); }
@@ -2497,8 +2583,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
         <div class="chart">${cols.map(c => `<div class="col ${c.today ? "today" : ""}"><span class="v">${c.v || ""}</span><span class="barv ${c.v ? "" : "zero"}" style="height:${c.v ? Math.max(4, c.v / max * 100) : 2}%"></span><span class="d">${c.day}</span></div>`).join("")}</div>
       </section>
       <section class="panel"><h2 class="section-title">전체 단어 ${S.cards.length}개의 상태</h2>
-        <div class="dist">${seg(nLong, "--accent")}${seg(nRev, "--c-rev")}${seg(nLearn, "--c-learn")}</div>
-        <div class="legend num"><span style="--c:var(--accent)">장기 기억 ${nLong}</span><span style="--c:var(--c-rev)">복습 중 ${nRev}</span><span style="--c:var(--c-learn)">학습 중 ${nLearn}</span><span style="--c:var(--line)">새 카드 ${nNew}</span></div>
+        <div class="dist">${seg(nGrad, "--star")}${seg(nLong, "--accent")}${seg(nRev, "--c-rev")}${seg(nLearn, "--c-learn")}</div>
+        <div class="legend num"><span style="--c:var(--accent)">장기 기억 ${nLong}</span><span style="--c:var(--c-rev)">복습 중 ${nRev}</span><span style="--c:var(--c-learn)">학습 중 ${nLearn}</span><span style="--c:var(--line)">새 카드 ${nNew}</span>${nGrad ? `<span style="--c:var(--star)">🎓 졸업 ${nGrad}</span>` : ""}</div>
         <p class="note" style="margin-top:10px">장기 기억은 기억 안정도가 21일 이상인 단어예요.</p>
       </section>
     </div>`;
@@ -2531,6 +2617,19 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
         sess.queued = true; render(); toast(`${n}개를 오늘 복습에 넣었어요.`); break; }
       case "reveal": if (S.study && S.study.cur) { S.study.revealed = !S.study.revealed; render(); } break;
       case "furi-go": furiFillAll(); break;
+      case "grad-on": setGrad(t.dataset.key, true); render(); toast("졸업했어요. 단어 탭의 🎓 졸업에서 볼 수 있어요."); break;
+      case "grad-off": setGrad(t.dataset.key, false); render(); toast("졸업을 취소했어요."); break;
+      case "tag": { toggleTag(t.dataset.key, t.dataset.t);
+        if (page && page.t === "write") { t.setAttribute("aria-pressed", String(!!tagOf(t.dataset.key)[t.dataset.t])); }
+        else { const y = window.scrollY; render(); window.scrollTo(0, y); }
+        break; }
+      case "rtag": { const v = t.dataset.t, cur = S.settings.rtags || []; S.settings.rtags = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v]; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "grad-ask": if (S.study && S.study.cur) { S.study.gradAsk = S.study.gradAsk === S.study.cur ? null : S.study.cur; render(); } break;
+      case "grad-cancel": if (S.study) { S.study.gradAsk = null; render(); } break;
+      case "grad-now": { const sess = S.study; if (!sess || !sess.cur) break; const k = sess.cur;
+        setGrad(k, true); sess.queue = sess.queue.filter(x => x !== k); sess.next = sess.next.filter(x => x !== k);
+        sess.total = Math.max(0, sess.total - 1); sess.cur = null; sess.revealed = false; sess.gradAsk = null;
+        render(); toast("졸업했어요. 이 단어는 이제 공부에 안 나와요. 단어 탭 🎓에서 되돌릴 수 있어요."); break; }
       case "tg-memo": if (S.study && S.study.cur) { S.study.memoKey = S.study.memoKey === S.study.cur ? null : S.study.cur; render(); } break;
       case "tg-ex": S.settings.hideEx = !S.settings.hideEx; saveSettingsSoon(); render(); break;
       case "tg-kana": S.settings.showKana = !S.settings.showKana; saveSettingsSoon(); render(); break;
@@ -2564,6 +2663,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "g-ai": gridAiFill(); break;
       case "g-save": saveGrid(); break;
       case "g-memomode": S.grid.memoMode = t.dataset.v; S.settings.gridMemoMode = t.dataset.v; saveSettingsSoon(); gridRedrawAll(); break;
+      case "g-tag": { const row = S.grid.rows[+t.dataset.r]; if (!row) break; const tg = t.dataset.t; row.tags = Object.assign({}, row.tags || {}); if (row.tags[tg]) delete row.tags[tg]; else row.tags[tg] = 1; t.setAttribute("aria-pressed", String(!!row.tags[tg])); break; }
       case "g-memo": { const i = +t.dataset.r, row = S.grid.rows[i]; if (!row) break;
         if (S.grid.memoMode === "now") gridMemoEdit(i);
         else { row.mflag = !row.mflag; gridMemoRefresh(i); }
@@ -2596,12 +2696,13 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "delword-no": page.draft = readForm(); page.confirmDel = false; render(); break;
       case "delword-yes": deleteWord(); break;
       case "filter": S.filter = t.dataset.f; S.wordLimit = 100; render(); break;
-      case "wlevel": case "wsrc": case "wpos": case "wvt": { const key = a, v = t.dataset.v, multi = S.settings.wMulti !== false;
+      case "wlevel": case "wsrc": case "wpos": case "wvt": case "wnt": { const key = a, v = t.dataset.v, multi = S.settings.wMulti !== false;
         S[key] = v === "all" ? [] : multi ? (S[key].includes(v) ? S[key].filter(x => x !== v) : [...S[key], v]) : (S[key].length === 1 && S[key][0] === v ? [] : [v]);
         if (!S.wpos.includes("verb")) S.wvt = [];
+        if (!S.wpos.includes("noun")) S.wnt = [];
         S.wordLimit = 100; const y = window.scrollY; render(); window.scrollTo(0, y); break; }
       case "wmulti": { const m = t.dataset.v === "1"; S.settings.wMulti = m; saveSettingsSoon();
-        if (!m) { S.wlevel = S.wlevel.slice(-1); S.wsrc = S.wsrc.slice(-1); S.wpos = S.wpos.slice(-1); S.wvt = S.wvt.slice(-1); if (!S.wpos.includes("verb")) S.wvt = []; }
+        if (!m) { S.wlevel = S.wlevel.slice(-1); S.wsrc = S.wsrc.slice(-1); S.wpos = S.wpos.slice(-1); S.wvt = S.wvt.slice(-1); S.wnt = S.wnt.slice(-1); if (!S.wpos.includes("verb")) S.wvt = []; if (!S.wpos.includes("noun")) S.wnt = []; }
         S.wordLimit = 100; render(); break; }
       case "more-words": { S.wordLimit += 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); break; }
       case "kfilter": { const f = t.dataset.f; S.kfilter = f === "all" ? [] : (S.kfilter.includes(f) ? S.kfilter.filter(x => x !== f) : [...S.kfilter, f]); S.kanjiLimit = 240; render(); break; }
@@ -2724,6 +2825,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     if (Array.isArray(o.rsrc)) S.settings.rsrc = o.rsrc.filter(x => typeof x === "string");
     if (Number.isFinite(o.randSize)) S.settings.randSize = o.randSize;
     if (typeof o.rfav === "boolean") S.settings.rfav = o.rfav;
+    if (Array.isArray(o.rtags)) S.settings.rtags = o.rtags.filter(x => ["p", "m", "k"].includes(x));
     if (typeof o.wMulti === "boolean") S.settings.wMulti = o.wMulti;
     if (o.gridMemoMode === "now" || o.gridMemoMode === "later") S.settings.gridMemoMode = o.gridMemoMode;
     if (Number.isFinite(o.sessSize)) S.settings.sessSize = o.sessSize;
@@ -2813,7 +2915,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
 
   // ================= backup =================
   async function exportBackup() {
-    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, days: S.days, notes: S.notes, levels: S.levels, decks: importedMetas };
+    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, grad: S.grad, tags: S.tags, days: S.days, notes: S.notes, levels: S.levels, decks: importedMetas };
     const name = "나만의단어장-백업-" + dayKey(Date.now()) + ".json";
     const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
     try {
@@ -2836,7 +2938,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     try {
       const j = JSON.parse((await file.text()).replace(/^\uFEFF/, ""));
       if (!j || j.format !== "fsrs-backup") { toast("나만의 단어장 백업 파일이 아니에요."); return; }
-      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; migrateNotes();
+      S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.grad = j.grad || {}; S.tags = j.tags || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; migrateNotes();
       importedMetas = Array.isArray(j.decks) ? j.decks : [];
       applySettings(j.settings);
       S.undo = null; S.stack = []; S.study = null;
@@ -2853,7 +2955,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const data = await S.store.loadAll();
     S.states = data.states || {};
     applySettings(data.settings);
-    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {};
+    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.grad = data.grad || {}; S.tags = data.tags || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {};
     if (migrateNotes()) S.store.saveNotes();
     rebuild();
     S.ready = true;
