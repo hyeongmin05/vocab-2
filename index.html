@@ -488,6 +488,19 @@ a.btn { color: inherit; }
 .wsortrow .seg { display: flex; gap: 4px; }
 .wsortrow .chip { font-size: 12px; padding: 3px 9px; }
 .nasuf { font-size: .55em; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.wfbtn { position: relative; }
+.wfbtn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.wfn { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 700; margin-left: 4px; }
+.wfact { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: -4px; }
+.wfchip { all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.wfclear { all: unset; cursor: pointer; font-size: 12.5px; color: var(--muted); padding: 4px 6px; text-decoration: underline; }
+.wfpanel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 12px; }
+.wfhead { display: flex; align-items: center; justify-content: space-between; }
+.wfhead .selmode { margin: 0; }
+.wfsec { display: grid; gap: 6px; min-width: 0; }
+.wflbl { font-size: 12px; color: var(--muted); font-weight: 600; }
+.wfsec .chips { margin: 0; }
+.wffoot { display: flex; justify-content: space-between; gap: 8px; }
 .gsum { font-size: 14px; margin: 4px 0 0; }
 .kcands { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-size: 13px; }
 .kcands:empty { display: none; }
@@ -612,6 +625,256 @@ a.btn { color: inherit; }
   .card, .hero { animation: in .18s ease-out; }
   @keyframes in { from { transform: translateY(4px); opacity: .6; } to { transform: none; opacity: 1; } }
 }
+
+/* ===== 학습 탭: 책장 · 카드 서랍 · 뜯기 ===== */
+:root { --wood1: #E3DCCD; --wood2: #D8CFBC; --plank1: #A98A5E; --plank2: #8A6C44; --woodink: #6B5634; --paper: #FBF8F1; --paperline: #E2DACA; --cab1: #8F6F47; --cab2: #7A5C38; --drw1: #E9DFCB; --drw2: #DDD0B6; --drwink: #3E2F19; --rib: #D8B44A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wood1: #2B2620; --wood2: #24201B; --plank1: #6E5A3E; --plank2: #574630; --woodink: #CDB894; --cab1: #4F3F2B; --cab2: #403323; --drw1: #3B3329; --drw2: #332C23; --drwink: #EFE3C8; } }
+:root[data-theme="dark"] { --wood1: #2B2620; --wood2: #24201B; --plank1: #6E5A3E; --plank2: #574630; --woodink: #CDB894; --cab1: #4F3F2B; --cab2: #403323; --drw1: #3B3329; --drw2: #332C23; --drwink: #EFE3C8; }
+.lhero { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 16px 18px; }
+.lh-big { display: flex; align-items: baseline; gap: 8px; }
+.lh-big b { font: 700 40px/1 var(--f-word); letter-spacing: -.5px; }
+.lh-big span { color: var(--muted); font-size: 14px; }
+.lh-sub { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+.lh-sub em { font-style: normal; font-weight: 700; color: var(--c-rev); }
+.lh-btns { display: flex; gap: 8px; margin-top: 14px; }
+.lh-check { display: block; width: 100%; text-align: left; margin-top: 12px; padding: 10px 12px; border: 1.5px dashed var(--star); border-radius: 12px; background: color-mix(in srgb, var(--star) 9%, transparent); color: var(--ink); font: inherit; cursor: pointer; }
+.lh-check b { display: block; font-size: 14px; } .lh-check span { font-size: 12px; color: var(--muted); word-break: keep-all; }
+.lhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lhead h3 { font-size: 15px; margin: 0; }
+.lhead .seg { flex: none; margin: 0; }
+.lplace { position: relative; }
+.shelf { position: relative; padding: 16px 12px 0; background: linear-gradient(var(--wood1), var(--wood2)); border-radius: 12px 12px 4px 4px; box-shadow: inset 0 6px 14px rgba(70,50,20,.12); }
+.shelf + .shelf { margin-top: 14px; }
+.srow { display: flex; align-items: flex-end; gap: 6px; min-height: 172px; }
+.srow .grow { flex: 1; }
+.plank { height: 14px; margin: 0 -12px; background: linear-gradient(var(--plank1), var(--plank2)); border-radius: 0 0 4px 4px; box-shadow: 0 5px 8px rgba(60,40,10,.22); }
+.lbk { position: relative; display: flex; align-items: flex-end; padding: 0; border: 0; background: none; cursor: pointer; transition: transform .25s ease; font: inherit; color: #fff; -webkit-tap-highlight-color: transparent; }
+.lbk .sp { position: relative; width: var(--w); height: var(--h); background: var(--bc); border-radius: 3px 3px 1px 1px; display: flex; flex-direction: column; align-items: center; padding: 0 0 8px; overflow: hidden; box-shadow: inset -3px 0 0 rgba(0,0,0,.16), inset 2px 0 0 rgba(255,255,255,.12), 1px 0 2px rgba(0,0,0,.22); transition: box-shadow .25s; }
+.lbk .sp::before, .lbk .sp::after { content: ""; position: absolute; left: 0; right: 0; height: 2px; background: rgba(255,255,255,.28); }
+.lbk .sp::before { top: 16px; } .lbk .sp::after { bottom: 30px; }
+.lbk .t { writing-mode: vertical-rl; font: 700 12.5px/1.2 var(--f-word); letter-spacing: .5px; flex: 1; min-height: 0; max-width: calc(100% - 6px); margin-top: 26px; overflow: hidden; word-break: keep-all; overflow-wrap: anywhere; }
+.lbk .n { font-size: 10.5px; opacity: .92; margin-top: 10px; }
+.lbk .was { width: var(--gw); height: calc(var(--h) - 4px); border: 1.5px dashed var(--plank1); border-left: 0; border-radius: 0 3px 0 0; opacity: .75; }
+.lbk .rib, .ldr .rib { position: absolute; top: -6px; right: calc(var(--gw, 0px) + 5px); width: 8px; height: 30px; background: var(--rib); clip-path: polygon(0 0,100% 0,100% 100%,50% 80%,0 100%); }
+.lbk.out { transform: translateY(-16px); }
+.lbk.out .sp { box-shadow: inset -3px 0 0 rgba(0,0,0,.16), 0 12px 18px rgba(0,0,0,.3); }
+.lbk:focus-visible, .ldr:focus-visible, .lpile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.lpile { width: 84px; height: 156px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; border: 0; background: none; cursor: pointer; padding: 0 0 1px; font: inherit; color: var(--woodink); flex: none; }
+.lpile i { display: block; width: 72px; height: 5px; background: var(--paper); border: 1px solid var(--paperline); border-radius: 1px; margin-top: -1px; }
+.lpile i:nth-of-type(odd) { transform: translateX(2px) rotate(-1.2deg); } .lpile i:nth-of-type(3n) { transform: translateX(-3px) rotate(1.4deg); }
+.lpile .lbl { position: absolute; top: 4px; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 700; }
+.lpile .lbl b { display: block; font: 700 22px/1.2 var(--f-word); }
+.lpile .none { font-size: 11px; opacity: .8; margin-bottom: 6px; border: 1.5px dashed var(--plank1); border-radius: 4px; padding: 14px 10px; line-height: 1.4; }
+.cab { background: linear-gradient(var(--cab1), var(--cab2)); border-radius: 12px; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; box-shadow: 0 6px 14px rgba(60,40,10,.22); }
+.ldr { position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; height: 118px; border: 0; border-radius: 6px; background: linear-gradient(var(--drw1), var(--drw2)); box-shadow: inset 0 -3px 0 rgba(0,0,0,.08); padding: 10px 12px; text-align: left; font: inherit; color: var(--drwink); cursor: pointer; overflow: hidden; transition: transform .25s, box-shadow .25s; -webkit-tap-highlight-color: transparent; }
+.ldr .lab { display: inline-block; background: #FBF8F1; border: 1px solid #C9B791; border-radius: 3px; padding: 2px 10px; font: 700 16px var(--f-word); color: #3E2F19; }
+.ldr .cnt { position: absolute; top: 10px; right: 12px; font-size: 11px; text-align: right; line-height: 1.35; opacity: .9; }
+.ldr .cnt b { display: block; font: 700 17px var(--f-word); }
+.ldr .cards { position: absolute; left: 12px; right: 12px; bottom: 26px; height: 40px; display: flex; align-items: flex-end; gap: 1px; overflow: hidden; }
+.ldr .cards i { flex: none; width: 3px; background: var(--paper); border: 1px solid var(--paperline); border-bottom: 0; border-radius: 1px 1px 0 0; }
+.ldr .pull { position: absolute; left: 50%; bottom: 10px; width: 46px; height: 9px; margin-left: -23px; border-radius: 5px; background: linear-gradient(#C7B48B, #A68E60); box-shadow: 0 1px 1px rgba(0,0,0,.25); }
+.ldr .rib { top: 0; right: auto; left: 60px; height: 22px; }
+.ldr.empty { opacity: .45; cursor: default; }
+.ldr.out { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 16px rgba(0,0,0,.28); }
+.lpile-row { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 10px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.lpile-row .ic { width: 30px; height: 22px; flex: none; background: repeating-linear-gradient(var(--paper) 0 4px, var(--paperline) 4px 5px); border: 1px solid var(--paperline); border-radius: 2px; transform: rotate(-4deg); }
+.lpile-row b { display: block; font-size: 14px; } .lpile-row small { color: var(--muted); font-size: 12px; } .lpile-row .go { margin-left: auto; color: var(--muted); font-size: 20px; }
+.lplace.arrive .lbk, .lplace.arrive .ldr:not(.empty), .lplace.arrive .lpile { animation: arrive .5s .38s both; }
+@keyframes arrive { from { opacity: .1; transform: translateY(6px); } }
+.flyp { position: fixed; left: 0; top: 0; width: 30px; height: 22px; background: var(--paper); border: 1px solid var(--paperline); border-radius: 2px; box-shadow: 0 4px 8px rgba(0,0,0,.16); z-index: 25; pointer-events: none; }
+.flyp::after { content: ""; position: absolute; left: 5px; right: 5px; top: 6px; height: 9px; background: repeating-linear-gradient(#D6CDB9 0 1px, transparent 1px 4px); }
+.lshade { position: fixed; inset: 0; background: rgba(16,20,27,.34); z-index: 30; animation: lfade .2s ease; }
+.lsheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; max-width: 640px; margin: 0 auto; background: var(--surface); border-radius: 20px 20px 0 0; box-shadow: 0 -12px 30px rgba(0,0,0,.22); padding: 6px 18px calc(18px + env(safe-area-inset-bottom, 0px)); animation: lsheetup .3s cubic-bezier(.2,.8,.2,1); }
+.lsheet .grab { display: block; width: 44px; height: 5px; border-radius: 3px; background: var(--line); border: 0; margin: 6px auto 16px; padding: 0; cursor: pointer; }
+.lbkinfo { display: flex; gap: 16px; align-items: flex-start; }
+.lcover { flex: none; width: 100px; height: 140px; border-radius: 4px 10px 10px 4px; background: linear-gradient(90deg, rgba(0,0,0,.24) 0 9px, transparent 9px), var(--bc); color: #fff; padding: 14px 10px 12px 18px; display: flex; flex-direction: column; box-shadow: 4px 6px 14px rgba(0,0,0,.25); }
+.lcover .k { font: 700 16px/1.3 var(--f-word); word-break: keep-all; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; }
+.lcover .s { font-size: 10.5px; opacity: .85; margin-top: auto; }
+.lcover.lcard { background: #FBF8F1 repeating-linear-gradient(transparent 0 15px, #E2DACA 15px 16px); background-position: 0 46px; color: #3E2F19; border: 1px solid #E2DACA; border-radius: 6px; padding-left: 14px; }
+.lcover.lcard .lab { font: 700 28px var(--f-word); }
+.lbkinfo .meta { flex: 1; min-width: 0; }
+.lbkinfo h2 { font-size: 17px; margin: 2px 0 0; line-height: 1.3; }
+.lbkinfo .sub { font-size: 12.5px; color: var(--muted); margin: 6px 0 0; }
+.lbkinfo .sub b { color: var(--ink); }
+.lbkinfo .bar { margin: 12px 0 4px; height: 6px; } .lbkinfo .bar i { background: var(--c-rev); }
+.lsheet .counts { margin: 16px 0 14px; }
+.lacts { display: flex; gap: 8px; } .lacts .btn { flex: 1; justify-content: center; text-align: center; }
+.gradpill .sgt { margin-left: 4px; font-size: 12.5px; font-weight: 700; }
+@media (max-width: 380px) { .gradpill .sgt { display: none; } }
+@keyframes lsheetup { from { transform: translateY(100%); } }
+@keyframes lfade { from { opacity: 0; } }
+.toast:not([hidden]) { display: flex; align-items: center; gap: 14px; }
+.toast-act { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: color-mix(in srgb, var(--accent) 55%, var(--bg)); cursor: pointer; white-space: nowrap; }
+.npage.tearing, .scard.tearing { animation: tearaway .56s cubic-bezier(.5,0,.75,0) forwards; transform-origin: 30% 0; pointer-events: none; clip-path: polygon(0 2%,4% 0,8% 2.2%,12% 0,16% 1.8%,20% 0,25% 2.4%,30% 0,35% 2%,40% 0,45% 2.2%,50% 0,55% 1.8%,60% 0,65% 2.4%,70% 0,75% 2%,80% 0,85% 2.2%,90% 0,95% 1.8%,100% 0,100% 100%,0 100%); }
+@keyframes tearaway { 0% { transform: none; } 22% { transform: rotate(-1.5deg) translateY(-8px); } 100% { transform: translate(110px, 300px) rotate(18deg); opacity: 0; } }
+.pillbtn.tearchk { border-style: dashed; color: var(--star); border-color: var(--star); cursor: default; }
+.slips { display: flex; flex-direction: column; gap: 10px; }
+.slip { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid #E2DACA; background: #FBF8F1; color: #2A2218; padding: 12px 14px 16px; border-radius: 3px; font: inherit; cursor: pointer; clip-path: polygon(0 0,100% 0,100% 100%,97% 93%,93% 100%,89% 93%,85% 100%,81% 93%,77% 100%,73% 93%,69% 100%,65% 93%,61% 100%,57% 93%,53% 100%,49% 93%,45% 100%,41% 93%,37% 100%,33% 93%,29% 100%,25% 93%,21% 100%,17% 93%,13% 100%,9% 93%,5% 100%,0 94%); }
+.slip .sw { min-width: 0; }
+.slip .sw b { font: 700 20px var(--f-word); }
+.slip .r { font-size: 12px; color: #7D6F5A; }
+.slip .m { display: block; font-size: 13px; margin-top: 2px; }
+.slip .sd { margin-left: auto; text-align: right; font-size: 11px; color: #7D6F5A; line-height: 1.55; flex: none; }
+.slip .sd b { display: block; color: #B93A28; }
+.srcdot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; opacity: 1; }
+.slip.back { background: #FFF3F0; border-color: #F0C9C0; }
+.slipgrp { font-size: 13px; margin: 10px 2px 0; display: flex; align-items: center; gap: 4px; }
+@media (prefers-reduced-motion: reduce) { .lsheet, .lshade, .lplace.arrive .lbk, .lplace.arrive .ldr, .lplace.arrive .lpile { animation: none; } .lbk, .ldr { transition: none; } }
+
+/* ===== 공부: 공책 페이지 + 빨간 시트 ===== */
+:root { --penred: #E66356; }
+.npage { --ink: #1D2433; --muted: #6A7080; --line: #D5DCE6; --surface: #FFFFFF; --sunken: #F2F4F7; --accent: #24427C; --accent-soft: #E0E7F4; --star: #C98A0B;
+  position: relative; display: flex; flex-direction: column; color: var(--ink); background-color: #FCFAF4; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 10px 24px rgba(24,32,46,.12);
+  min-height: min(64vh, 600px); padding: 16px 20px 18px 34px; overflow: hidden;
+  background-image: repeating-linear-gradient(transparent 0 31px, #DCE6F0 31px 32px); background-position: 0 26px; }
+.npage::before { content: ""; position: absolute; left: 9px; top: 20px; bottom: 20px; width: 12px; background: radial-gradient(circle at 6px 6px, var(--holebg, var(--bg)) 5px, rgba(0,0,0,.18) 5.5px, transparent 6.5px) 0 0 / 12px 54px repeat-y; z-index: 1; pointer-events: none; }
+.npage .sc-top { position: relative; z-index: 4; margin: 0 -8px 0 -10px; gap: 5px; }
+.npage .sc-top .pillbtn { padding: 6px 9px; font-size: 12.5px; }
+.npage .sc-top .pillbtn .pl { display: none; }
+.npage .gradask { position: relative; z-index: 4; }
+.npage .pillbtn { background: #FFFFFF; }
+.pillbtn.pen { display: inline-flex; align-items: center; gap: 5px; }
+.pillbtn.pen[aria-pressed] { color: var(--ink); border-color: var(--line); background: #FFFFFF; }
+.pdot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+.pdot.k { background: #1D2433; } .pdot.r { background: var(--penred); }
+.nbody { display: flex; flex-direction: column; padding-bottom: 8px; }
+.nl { position: relative; z-index: 3; }
+.pen-r { color: var(--penred) !important; --accent: var(--penred); --muted: var(--penred); }
+.pen-r .accnum, .pen-r small, .pen-r rt { color: var(--penred) !important; }
+.npage:not(.open) .pen-r .ul { background: none; }
+.npage:not(.open) .pen-r, .npage:not(.open) .rt-r rt { pointer-events: none; }
+.rt-r rt { color: var(--penred) !important; }
+.nword { display: block; margin: 22px auto 0; border: 0; background: none; color: inherit; padding: 0; font-family: var(--f-word); font-weight: 600; font-size: clamp(2.8rem, 14vw, 4.6rem); line-height: 1.15; text-align: center; overflow-wrap: anywhere; cursor: pointer; }
+.nread { text-align: center; font-family: var(--f-jp); font-size: 19px; letter-spacing: .06em; margin-top: 2px; color: var(--muted); }
+.nread .pitch { justify-content: center; }
+.nex { font-family: var(--f-word); font-size: 18px; line-height: 32px; margin-top: 20px; text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nex rt { font-family: var(--f-jp); font-size: 10px; color: #7A8090; }
+.nhl { background: linear-gradient(transparent 58%, rgba(255,210,0,.5) 58%); }
+.nmean { text-align: center; font-size: 21px; font-weight: 700; margin-top: 18px; }
+.nmean small { font-size: 13.5px; font-weight: 500; margin-left: 7px; color: var(--muted); }
+.m2w .nmean.nq { font-size: clamp(1.6rem, 7.5vw, 2.3rem); margin-top: 26px; }
+.m2w .nword { margin-top: 18px; }
+.nko { font-size: 14px; line-height: 32px; color: #4A5568; text-align: center; }
+.nmemo { font-size: 14px; line-height: 1.9; margin-top: 14px; overflow-wrap: anywhere; text-align: center; }
+.nmemo .bmline { margin-top: 4px; }
+.ntags { margin-top: auto; padding-top: 18px; position: relative; z-index: 3; }
+.nsheet { position: absolute; left: 0; right: 0; bottom: 0; top: 100%; z-index: 2; background: rgba(228,88,74,.93); border-radius: 8px 8px 0 0; box-shadow: 0 -3px 12px rgba(120,0,0,.2); touch-action: none; cursor: grab; transition: top .28s cubic-bezier(.2,.8,.2,1); -webkit-tap-highlight-color: transparent; }
+.nsheet.drag { transition: none; cursor: grabbing; }
+.nsband { position: absolute; left: 0; right: 0; top: 100%; height: 24px; z-index: 4; background: #E66356; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; pointer-events: none; transition: top .28s cubic-bezier(.2,.8,.2,1); }
+.nsband.drag { transition: none; }
+.nsband i { position: absolute; left: 50%; top: 9px; width: 44px; height: 5px; margin-left: -22px; border-radius: 3px; background: rgba(255,255,255,.65); }
+.nsband span { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.92); }
+.npage:not(.open) .nbody { touch-action: none; }
+.npage:not(.open) .nblank { background: none; box-shadow: inset 0 -1.5px 0 #1D2433; }
+.nsheet:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
+.nbottom { padding-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .nsheet, .nsband { transition: none; } }
+
+/* ===== 漢字辞典 ===== */
+.dbook { position: relative; background: #7D2A2A; border-radius: 6px 10px 10px 6px; padding: 8px; margin-right: 16px; box-shadow: 0 10px 26px rgba(40,20,10,.25); }
+.dpaper { --ink: #1D2433; --muted: #7A6F5A; --line: #E2D8C2; --surface: #FFFFFF; --sunken: #F5EFE2; --accent: #24427C; --accent-soft: #E0E7F4;
+  position: relative; color: var(--ink); background: #FBF6EA; border-radius: 3px; padding: 14px 16px 16px; min-height: min(70vh, 640px); }
+.dpaper::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: repeating-linear-gradient(#EFE6D2 0 2px, #DDD2BA 2px 3px); border-radius: 0 3px 3px 0; }
+.dhead { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; color: #8A7A5A; border-bottom: 1px solid #D9CCB0; padding: 0 10px 6px 0; }
+.dthumbs { position: absolute; right: -16px; top: 22px; display: flex; flex-direction: column; gap: 5px; }
+.dth { width: 20px; min-height: 42px; padding: 6px 0; border: 0; border-radius: 0 5px 5px 0; background: var(--c); color: #fff; font: 700 10.5px var(--f-ui); writing-mode: vertical-rl; letter-spacing: 1px; opacity: .72; cursor: pointer; box-shadow: 2px 1px 3px rgba(0,0,0,.15); transition: width .15s, opacity .15s; }
+.dth.on { width: 26px; opacity: 1; }
+.dprog { margin: 14px 10px 0 0; font-size: 13px; } .dprog b { font-size: 16px; } .dprog span { color: var(--muted); }
+.dbar { height: 6px; border-radius: 3px; background: #E9DFC8; margin: 8px 10px 0 0; overflow: hidden; } .dbar i { display: block; height: 100%; background: #7D2A2A; }
+.dtools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 10px 0 0; font-size: 12px; }
+.dsw { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: #FFF; border-radius: 999px; padding: 5px 12px 5px 6px; font: 600 12.5px var(--f-ui); color: var(--ink); cursor: pointer; }
+.dsw i { width: 30px; height: 18px; border-radius: 9px; background: #D9CCB0; position: relative; transition: background .15s; }
+.dsw i::after { content: ""; position: absolute; left: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.dsw[aria-pressed="true"] i { background: #7D2A2A; } .dsw[aria-pressed="true"] i::after { left: 14px; }
+.dgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 5px; margin: 12px 10px 0 0; }
+.dcell { position: relative; aspect-ratio: 1; border: 1px solid #D9CCB0; border-radius: 4px; background: #FFF; display: grid; place-items: center; padding: 0; cursor: pointer; }
+.dcell b { font: 400 24px/1 var(--f-word); color: #1D2433; }
+.dcell i { position: absolute; right: 2px; bottom: 0; font: 700 8.5px var(--f-ui); font-style: normal; color: #7D2A2A; }
+.dcell.f { background: transparent; border-style: dashed; border-color: #E2D8C2; } .dcell.f b { color: #C2B597; }
+.dcell:focus-visible, .dth:focus-visible { outline: 2px solid #24427C; outline-offset: 2px; }
+.dpaper .kgrid { margin: 12px 10px 0 0; }
+.dpaper .more { margin: 12px 10px 0 0; text-align: center; }
+.dkbox { width: 150px; height: 150px; margin: 18px auto 0; border: 2px solid #B49A6A; display: grid; place-items: center; font: 400 112px/1 var(--f-word); background: linear-gradient(#E9DFC8, #E9DFC8) center/1px 100% no-repeat, linear-gradient(#E9DFC8, #E9DFC8) center/100% 1px no-repeat; }
+.dkbox.f { color: #9A8F78; }
+.dko { text-align: center; font-size: 18px; font-weight: 700; margin: 10px 10px 0 0; }
+.drows { margin: 12px 10px 0 0; display: grid; gap: 8px; }
+.drow { display: flex; gap: 10px; align-items: baseline; }
+.drow .dl { flex: none; width: 30px; text-align: center; font-size: 11.5px; color: #fff; background: #7D2A2A; border-radius: 3px; padding: 1px 0; }
+.drow .dv { font: 15px/1.5 var(--f-word); }
+.dsec { font-size: 12px; color: #8A7A5A; margin: 20px 10px 8px 0; }
+.dpaper .list { margin-right: 10px; }
+.dcur .row { background: rgba(255,210,0,.28); }
+.dnone { margin-right: 10px; border: 1.5px dashed #D9CCB0; border-radius: 8px; padding: 14px; text-align: center; font-size: 13px; color: #8A7A5A; display: grid; gap: 8px; justify-items: center; }
+.dnav { display: flex; justify-content: space-between; margin: 20px 10px 0 0; }
+.dnav button { border: 0; background: none; font: 13px var(--f-ui); color: #8A7A5A; cursor: pointer; padding: 6px 0; }
+.dnav b { font: 700 19px var(--f-word); color: #5B4A2A; margin: 0 2px; }
+.dbook.dfly { animation: dfly .32s cubic-bezier(.2,.8,.2,1); transform-origin: 100% 50%; }
+@keyframes dfly { from { transform: translateX(60%) rotate(9deg) scale(.55); opacity: .3; } }
+.dbook.dturn-n .dpaper > * { animation: dturnN .22s ease-out; } .dbook.dturn-p .dpaper > * { animation: dturnP .22s ease-out; }
+@keyframes dturnN { from { transform: translateX(26px); opacity: 0; } } @keyframes dturnP { from { transform: translateX(-26px); opacity: 0; } }
+.nkj { cursor: pointer; border-bottom: 2px dotted rgba(36,66,124,.45); }
+.npage:not(.open) .pen-r .nkj { border-bottom-color: transparent; }
+.dspine { position: fixed; right: -12px; top: 46%; z-index: 15; width: 34px; height: 150px; border: 0; border-radius: 6px 0 0 6px; background: linear-gradient(90deg, #6B2222, #7D2A2A 40%, #5B1E1E); box-shadow: -3px 4px 10px rgba(40,20,10,.3); color: #F3E3C3; cursor: pointer; transition: right .2s; padding: 0; }
+.dspine span { writing-mode: vertical-rl; font: 700 13px var(--f-word); letter-spacing: 3px; }
+.dspine:hover, .dspine:focus-visible { right: -4px; }
+@media (prefers-reduced-motion: reduce) { .dbook.dfly, .dbook.dturn-n .dpaper > *, .dbook.dturn-p .dpaper > * { animation: none; } }
+
+/* ===== 화면에 꼭 맞추기(공부·사전) + 책상 ===== */
+body.fit { position: fixed; inset: 0; overflow: hidden; overscroll-behavior: none; display: flex; flex-direction: column; padding-bottom: calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom, 0px)); }
+body.fit.no-tabs { padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+body.fit .app { flex: 1; min-height: 0; width: 100%; gap: 12px; }
+body.fit #view { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+body.fit #view > .stack { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+body.fit #view > .stack > * { flex: none; }
+body.fit .npage { flex: 1 1 auto !important; min-height: 0; }
+body.fit .npage.open { overflow-y: auto; }
+body.fit .nbottom { padding-top: 0; }
+body.fit .hint { display: none; }
+@media (hover: hover) and (min-height: 940px) { body.fit .hint { display: block; } }
+body.fit .dbook { flex: 1 1 auto !important; min-height: 0; display: flex; }
+body.fit .dpaper { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+body.fit .dpaper.dscroll { display: block; overflow-y: auto; }
+body.fit #kresults { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+body.fit #kresults > .kgrid, body.fit #kresults > .knote { flex: none; }
+body.fit #kresults:has(.kgrid) { overflow-y: auto; display: block; }
+.dgw { flex: 1; min-height: 120px; display: grid; gap: 5px; margin: 12px 10px 0 0; align-content: start; touch-action: pan-y; }
+.dgw .dcell { aspect-ratio: auto; }
+.dpager { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 10px 10px 0 0; font-size: 13px; color: #8A7A5A; }
+.dpg { width: 40px; height: 34px; border: 1px solid #D9CCB0; border-radius: 8px; background: #FFF; font-size: 20px; line-height: 1; color: #5B4A2A; }
+.dpg:disabled { opacity: .35; }
+body.desk { --holebg: var(--desk); background: var(--desk) repeating-linear-gradient(92deg, rgba(120,90,50,.035) 0 3px, transparent 3px 11px); }
+:root { --desk: #E9E3D7; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --desk: #262119; } }
+:root[data-theme="dark"] { --desk: #262119; }
+body.fit.nohead .app > .top { display: none; }
+body.fit.nohead .spb { padding-right: 96px; }
+.stimer.sm { padding: 2px 8px; font-size: 12px; gap: 4px; }
+.stimer.sm svg { width: 13px; height: 13px; }
+.dcorner { position: fixed; z-index: 2; right: -58px; top: calc(-150px + env(safe-area-inset-top, 0px)); width: 150px; height: 206px; border: 0; padding: 0; border-radius: 4px 10px 10px 4px; transform: rotate(16deg); transform-origin: 0 0; background: linear-gradient(90deg, #5B1E1E 0 12px, #7D2A2A 12px); box-shadow: 4px 8px 18px rgba(40,20,10,.35); color: #F3E3C3; text-align: left; cursor: pointer; transition: bottom .2s; }
+.dcorner span { position: absolute; left: 26px; bottom: 8px; font: 700 22px/1.15 var(--f-word); letter-spacing: 3px; }
+.dcorner:hover, .dcorner:focus-visible { top: calc(-140px + env(safe-area-inset-top, 0px)); }
+body.fit #view > .stack > .rates, body.fit #view > .stack > .nbottom { position: relative; z-index: 1; }
+.dflycover { position: fixed; left: 0; top: 0; z-index: 60; transform-origin: 0 0; border-radius: 4px 10px 10px 4px; background: linear-gradient(90deg, #5B1E1E 0 14px, #7D2A2A 14px); box-shadow: 10px 22px 40px rgba(40,20,10,.4); color: #F3E3C3; pointer-events: none; }
+.dflycover span { position: absolute; left: 30px; top: 26px; font: 700 34px/1.15 var(--f-word); letter-spacing: 4px; }
+.dbook.dopen::after { content: "漢字\A辞典"; white-space: pre; position: absolute; inset: 0; z-index: 30; border-radius: 6px 10px 10px 6px; background: linear-gradient(90deg, #5B1E1E 0 14px, #7D2A2A 14px); color: #F3E3C3; font: 700 34px/1.15 var(--f-word); letter-spacing: 4px; padding: 26px 30px; transform-origin: 0 50%; animation: dcover .38s cubic-bezier(.4,0,.2,1) forwards; pointer-events: none; }
+@keyframes dcover { 0% { transform: perspective(1400px) rotateY(0); } 100% { transform: perspective(1400px) rotateY(-105deg); opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .dbook.dopen::after { display: none; } }
+
+/* 공부 중 사전: 뒤에 공책을 남기고 위에 펼치기 */
+body.fit #view > .under { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+body.fit #view > .under > .stack { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+body.fit #view > .under > .stack > * { flex: none; }
+.under .dcorner, .under .dspine { visibility: hidden; }
+.dlayer { position: fixed; inset: 0; z-index: 40; display: flex; justify-content: center; padding: calc(74px + env(safe-area-inset-top, 0px)) 34px calc(60px + env(safe-area-inset-bottom, 0px)) 26px; }
+.dshade { position: absolute; inset: 0; background: rgba(40,28,14,.26); animation: lfade .2s ease; }
+.dwin { position: relative; width: 100%; max-width: 560px; display: flex; flex-direction: column; }
+.dwin > .stack { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.dwin > .stack > * { flex: none; }
+.dwin .pagebar .btn { background: #FFFFFF; color: #1D2433; }
+.dwin .pagebar h2 { display: none; }
+.dwin .pagebar .btn { box-shadow: 0 3px 10px rgba(0,0,0,.15); }
+.dwin .searchrow .search { box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.dwin .dbook { box-shadow: 0 18px 44px rgba(30,15,5,.42); }
 </style>
 </head>
 <body>
@@ -711,6 +974,7 @@ a.btn { color: inherit; }
   const KANJI_RE = /[㐀-䶿一-鿿豈-﫿]/;
   const kanjiOf = s => [...new Set([...String(s || "")].filter(ch => KANJI_RE.test(ch)))];
   let toastTimer = null;
+  function toastAct(html, label, act) { const t = $("#toast"); t.innerHTML = `<span>${html}</span><button type="button" class="toast-act" data-act="${act}">${esc(label)}</button>`; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 5000); }
   function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
   const ALLOWED = new Set(["B", "STRONG", "I", "EM", "U", "BR", "DIV", "P", "SPAN", "RUBY", "RT", "RB", "RP", "SUB", "SUP", "UL", "OL", "LI", "SMALL"]);
   function sanitize(html) {
@@ -781,7 +1045,7 @@ a.btn { color: inherit; }
   // ================= state =================
   const S = {
     decks: [], cards: [], byKey: {}, kanji: {}, kbase: {}, kedits: {}, kidx: new Map(),
-    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, grad: {}, tags: {}, days: {}, notes: {}, levels: {}, links: {}, exs: {}, dates: {}, words: [],
+    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, grad: {}, tags: {}, days: {}, notes: {}, levels: {}, links: {}, exs: {}, dates: {}, tear: {}, words: [],
     store: null, ready: false, tab: "learn", stack: [],
     study: null, undo: null,
     q: "", filter: "all", wlevel: [], wsrc: [], wpos: [], wvt: [], wnt: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
@@ -796,7 +1060,7 @@ a.btn { color: inherit; }
     const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("기기 저장 공간에 저장하지 못했어요."); } };
     return {
       kind: "local",
-      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), grad: get("fsrs.grad", {}), tags: get("fsrs.tags", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}), links: get("fsrs.links", {}), exs: get("fsrs.exs", {}), kedits: get("fsrs.kedits", {}), dates: get("fsrs.dates", {}) }; },
+      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), grad: get("fsrs.grad", {}), tags: get("fsrs.tags", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}), links: get("fsrs.links", {}), exs: get("fsrs.exs", {}), kedits: get("fsrs.kedits", {}), dates: get("fsrs.dates", {}), tear: get("fsrs.tear", {}) }; },
       async saveState() { put("fsrs.states", S.states); },
       async deleteState() { put("fsrs.states", S.states); },
       async saveSettings(o) { put("fsrs.settings", o); },
@@ -813,10 +1077,11 @@ a.btn { color: inherit; }
       async saveLinks() { put("fsrs.links", S.links); },
       async saveExs() { put("fsrs.exs", S.exs); },
       async saveDates() { put("fsrs.dates", S.dates); },
+      async saveTear() { put("fsrs.tear", S.tear); },
       async saveKedits() { put("fsrs.kedits", S.kedits); },
       async saveAll() {
         put("fsrs.states", S.states); put("fsrs.settings", S.settings);
-        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.grad", S.grad); put("fsrs.tags", S.tags); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels); put("fsrs.links", S.links); put("fsrs.exs", S.exs); put("fsrs.dates", S.dates); put("fsrs.kedits", S.kedits);
+        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.grad", S.grad); put("fsrs.tags", S.tags); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels); put("fsrs.links", S.links); put("fsrs.exs", S.exs); put("fsrs.dates", S.dates); put("fsrs.tear", S.tear); put("fsrs.kedits", S.kedits);
       },
     };
   }
@@ -917,6 +1182,7 @@ a.btn { color: inherit; }
     if (dirty.tags) serial("tags", () => S.store.saveTags());
     if (dirty.favs) serial("favs", () => S.store.saveFavs());
     if (dirty.grad) serial("grad", () => S.store.saveGrad());
+    if (dirty.tear) serial("tear", () => S.store.saveTear());
     if (dirty.exs) serial("exs", () => S.store.saveExs());
     for (const k of dirty.states || []) persistState(k, S.states[k]);
     return alias;
@@ -929,6 +1195,7 @@ a.btn { color: inherit; }
     const at = S.tags[ak]; if (at) { S.tags[pk] = Object.assign({}, S.tags[pk] || {}, at); delete S.tags[ak]; dirty.tags = 1; }
     if (S.favs[ak]) { if (!S.favs[pk]) S.favs[pk] = S.favs[ak]; delete S.favs[ak]; dirty.favs = 1; }
     if (S.grad[ak]) { if (!S.grad[pk]) S.grad[pk] = S.grad[ak]; delete S.grad[ak]; dirty.grad = 1; }
+    if (S.tear && S.tear[ak]) { if (!S.tear[pk]) S.tear[pk] = S.tear[ak]; delete S.tear[ak]; dirty.tear = 1; }
     if (S.exs && S.exs[ak]) { const h = S.exs[pk] || (S.exs[pk] = []); for (const e of S.exs[ak]) if (!h.some(x => x.ex === e.ex)) h.push(e); delete S.exs[ak]; dirty.exs = 1; }
     // 학습 기록은 복사만 한다(더 많이 공부한 쪽을 대표에 둠)
     for (const pre of ["", "wr:"]) if (S.states[pre + ak] && (!S.states[pre + pk] || (S.states[pre + ak].reps || 0) > (S.states[pre + pk].reps || 0))) { S.states[pre + pk] = S.states[pre + ak]; (dirty.states = dirty.states || []).push(pre + pk); }
@@ -943,12 +1210,24 @@ a.btn { color: inherit; }
 
   // ================= queue =================
   const qKey = (c, mode) => mode === "write" ? "wr:" + c.key : c.key;
-  // 졸업한 단어는 학습·복습·쓰기·랜덤 복습 어디에도 안 나온다(기록은 그대로)
+  // 뜯은 종이(예전 이름: 졸업)는 학습·복습·쓰기·랜덤 복습에 안 나오고, 가끔 '뜯은 종이 확인'으로만 나온다
   const isGrad = c => !!S.grad[c.key];
   const qCards = (deck, mode) => deck.cards.filter(c => !isGrad(c) && (mode !== "write" || writeTarget(c)));
-  // 졸업 추천: 복습 간격이 180일 이상으로 길어진 단어
-  const GRAD_DAYS = 180;
-  const gradSuggest = key => { const s = S.states[key]; return !S.grad[key] && s && s.st === "review" && (s.ivl || 0) >= GRAD_DAYS; };
+  // 뜯기 추천: 복습 간격이 설정한 기간(기본 1달) 이상으로 길어진 단어. 뜯는 건 항상 직접.
+  const TEAR_OPTS = [[14, "2주"], [30, "1달"], [60, "2달"], [90, "3달"]];
+  const tearDays = () => S.settings.tearDays || 30;
+  const tearLabel = () => (TEAR_OPTS.find(o => o[0] === tearDays()) || [0, tearDays() + "일"])[1];
+  const gradSuggest = key => { const s = S.states[key]; return !S.grad[key] && s && s.st === "review" && (s.ivl || 0) >= tearDays(); };
+  // 뜯은 종이 확인: 뜯고 3달 뒤 → 맞히면 6달 뒤 → 1년마다. 틀리면 원래 책에 다시 끼운다.
+  const TEAR_CHECKS = [90, 180, 365];
+  const tearCheckDue = key => { const t = S.tear[key]; return (t && t.c) || ((S.grad[key] || Date.now()) + TEAR_CHECKS[0] * DAY); };
+  const tornDue = now => { const cut = nextCutoff(now); return S.cards.filter(c => isGrad(c) && tearCheckDue(c.key) < cut); };
+  const saveTear = () => serial("tear", () => S.store.saveTear());
+  function reinsert(key, now) {
+    delete S.grad[key]; serial("grad", () => S.store.saveGrad());
+    const t = Object.assign({}, S.tear[key] || {}); t.b = (t.b || 0) + 1; t.bt = now; delete t.c; t.n = 0; S.tear[key] = t; saveTear();
+    const o = againState(S.states[key] || null, now); S.states[key] = o; persistState(key, o);
+  }
   // 어려움 표시: p=발음(빨강), m=뜻(초록), k=한자(파랑). 종이에 긋던 밑줄처럼 해당 부분에 색 밑줄.
   const TAGS = [["p", "발음"], ["m", "뜻"], ["k", "한자"]];
   const tagOf = key => S.tags[key] || {};
@@ -965,8 +1244,10 @@ a.btn { color: inherit; }
   }
   const tagDots = key => { const g = tagOf(key); const d = TAGS.filter(([t]) => g[t]); return d.length ? `<span class="tdots">${d.map(([t, l]) => `<i class="td-${t}" title="${l}"></i>`).join("")}</span>` : ""; };
   function setGrad(key, on) {
-    if (on) S.grad[key] = Date.now(); else delete S.grad[key];
-    serial("grad", () => S.store.saveGrad());
+    const now = Date.now();
+    if (on) { S.grad[key] = now; const t = Object.assign({}, S.tear[key] || {}); t.c = now + TEAR_CHECKS[0] * DAY; t.n = 0; S.tear[key] = t; }
+    else { delete S.grad[key]; if (S.tear[key]) { const t = Object.assign({}, S.tear[key]); delete t.c; t.n = 0; S.tear[key] = t; } }
+    serial("grad", () => S.store.saveGrad()); saveTear();
   }
   function deckCounts(deck, now, mode) {
     const cut = nextCutoff(now), start = dayStart(now), cards = qCards(deck, mode);
@@ -1059,8 +1340,8 @@ a.btn { color: inherit; }
   function readingHtml(c, withNum = true) {
     const r = c.r || (!kanjiOf(c.w || "").length ? c.w : "");
     if (!r) return "";
-    const nums = accentNums(c);
-    if (!nums) return esc(c.r || "");
+    const nums = S.settings.pitch === false ? null : accentNums(c);
+    if (!nums) return esc(c.r || r);
     return pitchHtml(toHira(r) === r ? r : r, nums[0]) + (withNum ? `<span class="accnum" title="높낮이 악센트 번호">${nums.map(x => "[" + x + "]").join("")}</span>` : "");
   }
   const toHira = s => String(s || "").replace(/[\u30A1-\u30F6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
@@ -1108,7 +1389,7 @@ a.btn { color: inherit; }
   // ================= navigation =================
   function go(page) { if (page.key && S.byKey && S.byKey[page.key]) page.key = S.byKey[page.key].key; S.stack.push(page); render(); window.scrollTo(0, 0); }
   function back() { S.stack.pop(); render(); }
-  function setTab(t) { S.tab = t; S.stack = []; S.study = null; S.write = null; render(); window.scrollTo(0, 0); }
+  function setTab(t) { S.tab = t; S.lsheet = null; S.stack = []; S.study = null; S.write = null; render(); window.scrollTo(0, 0); }
 
   // ================= render: shell =================
   function renderSync() {
@@ -1121,17 +1402,30 @@ a.btn { color: inherit; }
     renderSync();
     clearTimeout(S.waitTimer);
     const page = topPage();
-    const studying = page && (page.t === "study" || page.t === "write");
+    const studying = page && (page.t === "study" || page.t === "write" || S.stack.some(p => p.t === "study" || p.t === "write"));
     $("#tabbar").hidden = !!studying;
     document.body.classList.toggle("no-tabs", !!studying);
+    // 공부 화면·사전은 화면에 꼭 맞게(위아래 스크롤 없이)
+    const fit = (page && ["study", "kanji", "kindex"].includes(page.t)) || (!page && S.tab === "kanji");
+    document.body.classList.toggle("fit", !!fit);
+    document.body.classList.toggle("desk", !!(fit && page && S.settings.kdMode !== "spine"));
+    document.body.classList.toggle("nohead", !!(fit && page));
     document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-current", b.dataset.tab === S.tab && !page ? "page" : "false"));
     let html;
     if (!page) html = { learn: viewLearn, words: viewWords, kanji: viewKanji, write: viewWriteTab, stats: viewStats }[S.tab]();
-    else html = { study: viewStudy, word: viewWord, kanji: viewKanjiPage, kedit: viewKanjiEdit, edit: viewEdit, write: viewWrite, addmenu: viewAddMenu, grid: viewGrid, import: viewImport, sources: viewSources, settings: viewSettings, pick: viewPick }[page.t](page);
+    else if ((page.t === "kanji" || page.t === "kindex") && S.study && S.stack.length > 1 && S.stack[S.stack.length - 2].t === "study") {
+      // 공부 중에 편 사전: 보던 공책 페이지는 뒤에 그대로 두고, 그 위에 사전을 펼친다
+      html = `<div class="under" inert aria-hidden="true">${viewStudy()}</div><div class="dlayer"><div class="dshade" data-act="back" aria-hidden="true"></div><div class="dwin">${(page.t === "kanji" ? viewKanjiPage : viewKanjiIndex)(page)}</div></div>`;
+    }
+    else html = { study: viewStudy, word: viewWord, kanji: viewKanjiPage, kedit: viewKanjiEdit, edit: viewEdit, write: viewWrite, addmenu: viewAddMenu, grid: viewGrid, import: viewImport, sources: viewSources, settings: viewSettings, pick: viewPick, torn: viewTorn, kindex: viewKanjiIndex }[page.t](page);
     $("#view").innerHTML = html;
     clearInterval(S.tick);
     if (page && (page.t === "study" || page.t === "write")) S.tick = setInterval(() => { const el = $("#stimer"), ss = page.t === "write" ? S.write : S.study; if (el && ss && ss.t0) el.textContent = fmtClock(Date.now() - ss.t0); }, 1000);
     if (page && page.t === "write") initPads();
+    if (page && page.t === "study") initSheet();
+    if ($(".under #npage")) initSheet();
+    if (page && page.t === "kanji") initDictSwipe();
+    if ($("#dgw")) kdLayout(0);
     if (page && page.t === "edit") fillEdit(page);
     if (page && page.t === "settings") ttsStatRefresh();
   }
@@ -1267,13 +1561,13 @@ a.btn { color: inherit; }
     return LEVELS.map(([k, l]) => ({ id: "lv:" + k, name: l, cards: S.cards.filter(c => cardLevel(c) === k) })).filter(g => g.cards.length);
   }
   function sourceGroups() {
-    return S.decks.filter(d => d.cards.length).map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, cards: d.cards }));
+    return S.decks.filter(d => d.cards.length).map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, cards: d.cards, mine: !!d.mineDeck }));
   }
   function groupById(id) {
     if (id === "all") return { id: "all", name: "전체 복습", cards: S.cards, noNew: true };
     if (String(id).startsWith("lv:")) { const k = id.slice(3); return { id, name: levelLabel(k), cards: S.cards.filter(c => cardLevel(c) === k) }; }
     const d = S.decks.find(x => x.id === id);
-    return d ? { id: d.id, name: d.mineDeck ? "직접 추가" : d.name, cards: d.cards } : null;
+    return d ? { id: d.id, name: d.mineDeck ? "직접 추가" : d.name, cards: d.cards, mine: !!d.mineDeck } : null;
   }
   function groupCard(g, mode, now) {
     const c = deckCounts(g, now, mode); if (!c.total) return "";
@@ -1303,17 +1597,122 @@ a.btn { color: inherit; }
       <div class="seg wide" role="tablist"><button type="button" data-act="learn-view" data-v="level" aria-pressed="${view === "level"}">급수별</button><button type="button" data-act="learn-view" data-v="source" aria-pressed="${view === "source"}">출처별</button></div>
       <div class="decks">${groups || '<p class="empty">아직 공부할 단어가 없어요.</p>'}</div>`;
   }
+  // ================= 책장(출처) · 카드 서랍(급수) =================
+  // 책 두께 = 남은(뜯지 않은) 단어 수. 다 외운 단어는 공부하다가 직접 ✂ 뜯어서 책에서 빼낸다.
+  const BOOK_COLORS = ["#24427C", "#2C6B4E", "#7A3E48", "#2F6670", "#5B4B8A", "#8A5A2B", "#4A5A7A"];
+  const hashN = s => { let x = 7; for (const ch of String(s)) x = (x * 31 + ch.charCodeAt(0)) | 0; return Math.abs(x); };
+  const bookColor = (g, i) => g.mine ? "#8C4A3A" : BOOK_COLORS[Math.max(0, i) % BOOK_COLORS.length];
+  const spineW = n => Math.round(24 + Math.min(40, Math.sqrt(n) * 1.9));
+  const reduceMotion = () => { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } };
+  function groupInfo(g, now) {
+    const remain = g.cards.filter(c => !isGrad(c)).length, rc = deckCounts(g, now, "read"), wc = deckCounts(g, now, "write");
+    return { remain, torn: g.cards.length - remain, total: g.cards.length, rc, wc, due: rc.learn + rc.rev + wc.learn + wc.rev, canStudy: rc.newToday + rc.learn + rc.rev > 0, canWrite: wc.newToday + wc.learn + wc.rev > 0 };
+  }
+  function pileHtml() {
+    const n = S.cards.filter(isGrad).length;
+    return `<button type="button" class="lpile" data-act="torn" aria-label="뜯은 종이 ${n}장 보기"><span class="lbl"><b class="num">${n}</b>뜯은 종이</span>${n ? "<i></i>".repeat(Math.min(22, n)) : '<span class="none">아직<br>없음</span>'}</button>`;
+  }
+  function shelfHtml(now) {
+    const CAP = 300, items = sourceGroups().map((g, i) => {
+      const f = groupInfo(g, now), w = spineW(f.remain), full = spineW(f.total), gw = Math.max(0, full - w), hh = 128 + hashN(g.id) % 34;
+      return { w: w + gw, html: `<button type="button" class="lbk${S.lsheet === g.id ? " out" : ""}" data-act="lsheet" data-id="${esc(g.id)}" style="--w:${w}px;--h:${hh}px;--bc:${bookColor(g, i)};--gw:${gw}px" aria-label="${esc(g.name)} · ${f.remain}장 남음${f.due ? " · 오늘 복습 있음" : ""}"><span class="sp"><span class="t">${esc(g.name)}</span><span class="n num">${f.remain}</span></span>${gw ? '<span class="was" aria-hidden="true"></span>' : ""}${f.due ? '<i class="rib" aria-hidden="true"></i>' : ""}</button>` };
+    });
+    const rows = []; let cur = [], used = 0;
+    for (const it of items) { if (cur.length && used + it.w > CAP) { rows.push(cur); cur = []; used = 0; } cur.push(it.html); used += it.w + 6; }
+    if (cur.length && used + 84 > CAP) { rows.push(cur); cur = []; }
+    cur.push('<span class="grow"></span>' + pileHtml()); rows.push(cur);
+    return rows.map(r => `<div class="shelf"><div class="srow">${r.join("")}</div><div class="plank"></div></div>`).join("");
+  }
+  function drawersHtml(now) {
+    const nT = S.cards.filter(isGrad).length;
+    return `<div class="cab">${LEVELS.map(([k, l]) => {
+      const g = groupById("lv:" + k), f = groupInfo(g, now);
+      if (!f.total) return `<div class="ldr empty" aria-hidden="true"><span class="lab">${l}</span><span class="cnt"><b class="num">0</b>비어 있음</span><span class="pull"></span></div>`;
+      const n = Math.min(34, Math.ceil(Math.sqrt(f.remain) * 1.6));
+      return `<button type="button" class="ldr${S.lsheet === g.id ? " out" : ""}" data-act="lsheet" data-id="${esc(g.id)}" aria-label="${l} · ${f.remain}장 남음${f.due ? " · 오늘 복습 있음" : ""}">${f.due ? '<i class="rib" aria-hidden="true"></i>' : ""}<span class="lab">${l}</span><span class="cnt"><b class="num">${f.remain}</b>/ ${f.total}장</span><span class="cards" aria-hidden="true">${Array.from({ length: n }, (_, i) => `<i style="height:${62 + (i * 37) % 38}%"></i>`).join("")}</span><span class="pull"></span></button>`;
+    }).join("")}</div>
+    <button type="button" class="lpile-row" data-act="torn"><span class="ic" aria-hidden="true"></span><span><b>뜯은 종이 ${nT}장</b><small>외워서 책에서 뜯어낸 단어</small></span><span class="go" aria-hidden="true">›</span></button>`;
+  }
+  function lsheetHtml(now) {
+    const g = S.lsheet && groupById(S.lsheet); if (!g || !g.cards.length) return "";
+    const lv = String(g.id).startsWith("lv:"), f = groupInfo(g, now), pct = f.total ? Math.round(f.torn / f.total * 100) : 0;
+    const cover = lv ? `<div class="lcover lcard" aria-hidden="true"><span class="lab">${esc(g.name)}</span><span class="s">급수 카드 서랍</span></div>`
+      : `<div class="lcover" style="--bc:${bookColor(g, sourceGroups().findIndex(x => x.id === g.id))}" aria-hidden="true"><span class="k">${esc(g.name)}</span><span class="s">${g.mine ? "내가 직접 넣은 단어" : "출처"}</span></div>`;
+    return `<div class="lshade" data-act="lsheet-close"></div>
+      <section class="lsheet" role="dialog" aria-label="${esc(g.name)}"><button class="grab" type="button" data-act="lsheet-close" aria-label="닫기"></button>
+        <div class="lbkinfo">${cover}<div class="meta"><h2>${esc(g.name)}</h2><p class="sub num">${f.total}단어 · <b>${f.remain}장 남음</b>${f.torn ? ` · ${f.torn}장 뜯음` : ""}</p><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div><small class="num muted">뜯어낸 비율 ${pct}%</small></div></div>
+        <dl class="counts"><div class="c-new"><dt>새 카드</dt><dd>${f.rc.newToday}</dd></div><div class="c-learn"><dt>학습 중</dt><dd>${f.rc.learn}</dd></div><div class="c-rev"><dt>복습</dt><dd>${f.rc.rev}</dd></div><div class="c-rev"><dt>쓰기</dt><dd>${f.wc.learn + f.wc.rev}</dd></div></dl>
+        <div class="lacts"><button class="btn primary" type="button" data-act="study" data-deck="${esc(g.id)}" ${f.canStudy ? "" : "disabled"}>${f.canStudy ? "공부하기" : "오늘 분량 끝"}</button>${f.canWrite ? `<button class="btn" type="button" data-act="write" data-deck="${esc(g.id)}">쓰기</button>` : ""}<button class="btn ghost" type="button" data-act="lsheet-words" data-id="${esc(g.id)}">단어 목록</button></div>
+      </section>`;
+  }
+  // 책 ↔ 서랍 전환: 종이가 빠져나와 반대편으로 날아가 꽂힌다
+  function flyPapers(fromRects, toEls) {
+    const place = $("#lplace"); if (place) { place.classList.remove("arrive"); void place.offsetWidth; place.classList.add("arrive"); }
+    if (reduceMotion() || !fromRects.length || !toEls.length || !Element.prototype.animate) return;
+    const to = toEls.map(e => e.getBoundingClientRect()), pick = a => a[Math.floor(Math.random() * a.length)];
+    const N = Math.min(18, 6 + fromRects.length * 4);
+    for (let i = 0; i < N; i++) {
+      const a = pick(fromRects), b = pick(to), el = document.createElement("i"); el.className = "flyp"; document.body.appendChild(el);
+      const x0 = a.left + Math.random() * Math.max(1, a.width - 30), y0 = a.top + Math.random() * Math.max(1, a.height - 22);
+      const x1 = b.left + 8 + Math.random() * Math.max(1, b.width - 46), y1 = b.top + b.height * (.3 + Math.random() * .4);
+      const mx = (x0 + x1) / 2 + (Math.random() - .5) * 140, my = Math.min(y0, y1) - 30 - Math.random() * 90, r0 = (Math.random() - .5) * 30, r1 = (Math.random() - .5) * 60;
+      const an = el.animate([{ transform: `translate(${x0}px,${y0}px) rotate(${r0}deg)`, opacity: 0 }, { transform: `translate(${x0}px,${y0 - 8}px) rotate(${r0}deg)`, opacity: 1, offset: .12 }, { transform: `translate(${mx}px,${my}px) rotate(${(r0 + r1) / 2}deg)`, opacity: 1, offset: .55 }, { transform: `translate(${x1}px,${y1}px) rotate(${r1}deg) scale(.7)`, opacity: 0 }], { duration: 650 + Math.random() * 300, delay: i * 30, easing: "cubic-bezier(.35,.6,.3,1)", fill: "both" });
+      an.onfinish = () => el.remove(); setTimeout(() => el.remove(), 2200);
+    }
+  }
   function viewLearn() {
     if (!S.ready) return '<p class="empty">단어 목록을 불러오는 중이에요.</p>';
     if (!S.cards.length) {
       return `<div class="stack"><article class="deck"><div class="deck-head"><h3>아직 단어가 없어요</h3></div>
-        <p class="note">이 앱은 여러 책에서 배운 단어를 한곳에 모아 복습하는 단어장이에요. 단어 탭에서 한 단어씩 추가하거나, 표로 한꺼번에 넣어 보세요.</p>
+        <p class="note">이 앱은 여러 책과 매체에서 만난 단어를 내 책장에 모아 두고, 외운 단어를 하나씩 뜯어내며 줄여 가는 단어장이에요. 단어 탭에서 한 단어씩 추가하거나, 표로 한꺼번에 넣어 보세요.</p>
         <div class="deck-actions"><button class="btn primary" type="button" data-act="go-add">단어 추가하러 가기</button></div></article></div>`;
     }
-    return `<div class="stack">
-      ${studyHome("read")}
-      <p class="note">급수별과 출처별은 같은 단어를 다르게 묶은 거라 복습 기록은 하나로 이어져요. 공부할 개수와 카드 앞면은 공부하기를 누르면 고를 수 있어요.</p>
+    const now = Date.now(), all = groupById("all"), ac = deckCounts(all, now, "read"), aw = deckCounts(all, now, "write"), wAll = aw.learn + aw.rev, rv = ac.learn + ac.rev, dueAll = rv + wAll;
+    const remain = S.cards.filter(c => !isGrad(c)).length, week = S.cards.filter(c => (S.grad[c.key] || 0) >= now - 7 * DAY).length;
+    const nR = studiedCards("read").length + studiedCards("write").length, chk = tornDue(now).length;
+    const view = S.settings.learnView === "source" ? "source" : "level";
+    if (S.lsheet && !groupById(S.lsheet)) S.lsheet = null;
+    return `<div class="stack learn2">
+      <section class="lhero">
+        <div class="lh-big"><b class="num">${remain}</b><span>장 남음</span></div>
+        <p class="lh-sub num">${week ? `이번 주 <em>${week}장</em> 뜯음 · ` : ""}오늘 복습 ${rv}${wAll ? ` · 쓰기 ${wAll}` : ""}</p>
+        <div class="lh-btns"><button class="btn primary" type="button" data-act="study" data-deck="all" ${dueAll ? "" : "disabled"}>${dueAll ? "오늘 복습" : "오늘 복습 끝"}</button><button class="btn" type="button" data-act="random" ${nR ? "" : "disabled"}>랜덤 복습</button></div>
+        ${chk ? `<button class="lh-check" type="button" data-act="tear-check"><b>✂ 뜯은 종이 확인 ${chk}장</b><span>기억나는지 가끔 확인해요. 까먹었으면 원래 책에 다시 끼워요.</span></button>` : ""}
+      </section>
+      <div class="lhead"><h3>${view === "source" ? "내 책장" : "카드 서랍"}</h3><div class="seg" role="tablist" aria-label="보기"><button type="button" data-act="learn-view" data-v="source" aria-pressed="${view === "source"}">책(출처)</button><button type="button" data-act="learn-view" data-v="level" aria-pressed="${view === "level"}">서랍(급수)</button></div></div>
+      <div class="lplace" id="lplace">${view === "source" ? shelfHtml(now) : drawersHtml(now)}</div>
+      <p class="note">${view === "source" ? "책 두께는 남은 단어 수예요. 다 외운 단어는 공부하다가 ✂로 직접 뜯어내요. 노란 책갈피가 꽂힌 책은 오늘 복습할 카드가 있어요." : "책에서 뽑은 종이를 급수별 카드로 서랍에 정리했어요. 같은 단어라 복습 기록은 하나로 이어지고, 서랍에서 뜯어도 원래 책에서 같이 빠져요."}</p>
+      ${lsheetHtml(now)}
     </div>`;
+  }
+  // 뜯은 종이 모음
+  function viewTorn(page) {
+    const now = Date.now(), sort = page.sort === "book" ? "book" : "recent", lim = page.lim || 120;
+    const torn = S.cards.filter(isGrad).sort((a, b) => S.grad[b.key] - S.grad[a.key]);
+    const back = S.cards.filter(c => !isGrad(c) && S.tear[c.key] && (S.tear[c.key].bt || 0) >= now - 30 * DAY).sort((a, b) => S.tear[b.key].bt - S.tear[a.key].bt);
+    const md = t => { const d = new Date(t); return (d.getMonth() + 1) + "/" + d.getDate(); };
+    const gs = sourceGroups(), col = {}; gs.forEach((g, i) => { col[g.id] = bookColor(g, i); });
+    const word = c => c.w || htmlText(c.front || "");
+    const slip = (c, isBack) => { const t = S.tear[c.key] || {}, d0 = cardDecks(c)[0];
+      return `<button type="button" class="slip${isBack ? " back" : ""}" data-act="word" data-key="${esc(c.key)}"><span class="sw"><b lang="ja">${esc(word(c))}</b>${c.r && c.r !== c.w ? ` <span class="r" lang="ja">${esc(c.r)}</span>` : ""}<span class="m">${esc(c.ko || "")}</span></span><span class="sd num">${isBack ? `<b>↩ 다시 끼움</b>${md(t.bt)} · ${t.b || 1}번째` : `<i class="srcdot" style="background:${col[d0] || "var(--muted)"}"></i>${esc(d0 === "mine" ? "직접 추가" : deckName(d0))}<br>${md(S.grad[c.key])} 뜯음 · 확인 ${md(tearCheckDue(c.key))}`}</span></button>`; };
+    let list = "";
+    if (sort === "recent") list = torn.slice(0, lim).map(c => slip(c)).join("");
+    else { let left = lim; for (const g of gs) { if (left <= 0) break; const cs = torn.filter(c => cardDecks(c)[0] === g.id).slice(0, left); if (!cs.length) continue; left -= cs.length; list += `<h3 class="slipgrp"><i class="srcdot" style="background:${col[g.id]}"></i>${esc(g.name)} <span class="muted num">${torn.filter(c => cardDecks(c)[0] === g.id).length}장</span></h3>` + cs.map(c => slip(c)).join(""); } }
+    return `<div class="stack">${pagebar("뜯은 종이")}
+      <p class="note" style="margin-top:0">외워서 책에서 뜯어낸 단어 ${torn.length}장이에요. 평소 공부엔 안 나오고, 3달 → 6달 → 1년 간격으로 가끔 확인 카드로 나와요. 까먹으면 원래 책에 다시 끼워져요.</p>
+      ${torn.length || back.length ? `${torn.length ? `<div class="seg"><button type="button" data-act="torn-sort" data-v="recent" aria-pressed="${sort === "recent"}">최근 뜯은 순</button><button type="button" data-act="torn-sort" data-v="book" aria-pressed="${sort === "book"}">책별</button></div>` : ""}
+      <div class="slips">${back.map(c => slip(c, true)).join("")}${list}</div>
+      ${torn.length > lim ? `<button class="btn ghost" type="button" data-act="torn-more">더 보기 (${torn.length - lim}장 더)</button>` : ""}`
+      : '<p class="empty">아직 뜯은 종이가 없어요. 공부하다가 다 외운 단어는 카드 위쪽 ✂ 버튼으로 책에서 뜯어낼 수 있어요.</p>'}
+    </div>`;
+  }
+  function startTearCheck() {
+    const keys = tornDue(Date.now()).map(c => c.key); if (!keys.length) return;
+    for (let i = keys.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [keys[i], keys[j]] = [keys[j], keys[i]]; }
+    keys.splice(50);
+    S.lsheet = null;
+    S.study = { mode: "read", deck: "tear", tear: true, practice: false, name: "뜯은 종이 확인", queue: keys, next: [], lap: 1, total: keys.length, cleared: 0, first: {}, cur: null, last: null, revealed: false, hist: [], backN: 0 };
+    go({ t: "study", deck: "tear" });
   }
 
   // ================= 예문 후리가나 한꺼번에 채우기 =================
@@ -1540,6 +1939,22 @@ a.btn { color: inherit; }
           <h2>기록 백업</h2>
           <p>덱·직접 추가한 단어·복습 기록·메모를 파일 하나로 저장해요. 다른 기기에서 가져올 때 무엇이 바뀌는지 먼저 보여주고, 합치기나 덮어쓰기를 고를 수 있어요.</p>
           <div class="deck-actions"><button class="btn" type="button" data-act="export">내보내기</button><label class="btn ghost" for="backupFile">가져오기</label></div>
+        </div>
+        <div class="panel">
+          <h2>읽기 높낮이(악센트)</h2>
+          <p>히라가나 읽기 위에 높낮이 선과 [0] 같은 악센트 번호를 표시해요. 공부 카드·단어 목록·상세 화면에 모두 적용돼요.</p>
+          <div class="seg"><button type="button" data-act="pitch" data-v="1" aria-pressed="${S.settings.pitch !== false}">표시</button><button type="button" data-act="pitch" data-v="0" aria-pressed="${S.settings.pitch === false}">숨기기</button></div>
+        </div>
+        <div class="panel">
+          <h2>한자 사전 꺼내는 방식</h2>
+          <p>공부하다가 한자를 누르거나 사전을 누를 때 사전이 나오는 방식이에요.</p>
+          <div class="seg"><button type="button" data-act="kd-mode" data-v="desk" aria-pressed="${S.settings.kdMode !== "spine"}">책상 모서리</button><button type="button" data-act="kd-mode" data-v="spine" aria-pressed="${S.settings.kdMode === "spine"}">오른쪽 책등</button></div>
+          <p class="note">책상 모서리: 화면 아래 모서리에 놓인 사전이 가운데로 와서 펼쳐져요. 오른쪽 책등: 화면 오른쪽에 책등만 살짝 보이다가 옆에서 펼쳐져요.</p>
+        </div>
+        <div class="panel">
+          <h2>뜯기 추천</h2>
+          <p>복습 간격이 이만큼 길어진 단어에 "✂ 뜯을까요?" 표시가 떠요. 뜯는 건 항상 직접 눌러야 해요.</p>
+          <div class="seg">${TEAR_OPTS.map(([d, l]) => `<button type="button" data-act="tear-days" data-v="${d}" aria-pressed="${tearDays() === d}">${l}</button>`).join("")}</div>
         </div>
         <div class="panel">
           <h2>예문·읽기 정리</h2>
@@ -2105,7 +2520,7 @@ a.btn { color: inherit; }
   function sourcesOfLevel(lv) {
     return S.decks.map(d => ({ id: d.id, name: d.mineDeck ? "직접 추가" : d.name, n: d.cards.filter(c => cardLevel(c) === lv).length })).filter(x => x.n);
   }
-  // 단어 탭: 기본은 졸업 안 한 단어, '졸업' 칩을 고르면 졸업한 단어만
+  // 단어 탭: 기본은 뜯지 않은 단어, '뜯은 종이' 칩을 고르면 뜯은 단어만
   const wordPool = () => S.cards.filter(c => (S.filter === "grad") === isGrad(c));
   function filteredCards() {
     const q = S.q.trim();
@@ -2334,14 +2749,30 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
     const nMulti = S.cards.filter(c => cardDecks(c).length > 1 && !isGrad(c)).length;
     const nMemo = S.cards.filter(c => hasMemo(c) && !isGrad(c)).length;
     const tagN = t => Object.entries(S.tags).filter(([k, g]) => g[t] && S.byKey[k]).length;
-    const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"], ...(nMemo ? [["memo", "✎ 메모 " + nMemo]] : []), ...(nMulti ? [["multi", "📚 여러 출처 " + nMulti]] : []), ...TAGS.filter(([t]) => tagN(t)).map(([t, l]) => ["tag-" + t, `<i class="cdot td-${t}"></i>${l} ${tagN(t)}`]), ...(nGrad ? [["grad", "🎓 졸업 " + nGrad]] : [])]
+    const chips = [["all", "전체"], ["fav", "★ 즐겨찾기"], ["new", "새 카드"], ["learn", "학습 중"], ["rev", "복습 중"], ...(nMemo ? [["memo", "✎ 메모 " + nMemo]] : []), ...(nMulti ? [["multi", "📚 여러 출처 " + nMulti]] : []), ...TAGS.filter(([t]) => tagN(t)).map(([t, l]) => ["tag-" + t, `<i class="cdot td-${t}"></i>${l} ${tagN(t)}`]), ...(nGrad ? [["grad", "✂ 뜯은 종이 " + nGrad]] : [])]
       .map(([k, l]) => `<button class="chip" type="button" data-act="filter" data-f="${k}" aria-pressed="${S.filter === k}">${l}</button>`).join("");
+    // 걸려 있는 필터 요약(누르면 그 필터만 해제)
+    const act = [];
+    for (const l of S.wlevel) act.push(["wlevel", l, levelLabel(l)]);
+    for (const d of S.wsrc) act.push(["wsrc", d, bookName(S.decks.find(x => x.id === d) || { name: deckLabel(d) })]);
+    if (S.filter && S.filter !== "all") { const f = { fav: "★ 즐겨찾기", new: "새 카드", learn: "학습 중", rev: "복습 중", memo: "✎ 메모", multi: "📚 여러 출처", grad: "✂ 뜯은 종이" }[S.filter] || (TAGS.find(([t]) => "tag-" + t === S.filter) || [, , ""])[1] + " 표시"; act.push(["filter", "all", f]); }
+    for (const g of S.wpos) act.push(["wpos", g, (POS_GROUPS.find(([k]) => k === g) || [, g])[1]]);
+    for (const v of S.wvt) act.push(["wvt", v, v === "복합" ? "복합동사" : v]);
+    for (const v of S.wnt) act.push(["wnt", v, v === "suru" ? "する동사" : "일반 명사"]);
+    const open = !!S.wfOpen;
+    const actHtml = act.length ? `<div class="wfact">${act.map(([a, v, l]) => `<button class="wfchip" type="button" data-act="wf-off" data-a="${a}" data-v="${esc(v)}">${esc(l)} <span aria-hidden="true">×</span></button>`).join("")}<button class="wfclear" type="button" data-act="wf-clear">모두 해제</button></div>` : "";
+    const panel = open ? `<div class="wfpanel">
+        <div class="wfhead"><b>필터</b>${top.split("\n")[0]}</div>
+        <div class="wfsec"><span class="wflbl">급수</span><div class="levels seven" role="group" aria-label="급수">${lvBtn("all", "전체", lvAll)}${LEVELS.map(([k, l]) => lvBtn(k, l, lvCount[k] || 0)).join("")}</div></div>
+        <div class="wfsec"><span class="wflbl">출처</span><div class="levels books" role="group" aria-label="출처">${srcBtn("all", "전체", srcAll)}${S.decks.filter(d => d.cards.length).map(d => srcBtn(d.id, bookName(d), srcCount[d.id] || 0)).join("")}</div></div>
+        <div class="wfsec"><span class="wflbl">상태</span><div class="chips">${chips}</div></div>
+        <div class="wfsec">${posRow()}</div>
+        <div class="wffoot"><button class="btn ghost small" type="button" data-act="sources">출처 관리</button><button class="btn primary small" type="button" data-act="wf-toggle">완료</button></div>
+      </div>` : "";
     return `<div class="stack">
-      ${top}
-      <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn ghost" type="button" data-act="sources">출처</button><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
-      ${subChips}
-      <div class="chips">${chips}</div>
-      ${posRow()}
+      <div class="searchrow"><input id="wsearch" class="search" type="search" placeholder="단어, 읽기, 뜻으로 검색" value="${esc(S.q)}" autocomplete="off"><button class="btn ghost wfbtn" type="button" data-act="wf-toggle" aria-pressed="${open}">필터${act.length ? ` <span class="wfn">${act.length}</span>` : ""}</button><button class="btn primary" type="button" data-act="add">+ 추가</button></div>
+      ${actHtml}
+      ${panel}
       <div id="wresults" class="stack">${wordsResults()}</div>
     </div>`;
   }
@@ -2353,14 +2784,68 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
   const isOut = i => !(i && i.joyo);
   const kNeedsKo = k => KANJI_RE.test(k) && !(S.kanji[k] || {}).ko;
   const kOutBadge = i => `<span class="jlpt out">${i && i.jinmei ? "인명용" : "상용 외"}</span>`;
+  // ================= 漢字辞典: 한자 탭 = 펼친 사전 =================
+  // 손톱 색인(N5~N1·급수 외·상용 외)으로 넘기고, 만난 한자(내 단어에 나온 한자)는 진하게, 아직 안 만난 한자는 흐리게.
+  const KD_TABS = [["5", "N5", "#5B6B8A"], ["4", "N4", "#2C6B4E"], ["3", "N3", "#24427C"], ["2", "N2", "#7A3E48"], ["1", "N1", "#4A4A4A"], ["none", "급수외", "#8A5A2B"], ["out", "상용외", "#6B5B7A"]];
+  const kdTabOf = i => i && i.jlpt ? String(i.jlpt) : (i && i.joyo ? "none" : "out");
+  const kdLabel = t => (KD_TABS.find(x => x[0] === t) || [, ""])[1].replace("급수외", "급수 외").replace("상용외", "상용 외");
+  function kdList(tab, mineOnly) {
+    let ks = allKanjiKeys().map(k => ({ k, i: S.kanji[k] || {}, n: (S.kidx.get(k) || []).length })).filter(x => kdTabOf(x.i) === tab);
+    if (mineOnly || tab === "out") ks = ks.filter(x => x.n > 0);
+    return ks.sort((a, b) => (a.i.freq || 9999) - (b.i.freq || 9999) || a.k.localeCompare(b.k));
+  }
+  const kdTab = () => KD_TABS.some(x => x[0] === S.settings.kdTab) ? S.settings.kdTab : "3";
+  function kdThumbs(cur) {
+    return `<div class="dthumbs" role="tablist" aria-label="손톱 색인">${KD_TABS.map(([v, l, c]) => `<button class="dth${v === cur ? " on" : ""}" type="button" role="tab" aria-selected="${v === cur}" data-act="kd-tab" data-v="${v}" style="--c:${c}">${l}</button>`).join("")}</div>`;
+  }
+  function kdIndex() {
+    const tab = kdTab(), all = kdList(tab, false), met = all.filter(x => x.n > 0), list = S.settings.kdMine ? met : all;
+    const pct = all.length ? Math.round(met.length / all.length * 100) : 0; KD_LIST = list;
+    const head = tab === "out" ? `<div class="dprog"><b>${kdLabel(tab)} 한자 ${all.length}자</b> <span>내 단어에 나온 것만</span></div>`
+      : `<div class="dprog"><b>${kdLabel(tab)} · ${all.length}자 중 ${met.length}자</b> <span>만남 (${pct}%)</span></div><div class="dbar" aria-hidden="true"><i style="width:${pct}%"></i></div>`;
+    return `${head}
+      <div class="dtools"><button class="dsw" type="button" data-act="kd-mine" aria-pressed="${!!S.settings.kdMine}"><i aria-hidden="true"></i>만난 한자만</button><span class="muted">자주 쓰이는 순</span></div>
+      ${list.length ? `<div class="dgw" id="dgw" aria-live="polite"></div><div class="dpager"><button class="dpg" type="button" data-act="kd-pg" data-d="-1" aria-label="앞 장">‹</button><span id="dpgn" class="num"></span><button class="dpg" type="button" data-act="kd-pg" data-d="1" aria-label="다음 장">›</button></div>` : '<p class="empty">이 색인에 한자가 없어요.</p>'}`;
+  }
+  const kdBody = () => S.kq.trim() ? kanjiResults() : kdIndex();
+  // 색인 격자를 화면에 꼭 맞는 한 장씩 나누고, 옆으로 넘긴다(세로 스크롤 없음)
+  let KD_LIST = [], KD_PER = 1;
+  const kdCell = x => `<button class="dcell${x.n ? "" : " f"}" type="button" data-act="kanji" data-k="${esc(x.k)}" aria-label="${esc(x.k)} ${esc(kKo(x.i))}${x.n ? ` · 내 단어 ${x.n}개` : " · 아직 안 만남"}"><b lang="ja">${esc(x.k)}</b>${x.n ? `<i>${x.n}</i>` : ""}</button>`;
+  function kdLayout(dir) {
+    const box = $("#dgw"); if (!box) return;
+    const gap = 5, w = box.clientWidth, hh = box.clientHeight || 300, cell = 52;
+    const cols = Math.max(4, Math.floor((w + gap) / (cell + gap))), rows = Math.max(2, Math.floor((hh + gap) / (cell + gap)));
+    KD_PER = cols * rows; const pages = Math.max(1, Math.ceil(KD_LIST.length / KD_PER));
+    S.kdPg = clamp(S.kdPg || 0, 0, pages - 1);
+    box.style.gridTemplateColumns = `repeat(${cols}, 1fr)`; box.style.gridTemplateRows = `repeat(${rows}, ${Math.floor((hh - gap * (rows - 1)) / rows)}px)`;
+    box.innerHTML = KD_LIST.slice(S.kdPg * KD_PER, S.kdPg * KD_PER + KD_PER).map(kdCell).join("");
+    const n = $("#dpgn"); if (n) n.textContent = `${S.kdPg + 1} / ${pages}`;
+    const bs = document.querySelectorAll(".dpager .dpg"); if (bs.length === 2) { bs[0].disabled = S.kdPg <= 0; bs[1].disabled = S.kdPg >= pages - 1; }
+    if (dir && !reduceMotion() && box.animate) box.animate([{ transform: `translateX(${dir > 0 ? 34 : -34}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 220, easing: "ease-out" });
+    if (!box.dataset.sw) { box.dataset.sw = 1; let x0 = null, y0 = 0;
+      box.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") { x0 = e.clientX; y0 = e.clientY; } });
+      box.addEventListener("pointerup", e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) { box.dataset.swiped = 1; setTimeout(() => { delete box.dataset.swiped; }, 80); kdTurn(dx < 0 ? 1 : -1); } });
+      box.addEventListener("pointercancel", () => { x0 = null; });
+      box.addEventListener("click", e => { if (box.dataset.swiped) { e.stopPropagation(); e.preventDefault(); delete box.dataset.swiped; } }, true); }
+  }
+  function kdTurn(d) { const pages = Math.max(1, Math.ceil(KD_LIST.length / KD_PER)), np = clamp((S.kdPg || 0) + d, 0, pages - 1); if (np === S.kdPg) return; S.kdPg = np; kdLayout(d); }
+  window.addEventListener("resize", () => { if ($("#dgw")) kdLayout(0); });
+  function kdSearchBar() {
+    const miss = [...S.kidx.keys()].filter(k => kNeedsKo(k)).length;
+    const fill = miss ? (KFILL.running ? `<span class="muted">AI가 음훈을 채우는 중…</span>` : aiReady() ? `<button class="btn small" type="button" data-act="kfill-missing">음훈 빈 ${miss}자 AI로 채우기</button>` : "") : "";
+    return `<div class="searchrow"><input id="ksearch" class="search" type="search" placeholder="사전에서 찾기: 한자, 음훈, 읽기 (예: 相, 서로, そう)" value="${esc(S.kq)}" autocomplete="off"></div>${fill ? `<div class="knote">${fill}</div>` : ""}`;
+  }
+  function kdBook(body, fly) {
+    return `<div class="dbook${fly === "open" ? " dopen" : fly ? " dfly" : ""}"><div class="dpaper"><div class="dhead"><span>${S.kq.trim() ? "찾기" : kdLabel(kdTab()) + " 색인"}</span><span lang="ja">漢字辞典</span></div><div id="kresults">${body}</div></div>${kdThumbs(S.kq.trim() ? "" : kdTab())}</div>`;
+  }
   function viewKanji() {
-    const chips = KFILTERS.map(([k, l]) => `<button class="chip" type="button" data-act="kfilter" data-f="${k}" aria-pressed="${k === "all" ? !S.kfilter.length : S.kfilter.includes(k)}">${l}</button>`).join("");
-    return `<div class="stack">
-      <div class="searchrow"><input id="ksearch" class="search" type="search" placeholder="한자, 음훈, 읽기로 검색 (예: 相, 서로, そう)" value="${esc(S.kq)}" autocomplete="off"></div>
-      <div class="chips">${chips}</div>
-      <div id="kresults" class="stack">${kanjiResults()}</div>
-      <p class="note">음독·훈독·획수·JLPT 급수는 KANJIDIC(EDRDG, CC BY-SA 4.0)을 정리한 kanji-data를 썼어요. JLPT 급수는 공식 목록이 없어서 추정치예요. 상용 외 한자는 단어장에 나오면 자동으로 여기에 들어오고, 한국어 음훈은 AI가 채우거나 직접 고칠 수 있어요. 한글 음은 Unicode Unihan을 참고했어요.</p>
-    </div>`;
+    S.kfilter = [];
+    return `<div class="stack">${kdSearchBar()}${kdBook(kdBody())}</div>`;
+  }
+  // 공부 중 책등을 눌러 펼친 사전(색인). 덮으면 공부하던 자리로.
+  function viewKanjiIndex(page) {
+    const fly = page.fly ? "fly" : page.open ? "open" : ""; page.fly = false; page.open = false; S.kfilter = [];
+    return `<div class="stack">${pagebar("漢字辞典").replace("← 뒤로", "사전 덮기")}${kdSearchBar()}${kdBook(kdBody(), fly)}</div>`;
   }
   const toKata = s => s.replace(/[\u3041-\u3096]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
   function allKanjiKeys() {
@@ -2517,10 +3002,10 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
     }
     const w = S.states["wr:" + key];
     const cnt = (s ? `<span class="wchip cnt">학습 ${s.reps || 0}회</span>` : "") + (w ? `<span class="wchip cnt">쓰기 ${w.reps || 0}회</span>` : "");
-    if (S.grad[key]) return `<div class="wchips">${cnt}<span class="wchip grad">🎓 졸업한 단어</span><button class="wchip" type="button" data-act="grad-off" data-key="${esc(key)}">졸업 취소</button></div>
-      <p class="note">학습·복습·쓰기에 나오지 않아요. 졸업을 취소하면 원래 복습 일정대로 다시 나와요.</p>`;
+    if (S.grad[key]) return `<div class="wchips">${cnt}<span class="wchip grad">✂ 뜯은 종이 · ${ymd(S.grad[key])}</span><button class="wchip" type="button" data-act="grad-off" data-key="${esc(key)}">↩ 책에 다시 끼우기</button></div>
+      <p class="note">책에서 뜯어낸 단어라 평소 공부엔 안 나와요. 다음 확인은 ${ymd(tearCheckDue(key))}이에요. 다시 끼우면 원래 복습 일정대로 나와요.</p>`;
     const sug = gradSuggest(key);
-    const gbtn = `<button class="wchip gradbtn${sug ? " sug" : ""}" type="button" data-act="grad-on" data-key="${esc(key)}">🎓 ${sug ? "졸업할까요?" : "졸업"}</button>`;
+    const gbtn = `<button class="wchip gradbtn${sug ? " sug" : ""}" type="button" data-act="grad-on" data-key="${esc(key)}">✂ ${sug ? "뜯을까요?" : "책에서 뜯기"}</button>`;
     return `<div class="wchips">${cnt}<span class="wchip ${st.cls}">● ${st.label}</span>${next ? `<span class="wchip">${next}</span>` : ""}${q}${gbtn}</div>`;
   }
   function simSection(page, c) {
@@ -2575,38 +3060,55 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
   function viewKanjiPage(page) {
     const k = page.k, info = S.kanji[k] || {}, keys = S.kidx.get(k) || [];
     const cards = keys.map(key => S.byKey[key]).filter(Boolean);
-    const fact = (label, v) => `<div><dt>${label}</dt><dd lang="ja">${v ? esc(v) : '<span class="muted" style="font-weight:400">—</span>'}</dd></div>`;
-    const hasDetail = (info.on && info.on.length) || (info.kun && info.kun.length) || info.strokes;
     const ed = S.kedits[k], kind = info.joyo ? "상용한자" : info.jinmei ? "인명용 한자" : "표외 한자";
+    const hasDetail = (info.on && info.on.length) || (info.kun && info.kun.length) || info.strokes;
     let knote = "";
     if (!info.ko) knote = KFILL.running && KFILL.list.includes(k) ? '<p class="note">AI가 음훈을 채우는 중이에요…</p>'
       : `<div class="knote"><p class="note">${info.kh ? "한글 음만 있고 뜻이 없어요." : "한국어 음훈이 없어요."}</p>${aiReady() ? `<button class="btn small" type="button" data-act="kfill-one" data-k="${esc(k)}">AI로 채우기</button>` : ""}<button class="btn small ghost" type="button" data-act="kedit" data-k="${esc(k)}">직접 입력</button></div>`;
     else if (ed && ed.ai) knote = `<div class="knote"><p class="note"><span class="aitag">AI</span> AI가 쓴 음훈이에요. 맞으면 확인을 눌러 주세요.</p><button class="btn small" type="button" data-act="kai-ok" data-k="${esc(k)}">맞아요</button><button class="btn small ghost" type="button" data-act="kedit" data-k="${esc(k)}">고치기</button></div>`;
     else if (ed) knote = '<p class="note">직접 고친 내용이 보이고 있어요. 편집에서 원래대로 되돌릴 수 있어요.</p>';
     else if (!hasDetail) knote = '<p class="note">이 한자의 읽기 정보가 없어요.</p>';
-    return `<div class="stack">${pagebar(k + "  " + (info.ko || ""), `<button class="btn small" type="button" data-act="kedit" data-k="${esc(k)}">편집</button>`)}
-      <div class="hero">
-        <div class="khero">
-          <div class="kbig" lang="ja">${esc(k)}</div>
-          <div style="display:grid;gap:10px;min-width:0">
-            <p class="kko">${esc(kKo(info) || "음훈 정보 없음")}</p>
-            <dl class="facts">
-              ${fact("음독", (info.on || []).join("・"))}
-              ${fact("훈독", (info.kun || []).join("・"))}
-              ${fact("획수", info.strokes ? info.strokes + "획" : "")}
-              ${fact("구분", kind)}
-              ${fact("JLPT", info.jlpt ? "N" + info.jlpt : (info.joyo ? "급수 외" : ""))}
-              ${fact("배우는 시기", info.grade >= 1 && info.grade <= 6 ? "초등 " + info.grade + "학년" : info.grade === 8 ? "중학교 이상" : "")}
-              ${fact("영어 뜻", info.en || "")}
-            </dl>
-            ${knote}
-          </div>
-        </div>
-      </div>
-      <section><h2 class="section-title num">이 한자가 들어간 단어 ${cards.length}개</h2>
-        ${cards.length ? `<div class="list">${cards.map(c => kanjiWordRow(c, k)).join("")}</div>` : '<p class="empty">단어장에는 이 한자가 들어간 단어가 없어요.</p>'}
-      </section>
+    const tab = kdTabOf(info);
+    let list = kdList(tab, !!S.settings.kdMine); if (!list.some(x => x.k === k)) list = kdList(tab, false);
+    const at = list.findIndex(x => x.k === k), prev = at > 0 ? list[at - 1].k : "", next = at >= 0 && at < list.length - 1 ? list[at + 1].k : "";
+    const fly = page.fly, open = page.open, turn = page.turn; page.fly = false; page.open = false; page.turn = "";
+    const row = (l, v, ja) => v ? `<div class="drow"><span class="dl">${l}</span><span class="dv"${ja ? ' lang="ja"' : ""}>${esc(v)}</span></div>` : "";
+    const meta = [info.jlpt ? "N" + info.jlpt : info.joyo ? "급수 외" : "", info.strokes ? info.strokes + "획" : "", kind, info.grade >= 1 && info.grade <= 6 ? "초등 " + info.grade + "학년" : info.grade === 8 ? "중학교 이상" : ""].filter(Boolean).join(" · ");
+    const words = cards.length ? `<div class="list">${cards.map(c => `<div class="${c.key === page.from ? "dcur" : ""}">${kanjiWordRow(c, k)}</div>`).join("")}</div>`
+      : `<div class="dnone">아직 내 단어에서 만나지 않은 한자예요.<button class="btn small" type="button" data-act="kd-add" data-k="${esc(k)}">＋ 이 한자로 단어 추가</button></div>`;
+    return `<div class="stack">${pagebar("漢字辞典 · " + k, `<button class="btn small" type="button" data-act="kedit" data-k="${esc(k)}">편집</button>`).replace("← 뒤로", "사전 덮기")}
+      <div class="dbook${fly ? " dfly" : ""}${open ? " dopen" : ""}${turn ? " dturn-" + turn : ""}" id="dbook"><div class="dpaper dscroll">
+        <div class="dhead"><span>${esc(meta)}</span><span lang="ja">漢字辞典</span></div>
+        <div class="dkbox${cards.length ? "" : " f"}" lang="ja">${esc(k)}</div>
+        <p class="dko">${esc(kKo(info) || "음훈 정보 없음")}</p>
+        <div class="drows">${row("音", (info.on || []).join("・"), 1)}${row("訓", (info.kun || []).join("・"), 1)}${row("英", info.en || "")}</div>
+        ${knote}
+        <h3 class="dsec num">이 한자를 쓰는 내 단어 ${cards.length ? cards.length + "개" : ""}</h3>
+        ${words}
+        <div class="dnav">${prev ? `<button type="button" data-act="kd-go" data-k="${esc(prev)}" data-d="p">‹ <b lang="ja">${esc(prev)}</b> 앞 장</button>` : "<span></span>"}${next ? `<button type="button" data-act="kd-go" data-k="${esc(next)}" data-d="n">다음 장 <b lang="ja">${esc(next)}</b> ›</button>` : "<span></span>"}</div>
+      </div>${kdThumbs(tab)}</div>
     </div>`;
+  }
+  // 책상 모드: 모서리의 사전이 가운데로 미끄러져 온 뒤 표지가 열린다
+  const kdDesk = () => S.settings.kdMode !== "spine";
+  function flyCover(cb) {
+    if (reduceMotion() || !Element.prototype.animate) return cb();
+    const src = $(".dcorner"), r0 = src ? src.getBoundingClientRect() : { left: innerWidth - 70, top: innerHeight - 90, width: 150, height: 206 };
+    const W = Math.min(innerWidth * .62, 260), H = W * 1.37, x1 = (innerWidth - W) / 2, y1 = (innerHeight - H) / 2.4;
+    const el = document.createElement("div"); el.className = "dflycover"; el.innerHTML = '<span lang="ja">漢字<br>辞典</span>'; el.style.width = W + "px"; el.style.height = H + "px"; document.body.appendChild(el);
+    if (src) src.style.visibility = "hidden";
+    const an = el.animate([{ transform: `translate(${r0.left}px,${r0.top}px) rotate(16deg) scale(${r0.width / W})` }, { transform: `translate(${x1}px,${y1}px) rotate(-2deg) scale(1)` }], { duration: 300, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
+    let done = false; const fin = () => { if (done) return; done = true; cb(); setTimeout(() => el.remove(), 60); };
+    an.onfinish = fin; setTimeout(fin, 600);
+  }
+  // 사전 한 장을 옆으로 밀어서 넘기기
+  function initDictSwipe() {
+    const bk = $("#dbook"); if (!bk) return;
+    let x0 = null, y0 = 0;
+    bk.addEventListener("pointerdown", e => { if (e.pointerType === "mouse") return; x0 = e.clientX; y0 = e.clientY; });
+    bk.addEventListener("pointerup", e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+      if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) { const b = bk.querySelector(`.dnav [data-d="${dx < 0 ? "n" : "p"}"]`); if (b) b.click(); } });
+    bk.addEventListener("pointercancel", () => { x0 = null; });
   }
 
   // ================= view: 한자 편집 =================
@@ -3045,7 +3547,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const c = p0.mine ? p0 : (p0.alts || []).find(a => a.mine); if (!c) return;
     // 묶인 단어의 대표를 빼면, 기록·메모·표시를 남는 출처의 카드로 먼저 옮긴다
     const heir = c === p0 && p0.alts && p0.alts.length ? p0.alts[0] : null;
-    if (heir) { const dirty = {}; absorbInto(heir.key, c.key, dirty); if (dirty.tags) serial("tags", () => S.store.saveTags()); if (dirty.favs) serial("favs", () => S.store.saveFavs()); if (dirty.grad) serial("grad", () => S.store.saveGrad()); for (const k of dirty.states || []) persistState(k, S.states[k]); }
+    if (heir) { const dirty = {}; absorbInto(heir.key, c.key, dirty); if (dirty.tags) serial("tags", () => S.store.saveTags()); if (dirty.favs) serial("favs", () => S.store.saveFavs()); if (dirty.grad) serial("grad", () => S.store.saveGrad()); if (dirty.tear) serial("tear", () => S.store.saveTear()); for (const k of dirty.states || []) persistState(k, S.states[k]); }
     const shared = !!(p0.alts && p0.alts.length);
     S.words = S.words.filter(x => x.id !== c.id); delete S.states[c.key]; delete S.states["wr:" + c.key]; delete S.favs[c.key]; delete S.notes[c.key]; serial("notes", () => S.store.saveNotes());
     { let ch = 0; for (const [a, b] of Object.entries(S.links)) if (a === c.key || b === c.key) { delete S.links[a]; ch = 1; } if (ch) serial("links", () => S.store.saveLinks()); }
@@ -3207,8 +3709,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   function sessTop(sess) {
     const pct = sess.total ? Math.round(sess.cleared / sess.total * 100) : 0;
     if (!sess.t0) sess.t0 = Date.now();
-    return `<div class="pagebar"><div class="left"><button class="circ" type="button" data-act="back" aria-label="목록으로">${ICON.back}</button><h2>${esc(sess.name)}${sess.practice ? '<span class="practice-tag">연습</span>' : ""}</h2></div><span class="stimer"><span id="stimer">${fmtClock(Date.now() - sess.t0)}</span>${ICON.clock}</span></div>
-      <div class="sessbar"><span>${sess.cleared}/${sess.total}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div><span>${sess.lap}바퀴째${sess.next.length ? ` · 다시 ${sess.next.length}` : ""}</span></div>`;
+    return `<div class="pagebar spb"><div class="left"><button class="circ" type="button" data-act="back" aria-label="목록으로">${ICON.back}</button><h2>${esc(sess.name)}${sess.practice ? '<span class="practice-tag">연습</span>' : ""}</h2></div></div>
+      <div class="sessbar"><span>${sess.cleared}/${sess.total}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div><span>${sess.lap}바퀴째${sess.next.length ? ` · 다시 ${sess.next.length}` : ""}</span><span class="stimer sm"><span id="stimer">${fmtClock(Date.now() - sess.t0)}</span>${ICON.clock}</span></div>`;
   }
   function sessTag(sess) {
     if (sess.cur in sess.first) return ["다시 학습", "t-learn"];
@@ -3218,11 +3720,14 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     return ["복습", "t-rev"];
   }
   function twoButtons(sess) {
+    if (sess.tear) { const t = S.tear[sess.cur] || {}, nd = TEAR_CHECKS[Math.min((t.n || 0) + 1, TEAR_CHECKS.length - 1)];
+      return `<div class="rates two"><button class="rate" type="button" data-act="rate" data-g="1"><b>까먹었어요</b><span>원래 책에 다시 끼우기</span><kbd>1</kbd></button><button class="rate" type="button" data-act="rate" data-g="3"><b>기억나요</b><span>${fmtDays(nd)} 뒤 다시 확인</span><kbd>2</kbd></button></div>`; }
     const prev = S.states[qKey({ key: sess.cur }, sess.mode)] || null, act = sess.mode === "write" ? "wrate" : "rate";
     const know = sess.practice ? "기록 안 함" : sess.cur in sess.first ? "내일 복습" : fmtDays(knowState(prev, Date.now()).ivl) + " 후 복습";
     return `<div class="rates two"><button class="rate" type="button" data-act="${act}" data-g="1"><b>다시 학습</b><span>한 바퀴 뒤 다시</span><kbd>1</kbd></button><button class="rate" type="button" data-act="${act}" data-g="3"><b>알고있음</b><span>${know}</span><kbd>2</kbd></button></div>`;
   }
   function sessDone(sess) {
+    if (sess.tear) return `<div class="card"><div class="done"><h3>おつかれさま</h3><p>뜯은 종이 ${sess.total}장을 확인했어요.</p><p>${sess.backN ? `${sess.backN}장은 까먹어서 원래 책에 다시 끼웠어요. 오늘 복습에 나와요.` : "전부 기억하고 있어요."}</p><button class="btn" type="button" data-act="back">목록으로</button></div></div>`;
     if (sess.practice) {
       const again = Object.keys(sess.first).filter(k => sess.first[k] === 1).length;
       return `<div class="card"><div class="done"><h3>おつかれさま</h3><p>${sess.total}개를 ${sess.lap}바퀴 만에 끝냈어요. 연습이라 복습 일정은 그대로예요.</p>
@@ -3254,11 +3759,127 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const mid = t.parts.map(p => p.blank ? (p.reading ? `<ruby>${esc(p.blank)}<rt>${esc(p.reading)}</rt></ruby>` : esc(p.blank)) : esc(p.text)).join("");
     return esc(t.before) + mid + esc(t.after);
   }
+  // ================= 공부: 공책 페이지 + 빨간 시트(赤シート) =================
+  // 검은 글씨 = 힌트(시트 너머로 비쳐 보임), 빨간 글씨 = 답(시트 색과 같아서 덮이면 안 보임).
+  // 시트는 위에서부터 한 칸씩 걷힌다(탭·스페이스 = 한 칸, 끌어내리기 = 원하는 만큼).
+  function exHighlight(ce) {
+    if (furiOk(ce)) return furiHtml(ce.exf);
+    const t = baseTarget(ce);
+    if (t && !t.fallback) { const mid = t.parts.map(p => p.blank ? (p.reading ? `<ruby>${esc(p.blank)}<rt>${esc(p.reading)}</rt></ruby>` : esc(p.blank)) : esc(p.text)).join(""); return esc(t.before) + `<span class="nhl">${mid}</span>` + esc(t.after); }
+    const rg = hlRange(ce.ex, ce.w, ce.pos);
+    return rg ? esc(ce.ex.slice(0, rg[0])) + `<span class="nhl">${esc(ce.ex.slice(rg[0], rg[1]))}</span>` + esc(ce.ex.slice(rg[1])) : esc(ce.ex);
+  }
+  function exRedWord(ce) {
+    const rg = hlRange(ce.ex, ce.w, ce.pos);
+    return rg ? esc(ce.ex.slice(0, rg[0])) + `<span class="nhl nblank"><span class="pen-r">${esc(ce.ex.slice(rg[0], rg[1]))}</span></span>` + esc(ce.ex.slice(rg[1])) : esc(ce.ex);
+  }
+  function studyTools(sess, c, pens) {
+    const fav = !!S.favs[c.key];
+    return `<div class="sc-top">
+          <span class="ago">${agoLabel(c.key)}</span>
+          <button class="favplain" type="button" data-act="fav" data-key="${esc(c.key)}" aria-pressed="${fav}" aria-label="즐겨찾기">${ICON.star}</button>
+          <span class="grow"></span>
+          ${pens}
+          ${sess.tear ? '<span class="pillbtn tearchk">✂ 확인</span>' : `<button class="pillbtn gradpill${gradSuggest(c.key) ? " sug" : ""}" type="button" data-act="grad-ask" aria-pressed="${sess.gradAsk === c.key}" aria-label="책에서 뜯기" title="${gradSuggest(c.key) ? `복습 간격이 ${tearLabel()}을 넘었어요. 뜯을까요?` : "다 외웠으면 책에서 뜯어내기"}">✂${gradSuggest(c.key) ? '<span class="sgt">뜯기?</span>' : ""}</button>`}
+          <button class="pillbtn" type="button" data-act="word" data-key="${esc(c.key)}" aria-label="상세">${ICON.detail}<span class="pl">상세</span></button>
+        </div>
+        ${sess.gradAsk === c.key ? `<div class="gradask" role="alertdialog" aria-label="뜯기 확인"><span>✂ 이 단어를 책에서 뜯을까요? 평소 공부엔 안 나오고, 몇 달에 한 번 확인 카드로만 나와요.</span><span class="gbtns"><button class="btn small primary" type="button" data-act="grad-now">뜯기</button><button class="btn small ghost" type="button" data-act="grad-cancel">취소</button></span></div>` : ""}`;
+  }
+  function studyNote(sess, c, top) {
+    if (sess.stopKey !== c.key) { sess.stopKey = c.key; sess.stop = 0; }
+    const m2w = S.settings.dir === "m2w", kanaK = !!S.settings.showKana, exK = !S.settings.hideEx, open = !!sess.revealed;
+    const ce = exVariant(c), say = c.r || c.w, rd = readingHtml(c);
+    const pen = k => k ? "pen-k" : "pen-r";
+    const P = (key, on, label, act, title) => `<button class="pillbtn tg pen" type="button" data-act="${act}" aria-pressed="${on}" title="${title}"><i class="pdot ${on ? "k" : "r"}" aria-hidden="true"></i>${label}</button>`;
+    const pens = (ce.ex ? P("ex", exK, "예문", "tg-ex", exK ? "예문: 검은 펜(처음부터 보임). 누르면 빨간 펜(시트로 가림)" : "예문: 빨간 펜(시트로 가림). 누르면 검은 펜") : "") + (rd ? P("kana", kanaK, "읽기", "tg-kana", kanaK ? "읽기: 검은 펜(처음부터 보임). 누르면 빨간 펜" : "읽기: 빨간 펜(시트로 가림). 누르면 검은 펜") : "");
+    const m = (noteOf(c.key).memo || "").trim(), bl = backlinksOf(c.key);
+    const memo = m || bl.length ? `<div class="nl nmemo pen-r" data-s="X">${m ? `<div class="txt">✎ ${memoHtml(m, c.key)}</div>` : ""}${bl.map(k => `<div class="bmline">✎ <b lang="ja">${esc(S.byKey[k].w)}</b> 메모 · ${memoHtml(noteOf(k).memo, c.key)}</div>`).join("")}</div>` : "";
+    const wHtml = [...String(c.w)].map(ch => KANJI_RE.test(ch) ? `<span class="nkj" data-act="kanji" data-k="${esc(ch)}" title="한자 사전에서 보기">${esc(ch)}</span>` : esc(ch)).join("");
+    const word = (cls, s) => `<button class="nl nword ${cls}" ${s} type="button" data-act="speak" data-text="${esc(say)}" data-key="${esc(c.key)}" data-kind="w" lang="ja" aria-label="발음 듣기">${ul(wHtml, c.key, "k")}</button>`;
+    const read = (cls, s) => rd ? `<div class="nl nread ${cls}" ${s} lang="ja">${ul(rd, c.key, "p")}</div>` : "";
+    const mean = (cls, s) => `<div class="nl nmean ${cls}" ${s}>${ul(esc(c.ko), c.key, "m")}${c.en ? `<small>${esc(c.en)}</small>` : ""}</div>`;
+    const exEl = (cls, s, inner) => ce.ex ? `<div class="nl nex ${cls}${kanaK ? "" : " rt-r"}" ${s} lang="ja" role="button" tabindex="0" data-act="speak" data-text="${esc(ce.ex)}" data-key="${esc(c.key)}" data-kind="ex" aria-label="예문 듣기">${inner}</div>` : "";
+    const exko = (cls, s) => ce.ex && ce.exko ? `<div class="nl nko ${cls}" ${s}>${esc(ce.exko)}</div>` : "";
+    // 빨간 항목마다 시트가 멈추는 칸 번호(data-s). 해석·메모는 마지막 한 칸으로 묶는다.
+    let n = 0; const st = k => k ? "" : `data-s="${++n}"`;
+    let body;
+    if (!m2w) {
+      body = word("pen-k", "") + read(pen(kanaK), st(kanaK)) + exEl(pen(exK), st(exK), exHighlight(ce)) + mean("pen-r", st(false));
+      const last = ++n; body += exko("pen-r", `data-s="${last}"`) + memo.replace('data-s="X"', `data-s="${last}"`);
+      if (!(ce.ex && ce.exko) && !memo) n--;
+    } else {
+      body = mean("pen-k nq", "") + exEl(pen(exK), st(exK), exRedWord(ce)) + exko(pen(exK), exK ? "" : `data-s="${n}"`) + word("pen-r", st(false)) + read(pen(kanaK), st(kanaK));
+      if (memo) body += memo.replace('data-s="X"', `data-s="${++n}"`);
+    }
+    const left = n - (sess.stop || 0);
+    return `<div class="stack">${top}
+      <div class="npage${open ? " open" : ""}${m2w ? " m2w" : ""}" id="npage">
+        ${studyTools(sess, c, pens)}
+        <div class="nbody">${body}</div>
+        ${open ? `<div class="ntags">${tagButtons(c.key)}</div>` : `<div class="nsheet" id="nsheet" role="button" tabindex="0" aria-label="빨간 시트 한 칸 내리기"></div><div class="nsband" id="nsband" aria-hidden="true"><span class="hl">↓ 끌어내리기</span><i></i><span class="lbl" lang="ja">赤シート</span></div>`}
+      </div>
+      <div class="sc-bottom nbottom">
+        <button class="circ" type="button" data-act="undo" aria-label="되돌리기" ${sess.hist.length ? "" : "disabled"}>${ICON.undo}</button>
+        <button class="toggle" type="button" data-act="reveal" aria-pressed="${open}">${open ? "다시 덮기" : left > 1 ? "한 칸 내리기 ↓" : m2w ? "단어 보기 ↓" : "뜻 보기 ↓"}</button>
+      </div>
+      ${twoButtons(sess)}
+      ${S.settings.kdMode === "spine" ? `<button class="dspine" type="button" data-act="kd-open" aria-label="한자 사전 펼치기"><span lang="ja">漢字辞典</span></button>` : `<button class="dcorner" type="button" data-act="kd-open" aria-label="한자 사전 펼치기"><span lang="ja">漢字<br>辞典</span></button>`}
+      <p class="hint">한자를 누르면 한자 사전 · 빨간 시트를 끌어내리거나 눌러서 한 칸씩 · 스페이스 한 칸 · E 예문 펜 · H 읽기 펜 · 1 다시 학습 · 2 알고있음 · Z 되돌리기</p></div>`;
+  }
+  // 시트 위치: 0칸 = 도구줄 바로 아래, k칸 = k번째 빨간 항목 바로 아래
+  function sheetStops() {
+    const pg = $("#npage"); if (!pg) return null;
+    const pr = pg.getBoundingClientRect(), tools = pg.querySelector(".sc-top"), ga = pg.querySelector(".gradask");
+    const y0 = Math.max(tools ? tools.getBoundingClientRect().bottom : pr.top, ga ? ga.getBoundingClientRect().bottom : 0) - pr.top + 8;
+    const ys = [y0], ks = [...new Set([...pg.querySelectorAll("[data-s]")].map(e => +e.dataset.s))].filter(Number.isFinite).sort((a, b) => a - b);
+    for (const k of ks) ys.push(Math.max(ys[ys.length - 1], ...[...pg.querySelectorAll(`[data-s="${k}"]`)].map(e => e.getBoundingClientRect().bottom - pr.top + 6)));
+    return { ys, h: pr.height };
+  }
+  function sheetTop(y) { const sh = $("#nsheet"), bd = $("#nsband"); if (sh) sh.style.top = y + "px"; if (bd) bd.style.top = y + "px"; }
+  function sheetDrag(on) { for (const e of [$("#nsheet"), $("#nsband")]) if (e) e.classList.toggle("drag", on); }
+  function sheetLabel(n, k) { const btn = document.querySelector('.nbottom [data-act="reveal"]'); if (btn) btn.textContent = n - k > 1 ? "한 칸 내리기 ↓" : S.settings.dir === "m2w" ? "단어 보기 ↓" : "뜻 보기 ↓"; }
+  function sheetGo(k) {
+    const sess = S.study; if (!sess || !sess.cur) return;
+    const sp = sheetStops();
+    if (!sp || !$("#nsheet")) { sess.revealed = true; render(); return; }
+    const n = sp.ys.length - 1; k = Math.max(0, Math.min(k, n)); sess.stop = k;
+    if (k >= n) { sheetTop(sp.h); setTimeout(() => { if (S.study === sess && sess.stop >= n && !sess.revealed) { sess.revealed = true; render(); } }, 260); return; }
+    sheetTop(sp.ys[k]); sheetLabel(n, k);
+  }
+  function initSheet() {
+    const sess = S.study, pg = $("#npage"), sh = $("#nsheet"); if (!sess || !pg || !sh) return;
+    const sp = sheetStops(); if (!sp) return;
+    const n = sp.ys.length - 1;
+    if (n <= 0) { sess.revealed = true; render(); return; }
+    const k0 = Math.min(sess.stop || 0, n - 1);
+    sheetDrag(true); sheetTop(sp.ys[k0]); void sh.offsetWidth; sheetDrag(false); sheetLabel(n, k0);
+    // 시트 위(빨간 영역)에서 시작한 손가락은 위에 비친 글씨 위여도 시트를 끈다. 살짝 누르면 한 칸.
+    let y0 = 0, t0 = 0, moved = false, id = null, eat = false;
+    pg.addEventListener("pointerdown", e => {
+      if (sess.revealed || id !== null) return;
+      const top = parseFloat(sh.style.top) || 0, pr = pg.getBoundingClientRect();
+      if (e.clientY < pr.top + top - 4 || e.target.closest(".sc-top, .gradask")) return;
+      id = e.pointerId; y0 = e.clientY; t0 = top; moved = false;
+    });
+    pg.addEventListener("pointermove", e => { if (e.pointerId !== id) return; const dy = e.clientY - y0; if (!moved && Math.abs(dy) > 7) { moved = true; sheetDrag(true); try { pg.setPointerCapture(id); } catch (x) {} } if (moved) { e.preventDefault(); sheetTop(Math.max(sp.ys[0], Math.min(sp.h, t0 + dy))); } });
+    const end = e => { if (e.pointerId !== id) return; id = null; sheetDrag(false);
+      if (!moved) { if (!e.target.closest("[data-act]") || e.target.closest("#nsheet")) sheetGo((sess.stop || 0) + 1); return; }
+      eat = true; setTimeout(() => { eat = false; }, 50);
+      const cur = parseFloat(sh.style.top) || 0; let k = 0;
+      for (let i = 0; i < sp.ys.length; i++) if (sp.ys[i] <= cur + 14) k = i;
+      if (cur >= sp.ys[n] + 30 || cur >= sp.h - 40) k = n;
+      sheetGo(k); };
+    pg.addEventListener("pointerup", end); pg.addEventListener("pointercancel", end);
+    pg.addEventListener("click", e => { if (eat) { e.stopPropagation(); e.preventDefault(); eat = false; } }, true);
+    sh.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); sheetGo((sess.stop || 0) + 1); } });
+  }
+  function sheetNext() { const sess = S.study; if (!sess || !sess.cur) return; if (sess.revealed) { sess.revealed = false; sess.stop = 0; render(); } else if ($("#nsheet")) sheetGo((sess.stop || 0) + 1); else { sess.revealed = true; render(); } }
   function viewStudy() {
     const sess = S.study;
     if (!sess) return pagebar("공부") + '<p class="empty">세션이 끝났어요.</p>';
     const card = sessCurrent(sess), top = sessTop(sess);
     if (!card) return `<div class="stack">${top}${sessDone(sess)}</div>`;
+    if (!card.html) return studyNote(sess, card, top);
     const dir = S.settings.dir, show = sess.revealed, c = card, fav = !!S.favs[c.key];
     const showEx = !S.settings.hideEx, kana = !!S.settings.showKana, m2w = dir === "m2w";
     const say = c.html ? htmlText(c.front) : (c.r || c.w);
@@ -3275,10 +3896,10 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
           <button class="favplain" type="button" data-act="fav" data-key="${esc(c.key)}" aria-pressed="${fav}" aria-label="즐겨찾기">${ICON.star}</button>
           <span class="grow"></span>
           ${c.html ? "" : `${c.ex ? `<button class="pillbtn tg" type="button" data-act="tg-ex" aria-pressed="${showEx}">예문</button>` : ""}${c.r ? `<button class="pillbtn tg" type="button" data-act="tg-kana" aria-pressed="${kana}">히라가나</button>` : ""}`}
-          <button class="pillbtn gradpill${gradSuggest(c.key) ? " sug" : ""}" type="button" data-act="grad-ask" aria-pressed="${sess.gradAsk === c.key}" aria-label="졸업" title="${gradSuggest(c.key) ? "복습 간격이 반년을 넘었어요. 졸업할까요?" : "졸업: 이제 안 봐도 되는 단어"}">🎓${gradSuggest(c.key) ? "?" : ""}</button>
+          ${sess.tear ? '<span class="pillbtn tearchk">✂ 확인</span>' : `<button class="pillbtn gradpill${gradSuggest(c.key) ? " sug" : ""}" type="button" data-act="grad-ask" aria-pressed="${sess.gradAsk === c.key}" aria-label="책에서 뜯기" title="${gradSuggest(c.key) ? `복습 간격이 ${tearLabel()}을 넘었어요. 뜯을까요?` : "다 외웠으면 책에서 뜯어내기"}">✂${gradSuggest(c.key) ? '<span class="sgt">뜯기?</span>' : ""}</button>`}
           <button class="pillbtn" type="button" data-act="word" data-key="${esc(c.key)}" aria-label="상세">${ICON.detail}<span class="pl">상세</span></button>
         </div>
-        ${sess.gradAsk === c.key ? `<div class="gradask" role="alertdialog" aria-label="졸업 확인"><span>🎓 이 단어를 졸업시킬까요? 앞으로 공부에 안 나와요.</span><span class="gbtns"><button class="btn small primary" type="button" data-act="grad-now">졸업</button><button class="btn small ghost" type="button" data-act="grad-cancel">취소</button></span></div>` : ""}
+        ${sess.gradAsk === c.key ? `<div class="gradask" role="alertdialog" aria-label="뜯기 확인"><span>✂ 이 단어를 책에서 뜯을까요? 평소 공부엔 안 나오고, 몇 달에 한 번 확인 카드로만 나와요.</span><span class="gbtns"><button class="btn small primary" type="button" data-act="grad-now">뜯기</button><button class="btn small ghost" type="button" data-act="grad-cancel">취소</button></span></div>` : ""}
         <div class="sc-main">${main}</div>
         ${ex}
         <div class="sc-bottom">
@@ -3298,6 +3919,15 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
   function sessRate(mode, know) {
     const sess = sessOf(mode); if (!sess || !sess.cur) return;
     const key = sess.cur, sk = qKey({ key }, mode), now = Date.now(), prev = S.states[sk] || null, isFirst = !(key in sess.first);
+    if (sess.tear) {
+      sess.hist.push({ key, sk, prev, isFirst: true, tearPrev: S.tear[key] ? Object.assign({}, S.tear[key]) : null, gradPrev: S.grad[key] || 0, wasBack: !know, queue: sess.queue.slice(), next: sess.next.slice(), lap: sess.lap, cleared: sess.cleared, total: sess.total });
+      sess.first[key] = know ? 3 : 1;
+      if (know) { const t = Object.assign({}, S.tear[key] || {}); t.n = (t.n || 0) + 1; t.c = now + TEAR_CHECKS[Math.min(t.n, TEAR_CHECKS.length - 1)] * DAY; S.tear[key] = t; saveTear(); }
+      else { reinsert(key, now); sess.backN = (sess.backN || 0) + 1; }
+      sess.cleared++; sess.last = key; sess.cur = null; sess.revealed = false;
+      render(); window.scrollTo(0, 0); if (!know) toast("↩ 원래 책에 다시 끼웠어요. 다시 복습에 나와요.");
+      return;
+    }
     sess.hist.push({ key, sk, prev, isFirst, queue: sess.queue.slice(), next: sess.next.slice(), lap: sess.lap, cleared: sess.cleared, total: sess.total });
     if (sess.hist.length > 60) sess.hist.shift();
     let nxt = prev;
@@ -3314,7 +3944,8 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const h = sess && sess.hist.pop(); if (!h) return;
     if (h.prev) S.states[h.sk] = h.prev; else delete S.states[h.sk];
     persistState(h.sk, h.prev);
-    if (h.isFirst) { delete sess.first[h.key]; if (!sess.practice) bumpDay(!h.prev, -1); }
+    if (h.isFirst) { delete sess.first[h.key]; if (!sess.practice && !sess.tear) bumpDay(!h.prev, -1); }
+    if ("tearPrev" in h) { if (h.tearPrev) S.tear[h.key] = h.tearPrev; else delete S.tear[h.key]; if (h.gradPrev) S.grad[h.key] = h.gradPrev; else delete S.grad[h.key]; saveTear(); serial("grad", () => S.store.saveGrad()); if (h.wasBack) sess.backN = Math.max(0, (sess.backN || 0) - 1); }
     Object.assign(sess, { queue: h.queue, next: h.next, lap: h.lap, cleared: h.cleared, total: h.total, cur: h.key, revealed: false });
     render();
   }
@@ -3490,7 +4121,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       </section>
       <section class="panel"><h2 class="section-title">전체 단어 ${S.cards.length}개의 상태</h2>
         <div class="dist">${seg(nGrad, "--star")}${seg(nLong, "--accent")}${seg(nRev, "--c-rev")}${seg(nLearn, "--c-learn")}</div>
-        <div class="legend num"><span style="--c:var(--accent)">장기 기억 ${nLong}</span><span style="--c:var(--c-rev)">복습 중 ${nRev}</span><span style="--c:var(--c-learn)">학습 중 ${nLearn}</span><span style="--c:var(--line)">새 카드 ${nNew}</span>${nGrad ? `<span style="--c:var(--star)">🎓 졸업 ${nGrad}</span>` : ""}</div>
+        <div class="legend num"><span style="--c:var(--accent)">장기 기억 ${nLong}</span><span style="--c:var(--c-rev)">복습 중 ${nRev}</span><span style="--c:var(--c-learn)">학습 중 ${nLearn}</span><span style="--c:var(--line)">새 카드 ${nNew}</span>${nGrad ? `<span style="--c:var(--star)">✂ 뜯은 종이 ${nGrad}</span>` : ""}</div>
         <p class="note" style="margin-top:10px">장기 기억은 기억 안정도가 21일 이상인 단어예요.</p>
       </section>
     </div>`;
@@ -3503,14 +4134,14 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const a = t.dataset.act, page = topPage();
     switch (a) {
       case "back": if (page && page.t === "study") { S.study = null; } if (page && page.t === "write") { S.write = null; } back(); break;
-      case "write": go({ t: "pick", deck: t.dataset.deck, mode: "write" }); break;
+      case "write": S.lsheet = null; go({ t: "pick", deck: t.dataset.deck, mode: "write" }); break;
       case "wreveal": writeReveal(); break;
       case "wrate": writeRate(+t.dataset.g); break;
       case "wtrans": toggleTrans(); break;
       case "wclear": clearPads(); break;
       case "wstroke": undoStroke(); break;
       case "wnpd": S.settings.writeNewPerDay = clamp(S.settings.writeNewPerDay + (+t.dataset.d), 0, 200); saveSettingsSoon(); render(); break;
-      case "study": go({ t: "pick", deck: t.dataset.deck }); break;
+      case "study": S.lsheet = null; go({ t: "pick", deck: t.dataset.deck }); break;
       case "pick-step": pickStep(page, +t.dataset.d); break;
       case "pick-max": { const b = pickBounds(page); if (b) { pickSet(page, b.max); const r = $("#pickRange"); if (r) r.value = r.max; } break; }
       case "pick-go": startSession(page); break;
@@ -3521,10 +4152,23 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "rand-queue": { const sess = page && page.t === "write" ? S.write : S.study; if (!sess || sess.queued) break; const now = Date.now(), cut = nextCutoff(now); let n = 0;
         for (const k of Object.keys(sess.first)) { if (sess.first[k] !== 1) continue; const sk = qKey({ key: k }, sess.mode), st0 = S.states[sk]; if (!st0) continue; if (st0.due >= cut) { const o = Object.assign({}, st0, { due: now }); S.states[sk] = o; persistState(sk, o); } n++; }
         sess.queued = true; render(); toast(`${n}개를 오늘 복습에 넣었어요.`); break; }
-      case "reveal": if (S.study && S.study.cur) { S.study.revealed = !S.study.revealed; render(); } break;
+      case "reveal": if (S.study && S.study.cur) { if ($("#npage")) sheetNext(); else { S.study.revealed = !S.study.revealed; render(); } } break;
       case "furi-go": furiFillAll(); break;
-      case "grad-on": setGrad(t.dataset.key, true); render(); toast("졸업했어요. 단어 탭의 🎓 졸업에서 볼 수 있어요."); break;
-      case "grad-off": setGrad(t.dataset.key, false); render(); toast("졸업을 취소했어요."); break;
+      case "grad-on": { const y = window.scrollY; setGrad(t.dataset.key, true); render(); window.scrollTo(0, y); toast("✂ 책에서 뜯었어요. 학습 탭 책장 옆 '뜯은 종이'에서 볼 수 있어요."); break; }
+      case "grad-off": { const y = window.scrollY; setGrad(t.dataset.key, false); render(); window.scrollTo(0, y); toast("↩ 원래 책에 다시 끼웠어요."); break; }
+      case "lsheet": { const id = t.dataset.id, y = window.scrollY; S.lsheet = S.lsheet === id ? null : id; render(); window.scrollTo(0, y); break; }
+      case "lsheet-close": { const y = window.scrollY; S.lsheet = null; render(); window.scrollTo(0, y); break; }
+      case "lsheet-words": { const id = t.dataset.id; S.lsheet = null; S.stack = []; S.tab = "words"; S.wlevel = id.startsWith("lv:") ? [id.slice(3)] : []; S.wsrc = id.startsWith("lv:") ? [] : [id]; S.filter = "all"; S.q = ""; S.wpos = []; S.wvt = []; S.wnt = []; S.wordLimit = 100; render(); window.scrollTo(0, 0); break; }
+      case "torn": S.lsheet = null; go({ t: "torn" }); break;
+      case "torn-sort": if (page) { page.sort = t.dataset.v; render(); } break;
+      case "torn-more": if (page) { const y = window.scrollY; page.lim = (page.lim || 120) + 120; render(); window.scrollTo(0, y); } break;
+      case "tear-check": startTearCheck(); break;
+      case "pitch": S.settings.pitch = t.dataset.v === "1"; saveSettingsSoon(); { const y = window.scrollY; render(); window.scrollTo(0, y); } break;
+      case "tear-days": S.settings.tearDays = +t.dataset.v; saveSettingsSoon(); { const y = window.scrollY; render(); window.scrollTo(0, y); } break;
+      case "tear-undo": { const L = S.lastTear; if (!L) break; S.lastTear = null;
+        delete S.grad[L.k]; if (L.prevT) S.tear[L.k] = L.prevT; else delete S.tear[L.k]; serial("grad", () => S.store.saveGrad()); saveTear();
+        if (L.sess && S.study === L.sess) Object.assign(L.sess, { queue: L.queue, next: L.next, total: L.total, cur: L.k, revealed: false });
+        $("#toast").hidden = true; render(); break; }
       case "tag": { toggleTag(t.dataset.key, t.dataset.t);
         if (page && page.t === "write") { t.setAttribute("aria-pressed", String(!!tagOf(t.dataset.key)[t.dataset.t])); }
         else { const y = window.scrollY; render(); window.scrollTo(0, y); }
@@ -3532,13 +4176,20 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "rtag": { const v = t.dataset.t, cur = S.settings.rtags || []; S.settings.rtags = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v]; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
       case "grad-ask": if (S.study && S.study.cur) { S.study.gradAsk = S.study.gradAsk === S.study.cur ? null : S.study.cur; render(); } break;
       case "grad-cancel": if (S.study) { S.study.gradAsk = null; render(); } break;
-      case "grad-now": { const sess = S.study; if (!sess || !sess.cur) break; const k = sess.cur;
-        setGrad(k, true); sess.queue = sess.queue.filter(x => x !== k); sess.next = sess.next.filter(x => x !== k);
-        sess.total = Math.max(0, sess.total - 1); sess.cur = null; sess.revealed = false; sess.gradAsk = null;
-        render(); toast("졸업했어요. 이 단어는 이제 공부에 안 나와요. 단어 탭 🎓에서 되돌릴 수 있어요."); break; }
+      case "grad-now": { const sess = S.study; if (!sess || !sess.cur || sess.tearing) break; const k = sess.cur; sess.gradAsk = null;
+        const finish = () => { sess.tearing = false;
+          const L = { k, prevT: S.tear[k] ? Object.assign({}, S.tear[k]) : null, sess, queue: sess.queue.slice(), next: sess.next.slice(), total: sess.total };
+          setGrad(k, true); sess.queue = sess.queue.filter(x => x !== k); sess.next = sess.next.filter(x => x !== k);
+          sess.total = Math.max(0, sess.total - 1); sess.cur = null; sess.revealed = false; S.lastTear = L;
+          render(); window.scrollTo(0, 0);
+          const g = sess.deck !== "all" && groupById(sess.deck), left = (g ? g.cards : S.cards).filter(c => !isGrad(c)).length;
+          toastAct(`✂ 한 장 뜯었어요 · ${esc(g ? g.name : "책장")} 남은 ${left}장`, "되돌리기", "tear-undo"); };
+        const el = $("#npage") || $(".scard");
+        if (el && !reduceMotion()) { sess.tearing = true; const gq = $(".gradask"); if (gq) gq.remove(); el.classList.add("tearing"); setTimeout(finish, 560); } else finish();
+        break; }
       case "tg-memo": if (S.study && S.study.cur) { S.study.memoKey = S.study.memoKey === S.study.cur ? null : S.study.cur; render(); } break;
-      case "tg-ex": S.settings.hideEx = !S.settings.hideEx; saveSettingsSoon(); render(); break;
-      case "tg-kana": S.settings.showKana = !S.settings.showKana; saveSettingsSoon(); render(); break;
+      case "tg-ex": { S.settings.hideEx = !S.settings.hideEx; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "tg-kana": { S.settings.showKana = !S.settings.showKana; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
       case "tts-engine": { const tt = ttsReadForm(); tt.engine = t.dataset.v; ttsSave(tt); ttsWarned = false; const y = window.scrollY; render(); window.scrollTo(0, y); break; }
       case "tts-save": { ttsSave(ttsReadForm()); ttsWarned = false; const y = window.scrollY; render(); window.scrollTo(0, y); toast("음성 설정을 저장했어요."); break; }
       case "tts-try": { ttsSave(ttsReadForm()); ttsWarned = false; speak("こんにちは。今日も一緒に頑張りましょう。"); break; }
@@ -3549,7 +4200,22 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "rate": rate(+t.dataset.g); break;
       case "undo": undo(); break;
       case "word": go({ t: "word", key: t.dataset.key }); break;
-      case "kanji": e.preventDefault(); if (!(page && page.t === "kanji" && page.k === t.dataset.k)) go({ t: "kanji", k: t.dataset.k }); break;
+      case "kanji": { e.preventDefault(); const kk = t.dataset.k;
+        if (page && page.t === "kanji") { if (page.k !== kk) { page.k = kk; page.turn = "n"; render(); window.scrollTo(0, 0); } break; }
+        const from = page && page.t === "study" && S.study ? S.study.cur : page && page.t === "word" ? page.key : "";
+        const fly = !!(page && (page.t === "study" || page.t === "word")) && !reduceMotion();
+        if (page && page.t === "kindex") { S.stack[S.stack.length - 1] = { t: "kanji", k: kk, from: page.from || "", fly: false, turn: "n" }; render(); window.scrollTo(0, 0); break; }
+        if (fly && kdDesk()) { flyCover(() => go({ t: "kanji", k: kk, from, open: true })); break; }
+        go({ t: "kanji", k: kk, from, fly }); break; }
+      case "kd-go": if (page && page.t === "kanji") { page.k = t.dataset.k; page.turn = t.dataset.d === "p" ? "p" : "n"; render(); window.scrollTo(0, 0); } break;
+      case "kd-pg": kdTurn(+t.dataset.d); break;
+      case "kd-mode": S.settings.kdMode = t.dataset.v === "spine" ? "spine" : "desk"; saveSettingsSoon(); { const y = window.scrollY; render(); window.scrollTo(0, y); } break;
+      case "kd-tab": { S.settings.kdTab = t.dataset.v; S.kq = ""; S.kanjiLimit = 240; S.kdPg = 0; saveSettingsSoon();
+        if (page && (page.t === "kanji" || page.t === "kindex")) { S.stack[S.stack.length - 1] = { t: "kindex", from: page.from || "" }; }
+        render(); window.scrollTo(0, 0); break; }
+      case "kd-mine": { S.settings.kdMine = !S.settings.kdMine; S.kanjiLimit = 240; S.kdPg = 0; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y); break; }
+      case "kd-open": { const from = S.study ? S.study.cur : ""; if (kdDesk()) flyCover(() => go({ t: "kindex", open: !reduceMotion(), from })); else go({ t: "kindex", fly: !reduceMotion(), from }); break; }
+      case "kd-add": go({ t: "edit", key: null, draft: { w: t.dataset.k } }); break;
       case "note-edit": page.editNote = true; render(); { const el = $("#n_memo"); if (el) el.focus(); } break;
       case "note-cancel": page.editNote = false; render(); break;
       case "note-save": saveNote(page.key); page.editNote = false; render(); toast("저장했어요."); break;
@@ -3593,7 +4259,10 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "imp-level": if (S.pendingImport) { S.pendingImport.name = (($("#imp_name") || {}).value || S.pendingImport.name); S.pendingImport.skip = !!(($("#imp_skip") || {}).checked); S.pendingImport.level = t.dataset.v; render(); } break;
       case "imp-go": doImport(); break;
       case "sources": S.confirmDel = null; S.renaming = null; go({ t: "sources" }); break;
-      case "learn-view": S.settings.learnView = t.dataset.v; saveSettingsSoon(); render(); break;
+      case "learn-view": { const v = t.dataset.v; if (v === (S.settings.learnView === "source" ? "source" : "level")) break;
+        const from = [...document.querySelectorAll(".lbk, .ldr:not(.empty)")].map(e => e.getBoundingClientRect()).filter(r => r.bottom > 0 && r.top < innerHeight);
+        S.settings.learnView = v; S.lsheet = null; saveSettingsSoon(); const y = window.scrollY; render(); window.scrollTo(0, y);
+        flyPapers(from, [...document.querySelectorAll(v === "level" ? ".ldr:not(.empty)" : ".lbk")]); break; }
       case "settings": if (!(page && page.t === "settings")) go({ t: "settings" }); break;
       case "src-rename": S.renaming = t.dataset.deck; S.confirmDel = null; render(); { const el = $("#src_name"); if (el) el.focus(); } break;
       case "src-rename-no": S.renaming = null; render(); break;
@@ -3631,6 +4300,9 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "delword-no": page.draft = readForm(); page.confirmDel = false; render(); break;
       case "delword-yes": deleteWord(); break;
       case "filter": S.filter = t.dataset.f; S.wordLimit = 100; render(); break;
+      case "wf-toggle": S.wfOpen = !S.wfOpen; render(); break;
+      case "wf-clear": S.wlevel = []; S.wsrc = []; S.filter = "all"; S.wpos = []; S.wvt = []; S.wnt = []; S.wordLimit = 100; render(); break;
+      case "wf-off": { const a2 = t.dataset.a, v = t.dataset.v; if (a2 === "filter") S.filter = "all"; else { S[a2] = (S[a2] || []).filter(x => x !== v); if (a2 === "wpos") { if (v === "verb") S.wvt = []; if (v === "noun") S.wnt = []; } } S.wordLimit = 100; render(); break; }
       case "wlevel": case "wsrc": case "wpos": case "wvt": case "wnt": { const key = a, v = t.dataset.v, multi = S.settings.wMulti !== false;
         S[key] = v === "all" ? [] : multi ? (S[key].includes(v) ? S[key].filter(x => x !== v) : [...S[key], v]) : (S[key].length === 1 && S[key][0] === v ? [] : [v]);
         if (!S.wpos.includes("verb")) S.wvt = [];
@@ -3648,7 +4320,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "kfill-one": { const k = t.dataset.k; KFILL.failed.delete(k); kanjiAutoFill([k]); break; }
       case "kfill-missing": { KFILL.failed.clear(); kanjiAutoFill([...S.kidx.keys()]); break; }
       case "kfilter": { const f = t.dataset.f; S.kfilter = f === "all" ? [] : (S.kfilter.includes(f) ? S.kfilter.filter(x => x !== f) : [...S.kfilter, f]); S.kanjiLimit = 240; render(); break; }
-      case "more-kanji": { S.kanjiLimit += 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); break; }
+      case "more-kanji": { S.kanjiLimit += 240; const r = $("#kresults"); if (r) { r.innerHTML = kdBody(); kdLayout(0); } break; }
       case "npd": setNewPerDay(S.settings.newPerDay + (+t.dataset.d)); break;
       case "dir": { const v = t.dataset.v, m = v === "write" ? "write" : "read";
         if (page && page.t === "pick" && page.mode !== m) { page.mode = m; if (!page.rand) { page.n = null; page.touched = false; } }
@@ -3670,7 +4342,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     }
     if (!page || page.t !== "study" || !S.study || e.metaKey || e.ctrlKey || e.altKey) return;
     if (/INPUT|TEXTAREA|SELECT/.test(t && t.tagName)) return;
-    if ((e.key === " " || e.key === "Enter") && S.study.cur) { e.preventDefault(); S.study.revealed = !S.study.revealed; render(); }
+    if ((e.key === " " || e.key === "Enter") && S.study.cur) { e.preventDefault(); if ($("#npage")) sheetNext(); else { S.study.revealed = !S.study.revealed; render(); } }
     else if (S.study.cur && (e.key === "1" || e.key === "2")) { e.preventDefault(); sessRate("read", e.key === "2"); }
     else if (e.key === "e" || e.key === "E") { S.settings.hideEx = !S.settings.hideEx; saveSettingsSoon(); render(); }
     else if (e.key === "h" || e.key === "H") { S.settings.showKana = !S.settings.showKana; saveSettingsSoon(); render(); }
@@ -3685,9 +4357,10 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       return;
     }
     if (e.target.id === "wsearch") { S.q = e.target.value; S.wordLimit = 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); }
-    else if (e.target.id === "ksearch") { S.kq = e.target.value; S.kanjiLimit = 240; const r = $("#kresults"); if (r) r.innerHTML = kanjiResults(); }
+    else if (e.target.id === "ksearch") { S.kq = e.target.value; S.kanjiLimit = 240; const r = $("#kresults"); if (r) { r.innerHTML = kdBody(); kdLayout(0); } const hd = document.querySelector(".dhead span"); if (hd) hd.textContent = S.kq.trim() ? "찾기" : kdLabel(kdTab()) + " 색인"; }
     else if (e.target.id === "f_w" || e.target.id === "f_r") dupCheck();
   });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && S.lsheet && !$("#modal") && !topPage()) { S.lsheet = null; const y = window.scrollY; render(); window.scrollTo(0, y); } });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#modal")) { e.preventDefault(); e.stopPropagation(); closeModal(); } }, true);
   // 표 입력: 엑셀처럼 방향키·엔터로 칸 이동 (일본어 입력 중 변환할 때는 건드리지 않음)
   function gridFocus(r, c) {
@@ -3778,7 +4451,12 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     if (o.gridMemoMode === "now" || o.gridMemoMode === "later") S.settings.gridMemoMode = o.gridMemoMode;
     if (Number.isFinite(o.sessSize)) S.settings.sessSize = o.sessSize;
     if (typeof o.hideEx === "boolean") S.settings.hideEx = o.hideEx;
+    if ([14, 30, 60, 90].includes(o.tearDays)) S.settings.tearDays = o.tearDays;
     if (typeof o.showKana === "boolean") S.settings.showKana = o.showKana;
+    if (typeof o.pitch === "boolean") S.settings.pitch = o.pitch;
+    if (typeof o.kdTab === "string") S.settings.kdTab = o.kdTab;
+    if (typeof o.kdMine === "boolean") S.settings.kdMine = o.kdMine;
+    if (o.kdMode === "desk" || o.kdMode === "spine") S.settings.kdMode = o.kdMode;
     if (Number.isFinite(o.writeSessSize)) S.settings.writeSessSize = o.writeSessSize;
   }
   let settingsTimer = null;
@@ -3863,7 +4541,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
 
   // ================= backup =================
   async function exportBackup() {
-    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, grad: S.grad, tags: S.tags, days: S.days, notes: S.notes, levels: S.levels, links: S.links, exs: S.exs, kedits: S.kedits, dates: S.dates, decks: importedMetas };
+    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, grad: S.grad, tags: S.tags, days: S.days, notes: S.notes, levels: S.levels, links: S.links, exs: S.exs, kedits: S.kedits, dates: S.dates, tear: S.tear, decks: importedMetas };
     const name = "나만의단어장-백업-" + dayKey(Date.now()) + ".json";
     const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
     try {
@@ -3922,13 +4600,14 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     for (const [k, v] of Object.entries(j.tags || {})) { const t = mk(k); S.tags[t] = Object.assign({}, S.tags[t] || {}, v || {}); }
     for (const [k, v] of Object.entries(j.links || {})) S.links[mk(k)] = mk(v);
     for (const [k, v] of Object.entries(j.dates || {})) { const t = mk(k), o = S.dates[t] || {}, as = [o.a, v && v.a].filter(Boolean); S.dates[t] = { a: as.length ? Math.min(...as) : 0, u: Math.max(o.u || 0, (v && v.u) || 0) }; }
+    for (const [k, v] of Object.entries(j.tear || {})) { if (!v) continue; const t = mk(k), o = S.tear[t]; S.tear[t] = o ? { c: Math.max(o.c || 0, v.c || 0) || undefined, n: Math.max(o.n || 0, v.n || 0), b: Math.max(o.b || 0, v.b || 0), bt: Math.max(o.bt || 0, v.bt || 0) || undefined } : v; }
     for (const [k, v] of Object.entries(j.exs || {})) { const t = mk(k), have = S.exs[t] || []; for (const e of v || []) if (e && e.ex && !have.some(h => h.ex === e.ex)) have.push(e); if (have.length) S.exs[t] = have; }
     for (const [k, v] of Object.entries(j.kedits || {})) { const h = S.kedits[k]; if (v && (!h || (v.at || 0) > (h.at || 0))) S.kedits[k] = v; }
     for (const [k, v] of Object.entries(j.days || {})) { const h = S.days[k] || {}; S.days[k] = { rev: Math.max(h.rev || 0, (v || {}).rev || 0), new: Math.max(h.new || 0, (v || {}).new || 0) }; }
     migrateNotes();
   }
   function overwriteBackup(j) {
-    S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.grad = j.grad || {}; S.tags = j.tags || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; S.links = j.links || {}; S.exs = j.exs || {}; S.kedits = j.kedits || {}; S.dates = j.dates || {}; migrateNotes();
+    S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.grad = j.grad || {}; S.tags = j.tags || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; S.links = j.links || {}; S.exs = j.exs || {}; S.kedits = j.kedits || {}; S.dates = j.dates || {}; S.tear = j.tear || {}; migrateNotes();
     importedMetas = Array.isArray(j.decks) ? j.decks : [];
     applySettings(j.settings);
   }
@@ -3973,7 +4652,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const data = await S.store.loadAll();
     S.states = data.states || {};
     applySettings(data.settings);
-    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.grad = data.grad || {}; S.tags = data.tags || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {}; S.links = data.links || {}; S.exs = data.exs || {}; S.kedits = data.kedits || {}; S.dates = data.dates || {};
+    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.grad = data.grad || {}; S.tags = data.tags || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {}; S.links = data.links || {}; S.exs = data.exs || {}; S.kedits = data.kedits || {}; S.dates = data.dates || {}; S.tear = data.tear || {};
     kanjiRebuild();
     if (migrateNotes()) S.store.saveNotes();
     rebuild();
