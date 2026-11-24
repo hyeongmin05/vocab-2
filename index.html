@@ -480,6 +480,14 @@ a.btn { color: inherit; }
 .example.gen { border: 1.5px dashed var(--accent, #2b4c8c); }
 .exbtns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .exgenrow { margin-top: 8px; }
+.gaistat { font-size: 12.5px; align-self: center; }
+.gwrap { overflow-anchor: none; }
+.wdates { font-size: 12px; margin: 4px 0 0; }
+.wsortrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.wsortrow .note { margin: 0; }
+.wsortrow .seg { display: flex; gap: 4px; }
+.wsortrow .chip { font-size: 12px; padding: 3px 9px; }
+.nasuf { font-size: .55em; color: var(--muted); font-weight: 500; margin-left: 2px; }
 .gsum { font-size: 14px; margin: 4px 0 0; }
 .kcands { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-size: 13px; }
 .kcands:empty { display: none; }
@@ -494,6 +502,8 @@ a.btn { color: inherit; }
 .mhead b { font-family: var(--f-word); font-size: 17px; }
 .gnum { width: 64px; padding: 4px 6px !important; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .gstat { display: block; font-size: 10.5px; font-weight: 600; }
+.gsrc { display: block; font-size: 9.5px; color: var(--muted); max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25; }
+.gsrc:empty { display: none; }
 .gstat.dup, .gstat.err { color: var(--again); }
 .gstat.warn { color: var(--hard); }
 .gstat.ok { color: var(--good); }
@@ -771,7 +781,7 @@ a.btn { color: inherit; }
   // ================= state =================
   const S = {
     decks: [], cards: [], byKey: {}, kanji: {}, kbase: {}, kedits: {}, kidx: new Map(),
-    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, grad: {}, tags: {}, days: {}, notes: {}, levels: {}, links: {}, exs: {}, words: [],
+    states: {}, settings: { newPerDay: 20, dir: "w2m", writeNewPerDay: 10, showTrans: false, learnView: "level", sessSize: 20, writeSessSize: 10, hideEx: false }, write: null, favs: {}, grad: {}, tags: {}, days: {}, notes: {}, levels: {}, links: {}, exs: {}, dates: {}, words: [],
     store: null, ready: false, tab: "learn", stack: [],
     study: null, undo: null,
     q: "", filter: "all", wlevel: [], wsrc: [], wpos: [], wvt: [], wnt: [], wordLimit: 100, kq: "", kfilter: [], kanjiLimit: 240, confirmDel: null, waitTimer: null,
@@ -786,7 +796,7 @@ a.btn { color: inherit; }
     const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("기기 저장 공간에 저장하지 못했어요."); } };
     return {
       kind: "local",
-      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), grad: get("fsrs.grad", {}), tags: get("fsrs.tags", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}), links: get("fsrs.links", {}), exs: get("fsrs.exs", {}), kedits: get("fsrs.kedits", {}) }; },
+      async loadAll() { return { states: get("fsrs.states", {}), settings: get("fsrs.settings", {}), decks: get("fsrs.decks", []), words: get("fsrs.words", []), favs: get("fsrs.favs", {}), grad: get("fsrs.grad", {}), tags: get("fsrs.tags", {}), days: get("fsrs.days", {}), notes: get("fsrs.notes", {}), levels: get("fsrs.levels", {}), links: get("fsrs.links", {}), exs: get("fsrs.exs", {}), kedits: get("fsrs.kedits", {}), dates: get("fsrs.dates", {}) }; },
       async saveState() { put("fsrs.states", S.states); },
       async deleteState() { put("fsrs.states", S.states); },
       async saveSettings(o) { put("fsrs.settings", o); },
@@ -802,10 +812,11 @@ a.btn { color: inherit; }
       async saveLevels() { put("fsrs.levels", S.levels); },
       async saveLinks() { put("fsrs.links", S.links); },
       async saveExs() { put("fsrs.exs", S.exs); },
+      async saveDates() { put("fsrs.dates", S.dates); },
       async saveKedits() { put("fsrs.kedits", S.kedits); },
       async saveAll() {
         put("fsrs.states", S.states); put("fsrs.settings", S.settings);
-        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.grad", S.grad); put("fsrs.tags", S.tags); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels); put("fsrs.links", S.links); put("fsrs.exs", S.exs); put("fsrs.kedits", S.kedits);
+        put("fsrs.decks", importedMetas); put("fsrs.words", S.words); put("fsrs.favs", S.favs); put("fsrs.grad", S.grad); put("fsrs.tags", S.tags); put("fsrs.days", S.days); put("fsrs.notes", S.notes); put("fsrs.levels", S.levels); put("fsrs.links", S.links); put("fsrs.exs", S.exs); put("fsrs.dates", S.dates); put("fsrs.kedits", S.kedits);
       },
     };
   }
@@ -821,8 +832,31 @@ a.btn { color: inherit; }
   const persistDay = k => serial("day:" + k, () => S.store.saveDay(k));
 
   // ================= data model =================
-  function wordCard(deckId, r, i) { return { key: deckId + "-" + i, deck: deckId, idx: i, w: r[0], r: r[1], ko: r[2], en: r[3], pos: r[4], ex: r[5], exko: r[6], exf: r[7] || "" }; }
-  function myCard(w) { return { key: "w-" + w.id, deck: "mine", id: w.id, mine: true, level: w.level && w.level !== "mine" ? w.level : null, w: w.w, r: w.r || "", ko: w.ko || "", en: w.en || "", pos: w.pos || "", ex: w.ex || "", exko: w.exko || "", exf: w.exf || "", createdAt: w.createdAt || 0 }; }
+  // 읽기 칸 정리: 가나로만 된 단어는 읽기가 필요 없고(중복), 읽기에 한자가 섞였으면 사전 읽기로 바꾼다
+  let RNEED = false;
+  function cleanR(w, r) {
+    w = String(w || "").trim(); r = String(r || "").replace(/\s+/g, "");
+    if (!r) return "";
+    if (!/[㐀-䶿一-鿿豈-﫿々]/.test(w)) return "";
+    if (/[㐀-䶿一-鿿豈-﫿々a-zA-Z가-힣]/.test(r)) { if (!ACCK) { RNEED = true; return ""; } const d = ACCK.get(w); return d && d[0] ? toHira(d[0]) : ""; }
+    return r;
+  }
+  // な형용사는 사전형(な 없이)으로 저장한다: 鮮やかな → 鮮やか, あざやかな → あざやか
+  // 한자 뒤에 な 하나만 붙었고, な를 뗀 형태가 사전이나 단어장에 실제로 있을 때만 뗀다.
+  function normNa(w, r) {
+    w = String(w || "").trim(); r = String(r || "").trim();
+    if (w.length < 2 || !w.endsWith("な") || w.endsWith("なな")) return null;
+    const base = w.slice(0, -1);
+    if (!/[㐀-䶿一-鿿豈-﫿々]/.test(base)) return null;
+    const known = (ACCK && ACCK.has(base)) || (WIDX_OK() && wordIndex().byW.has(base));
+    if (!known) return null;
+    return { w: base, r: r.endsWith("な") ? r.slice(0, -1) : r };
+  }
+  const WIDX_OK = () => { try { return !!S.cards; } catch (e) { return false; } };
+  const isNaAdj = c => /な형용사/.test(c.pos || "") && !String(c.w || "").endsWith("な");
+  const naSuf = c => isNaAdj(c) ? '<span class="nasuf">(な)</span>' : "";
+  function wordCard(deckId, r, i) { return { key: deckId + "-" + i, deck: deckId, idx: i, w: r[0], r: cleanR(r[0], r[1]), rr: r[1] || "", ko: r[2], en: r[3], pos: r[4], ex: r[5], exko: r[6], exf: r[7] || "" }; }
+  function myCard(w) { return { key: "w-" + w.id, deck: "mine", id: w.id, mine: true, level: w.level && w.level !== "mine" ? w.level : null, w: w.w, r: cleanR(w.w, w.r), rr: w.r || "", ko: w.ko || "", en: w.en || "", pos: w.pos || "", ex: w.ex || "", exko: w.exko || "", exf: w.exf || "", createdAt: w.createdAt || 0, updatedAt: w.updatedAt || 0 }; }
   function htmlCard(m, r, i) { return { key: m.id + "-" + i, deck: m.id, html: true, front: r[0], back: r[1] || "", w: htmlText(r[0]), ko: htmlText(r[1] || "").slice(0, 80) }; }
   let importedMetas = [];
   function rebuild() {
@@ -836,7 +870,7 @@ a.btn { color: inherit; }
     for (const d of S.decks) { const seen = new Set(); d.cards = d.cards.map(c => alias[c.key] || c).filter(c => !seen.has(c.key) && seen.add(c.key)); }
     S.cards = all.filter(c => !alias[c.key]);
     S.byKey = {}; for (const c of all) S.byKey[c.key] = alias[c.key] || c;
-    mentionReset();
+    mentionReset(); WIDX = null;
     WT.clear();
     S.kidx = new Map();
     for (const c of S.cards) for (const k of kanjiOf(c.w)) { if (!S.kidx.has(k)) S.kidx.set(k, []); S.kidx.get(k).push(c.key); }
@@ -991,6 +1025,7 @@ a.btn { color: inherit; }
         if (r && /[\u4e00-\u9fff々]/.test(w)) { const l = byW.get(r); if (l) { if (l.length < 40 && !l.includes(w)) l.push(w); } else byW.set(r, [w]); }
       }
       ACC = m; ACCR = byR; ACCW = byW; ACCK = byK;
+      if (RNEED) { RNEED = false; try { rebuild(); render(); } catch (e) {} }
     } catch (e) { ACC = new Map(); ACCR = new Map(); }
   }
   function accentNums(c) {
@@ -1163,17 +1198,31 @@ a.btn { color: inherit; }
   const CARD_SCHEMA = { type: "ARRAY", items: { type: "OBJECT", properties: { w: { type: "STRING" }, r: { type: "STRING" }, pos: { type: "STRING" }, ko: { type: "STRING" }, en: { type: "STRING" }, ex: { type: "STRING" }, exko: { type: "STRING" }, exf: { type: "STRING" } }, required: ["w", "r", "pos", "ko", "en", "ex", "exko", "exf"] } };
   const SCHEMA_OFF = new Set(); // 응답 형식 지정을 못 받는 모델(한 번 거절되면 다음부터 안 보냄)
   const fatalErr = msg => { const e = new Error(msg); e.fatal = true; return e; };
+  // AI 요청 멈추기/시간 제한: AI_STOP(멈추기 버튼)과 요청마다 45초 제한
+  let AI_STOP = null;
+  const cancelErr = () => { const e = new Error("CANCEL"); e.cancel = true; e.fatal = true; return e; };
+  async function fetchT(url, opts, ms) {
+    const outer = AI_STOP && AI_STOP.signal;
+    if (outer && outer.aborted) throw cancelErr();
+    const ctl = new AbortController(); let timedOut = false;
+    const tm = setTimeout(() => { timedOut = true; ctl.abort(); }, ms || 45000);
+    const onStop = () => ctl.abort(); if (outer) outer.addEventListener("abort", onStop);
+    try { return await fetch(url, Object.assign({}, opts, { signal: ctl.signal })); }
+    catch (e) { if (outer && outer.aborted) throw cancelErr(); if (timedOut) { const t = new Error("TIMEOUT"); t.timeout = true; throw t; } throw e; }
+    finally { clearTimeout(tm); if (outer) outer.removeEventListener("abort", onStop); }
+  }
+  const sleepC = ms => new Promise((res, rej) => { const outer = AI_STOP && AI_STOP.signal; if (outer && outer.aborted) return rej(cancelErr()); const t = setTimeout(() => { if (outer) outer.removeEventListener("abort", ab); res(); }, ms); const ab = () => { clearTimeout(t); rej(cancelErr()); }; if (outer) outer.addEventListener("abort", ab, { once: true }); });
   async function aiAsk(prompt, conf, schema) {
     const a = conf || aiConf();
     if (!a.key) throw new Error("NO_KEY");
     const model = a.model || AI_MODELS[a.provider];
     let res, data;
     if (a.provider === "claude") {
-      res = await fetch("https://api.anthropic.com/v1/messages", {
+      try { res = await fetchT("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "content-type": "application/json", "x-api-key": a.key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
         body: JSON.stringify({ model, max_tokens: 2000, messages: [{ role: "user", content: prompt }] }),
-      });
+      }, 60000); } catch (e) { if (e.cancel) throw e; throw fatalErr(e.timeout ? "AI 응답이 너무 오래 걸려요. 잠시 뒤 다시 해 주세요." : "인터넷 연결을 확인해 주세요."); }
       data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error((data.error && data.error.message) || ("HTTP " + res.status));
       return (data.content || []).map(p => p.text || "").join("");
@@ -1182,17 +1231,17 @@ a.btn { color: inherit; }
     const alt = /lite/i.test(model) ? "gemini-flash-latest" : "gemini-flash-lite-latest";
     const plan = [[model, 0], [model, 2500], [model, 6000], [alt, 0]];
     let lastMsg = "", useSchema = !!schema;
-    const call = m => fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(m) + ":generateContent", {
+    const call = m => fetchT("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(m) + ":generateContent", {
       method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": a.key },
       body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: Object.assign({ temperature: 0.3, responseMimeType: "application/json" }, useSchema && !SCHEMA_OFF.has(m) ? { responseSchema: schema } : {}) }),
     });
     for (const [m, wait] of plan) {
-      if (wait) await sleep(wait);
-      try { res = await call(m); } catch (e) { lastMsg = "인터넷 연결을 확인해 주세요."; continue; }
+      if (wait) await sleepC(wait);
+      try { res = await call(m); } catch (e) { if (e.cancel) throw e; lastMsg = e.timeout ? "AI 응답이 너무 오래 걸려요. 구글 서버가 느린 것 같아요." : "인터넷 연결을 확인해 주세요."; res = null; continue; }
       data = await res.json().catch(() => ({}));
       // 이 모델이 응답 형식 지정을 못 받으면 형식 없이 바로 다시
-      if (res.status === 400 && useSchema && !SCHEMA_OFF.has(m)) { SCHEMA_OFF.add(m); try { res = await call(m); data = await res.json().catch(() => ({})); } catch (e) { lastMsg = "인터넷 연결을 확인해 주세요."; continue; } }
+      if (res.status === 400 && useSchema && !SCHEMA_OFF.has(m)) { SCHEMA_OFF.add(m); try { res = await call(m); data = await res.json().catch(() => ({})); } catch (e) { if (e.cancel) throw e; lastMsg = e.timeout ? "AI 응답이 너무 오래 걸려요." : "인터넷 연결을 확인해 주세요."; res = null; continue; } }
       if (res.ok) break;
       const msg = (data.error && data.error.message) || ("HTTP " + res.status);
       const busy = res.status === 503 || res.status === 500 || res.status === 502 || /high demand|overloaded|unavailable/i.test(msg);
@@ -1493,8 +1542,8 @@ a.btn { color: inherit; }
           <div class="deck-actions"><button class="btn" type="button" data-act="export">내보내기</button><label class="btn ghost" for="backupFile">가져오기</label></div>
         </div>
         <div class="panel">
-          <h2>예문 정리</h2>
-          <p>일본어 예문 칸에 한국어 해석이 섞여 들어간 단어를 찾아서 고쳐요. 바꾸기 전에 목록을 먼저 보여 줘요.</p>
+          <h2>예문·읽기 정리</h2>
+          <p>일본어 예문 칸에 한국어 해석이 섞여 들어갔거나, 읽기 칸에 한자가 들어갔거나, 가나 단어에 읽기가 중복으로 들어갔거나, な형용사가 鮮やかな처럼 な까지 붙어 들어간 단어를 찾아서 고쳐요. 바꾸기 전에 목록을 먼저 보여 줘요.</p>
           <div class="deck-actions"><button class="btn" type="button" data-act="exfix-scan">검사하기</button></div>
         </div>
         ${furiPanel()}
@@ -1538,18 +1587,20 @@ a.btn { color: inherit; }
   function gridDupKind(row, tgt) {
     const w = row.w.trim(); if (!w) return "";
     if (rowLink(row)) return "other";
-    const hit = S.cards.filter(c => !c.html && c.w === w && (!normR(row.r) || !normR(c.r) || normR(row.r) === normR(c.r)));
+    const hit = (wordIndex().byW.get(w) || []).filter(c => !normR(row.r) || !normR(c.r) || normR(row.r) === normR(c.r));
     if (!hit.length) return "";
     return tgt && hit.some(c => cardDecks(c).includes(tgt)) ? "same" : "other";
   }
+  // 상태 칸 아래 작은 글씨: 어느 출처의 단어와 겹치는지
+  const gridSrcOf = (c, w) => c ? `${c.w !== w ? c.w + " · " : ""}${srcName(c)}` : "";
   function gridStatus(i) {
     const g = S.grid, row = g.rows[i], w = row.w.trim();
     if (!w) return ["", ""];
     if (g.rows.slice(0, i).some(x => sameRow(x, row))) return ["dup", "표 안 중복"];
     const dk = gridDupKind(row, gridTargetDeck());
-    if (dk === "same") return ["dup", "이미 있음"];
-    if (dk === "other") return ["ok", "묶임"];
-    if (!row.linkNo && sameWordCards(w, row.r).length) return ["warn", "같은 단어?"];
+    if (dk === "same") return ["dup", "이미 있음", gridSrcOf(gridExisting(row), w)];
+    if (dk === "other") return ["ok", "묶임", gridSrcOf(gridExisting(row), w)];
+    if (!row.linkNo) { const sw = sameWordCards(w, row.r); if (sw.length) return ["warn", "같은 단어?", gridSrcOf(sw[0].c, w)]; }
     if (!row.ko.trim()) return [g.tried ? "err" : "warn", "뜻 필요"];
     return ["ok", "✓"];
   }
@@ -1557,8 +1608,8 @@ a.btn { color: inherit; }
   const gridPh = (c, k) => !c || k === "w" || k === "lv" ? "" : k === "r" ? String(c.r || (!kanjiOf(c.w).length ? c.w : "")) : String(c[k] || "");
   function gridBody() {
     return S.grid.rows.map((row, i) => {
-      const [cls, label] = gridStatus(i), ex = gridExisting(row);
-      return `<tr>${gridMemoCell(row, i)}${gridTagCell(row, i)}<td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}" data-r="${i}" ${label === "같은 단어?" ? 'data-act="g-same" role="button" title="눌러서 같은 단어인지 정하기"' : ""}>${label}</span></td>${gcols().map(([k], j) => k === "lv"
+      const [cls, label, src] = gridStatus(i), ex = gridExisting(row);
+      return `<tr>${gridMemoCell(row, i)}${gridTagCell(row, i)}<td class="gnum num">${i + 1}<span class="gstat ${cls}" id="gs_${i}" data-r="${i}" ${label === "같은 단어?" ? 'data-act="g-same" role="button" title="눌러서 같은 단어인지 정하기"' : ""}>${label}</span><span class="gsrc" id="gsrc_${i}" title="${esc(src || "")}">${esc(src || "")}</span></td>${gcols().map(([k], j) => k === "lv"
         ? `<td><select class="gcell gsel" data-r="${i}" data-c="${j}" aria-label="${i + 1}번 줄 분류">${LEVELS.map(([v, l]) => `<option value="${v}" ${row.lv === v ? "selected" : ""}>${l}</option>`).join("")}</select></td>`
         : `<td><input class="gcell ${k === "w" || k === "r" || k === "ex" ? "jpi" : ""}" data-r="${i}" data-c="${j}" ${k === "pos" ? 'list="posList"' : ""} value="${esc(row[k])}" placeholder="${esc(gridPh(ex, k))}" autocomplete="off"></td>`).join("")}<td><button class="gdel" type="button" data-act="g-del" data-r="${i}" aria-label="${i + 1}번 줄 지우기">×</button></td></tr>`;
     }).join("");
@@ -1567,7 +1618,7 @@ a.btn { color: inherit; }
   function gridExisting(row) {
     const w = (row.w || "").trim(); if (!w) return null;
     const l = rowLink(row); if (l) return l;
-    const c = S.cards.find(x => !x.html && x.w === w && (!normR(row.r) || !normR(x.r) || normR(row.r) === normR(x.r)));
+    const c = (wordIndex().byW.get(w) || []).find(x => !normR(row.r) || !normR(x.r) || normR(row.r) === normR(x.r));
     return c || null;
   }
   const existMemo = c => (c && S.notes[c.key] && S.notes[c.key].memo) || "";
@@ -1657,7 +1708,7 @@ a.btn { color: inherit; }
           <p class="note">${g.memoMode === "now" ? "표 맨 왼쪽 ✎를 누르면 그 자리에서 메모를 써요." : "표 맨 왼쪽 ✎로 메모할 단어만 표시해 두면, 추가하기를 누를 때 표시한 단어만 모아서 메모를 쓰게 해 줘요."}</p>
         </div>
         <div class="gtools">
-          <button class="btn small" type="button" data-act="g-ai">빈칸 AI로 채우기</button>
+          <button class="btn small" type="button" data-act="g-ai">빈칸 AI로 채우기</button><span id="gAiStat" class="muted gaistat"></span>
           <a class="btn small ghost" href="vocab-template.xlsx" download="단어장-양식.xlsx">엑셀 양식 받기</a>
           <label class="btn small ghost" for="gridFile">엑셀·CSV 올리기</label>
           <button class="btn small ghost" type="button" data-act="g-json">단어장 파일(.json) 넣기</button>
@@ -1675,13 +1726,31 @@ a.btn { color: inherit; }
       </div>
     </div>`;
   }
-  function gridMsg(text, kind) { const m = $("#gridMsg"); if (!m) return; m.hidden = !text; m.textContent = text || ""; if (kind) m.dataset.kind = kind; else m.removeAttribute("data-kind"); }
+  function gridMsg(text, kind) { const m = $("#gridMsg"); if (!m) return; m.hidden = !text; m.textContent = text || ""; if (kind) m.dataset.kind = kind; else m.removeAttribute("data-kind"); if (GAI_RUN) gridAiStat(text); }
+  let GAI_RUN = false;
+  function gridAiStat(t) { const e = $("#gAiStat"); if (e) e.textContent = t || ""; }
   function gridRefreshStatus() {
-    S.grid.rows.forEach((row, i) => { const el = $("#gs_" + i); if (!el) return; const [cls, label] = gridStatus(i); el.className = "gstat " + cls; el.textContent = label; if (label === "같은 단어?") { el.dataset.act = "g-same"; el.title = "눌러서 같은 단어인지 정하기"; } else { el.removeAttribute("data-act"); el.removeAttribute("title"); } { const ex = gridExisting(row); gcols().forEach(([k], j) => { const inp = document.querySelector(`input.gcell[data-r="${i}"][data-c="${j}"]`); if (inp) inp.placeholder = gridPh(ex, k); }); } const tg = rowTags(row); document.querySelectorAll(`.gtagbtn[data-r="${i}"]`).forEach(b => b.setAttribute("aria-pressed", String(!!tg[b.dataset.t]))); const mb = document.querySelector(`.gmemobtn[data-r="${i}"]`); if (mb) { const t = rowMemoText(row).trim(); mb.classList.toggle("has", !!t); mb.title = t || "메모"; } });
+    // 칸·버튼을 한 번에 모아 두고 줄마다 꺼내 쓴다(줄 수가 많아도 빠르게)
+    const CELL = {}, TAGB = {}, MEMB = {};
+    document.querySelectorAll("#gbody input.gcell").forEach(el => { (CELL[el.dataset.r] || (CELL[el.dataset.r] = {}))[el.dataset.c] = el; });
+    document.querySelectorAll("#gbody .gtagbtn").forEach(el => { (TAGB[el.dataset.r] || (TAGB[el.dataset.r] = [])).push(el); });
+    document.querySelectorAll("#gbody .gmemobtn").forEach(el => { MEMB[el.dataset.r] = el; });
+    S.grid.rows.forEach((row, i) => { const el = $("#gs_" + i); if (!el) return; const [cls, label, src] = gridStatus(i); { const sEl = $("#gsrc_" + i); if (sEl && sEl.textContent !== (src || "")) { sEl.textContent = src || ""; sEl.title = src || ""; } } el.className = "gstat " + cls; el.textContent = label; if (label === "같은 단어?") { el.dataset.act = "g-same"; el.title = "눌러서 같은 단어인지 정하기"; } else { el.removeAttribute("data-act"); el.removeAttribute("title"); } { const ex = gridExisting(row), cr = CELL[i] || {}; gcols().forEach(([k], j) => { const inp = cr[j]; if (inp) { const ph = gridPh(ex, k); if (inp.placeholder !== ph) inp.placeholder = ph; } }); } const tg = rowTags(row); (TAGB[i] || []).forEach(b => b.setAttribute("aria-pressed", String(!!tg[b.dataset.t]))); const mb = MEMB[i]; if (mb) { const t = rowMemoText(row).trim(); mb.classList.toggle("has", !!t); mb.title = t || "메모"; } });
     const b = $("#gSave"); if (b) b.textContent = `추가하기 (${gridCount()}개)`;
     const sm = $("#gSum"); if (sm) sm.innerHTML = gridSummary();
   }
-  function gridRerender() { const tb = $("#gbody"); if (tb) tb.innerHTML = gridBody(); gridRefreshStatus(); }
+  let gridRefreshT = 0;
+  function gridRefreshSoon() { clearTimeout(gridRefreshT); gridRefreshT = setTimeout(() => { if (S.grid && $("#gbody")) gridRefreshStatus(); }, 180); }
+  // 표를 다시 그릴 때 화면 위치(세로 스크롤·표 가로 스크롤)를 그대로 둔다
+  function gridRerender() { const tb = $("#gbody"); if (!tb) return; const y = window.scrollY, gw = $(".gwrap"), x = gw ? gw.scrollLeft : 0; tb.innerHTML = gridBody(); gridRefreshStatus(); if (gw) gw.scrollLeft = x; window.scrollTo(0, y); }
+  // 줄 수는 그대로이고 값만 바뀐 경우: 칸 값만 바꿔 넣는다(다시 그리지 않아 화면이 움직이지 않음)
+  function gridFillValues() {
+    const g = S.grid; if (!g) return;
+    if (document.querySelectorAll("#gbody tr").length !== g.rows.length) return gridRerender();
+    const cols = gcols();
+    g.rows.forEach((row, i) => cols.forEach(([k], j) => { const el = document.querySelector(`.gcell[data-r="${i}"][data-c="${j}"]`); if (!el || el === document.activeElement) return; const v = row[k] == null ? "" : String(row[k]); if (el.value !== v) el.value = v; }));
+    gridRefreshStatus();
+  }
   function gridSyncHeader() { const g = S.grid; if (!g) return; const s1 = $("#g_src"); if (s1) g.src = s1.value; const sk = $("#g_skip"); if (sk) g.skipDup = sk.checked; }
   function gridRedrawAll() { gridSyncHeader(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   // 시트의 행들(첫 줄이 제목이면 제목으로 칸을 찾음)을 표 행으로 바꾼다
@@ -1779,6 +1848,9 @@ a.btn { color: inherit; }
     if (!todo.length) return gridMsg(g.rows.some(r => r.w.trim() && gridDupKind(r, tgt)) ? "채울 빈칸이 없어요. 이미 있는 단어는 기존 뜻과 예문을 그대로 써요." : "채울 빈칸이 없어요.");
     let done = 0, stopMsg = "";
     const failedW = [];
+    GAI_RUN = true; AI_STOP = new AbortController(); let cancelled = false;
+    const aiBtn = document.querySelector('[data-act="g-ai"]'); if (aiBtn) { aiBtn.dataset.act = "g-ai-stop"; aiBtn.textContent = "■ 멈추기"; aiBtn.classList.add("danger"); }
+    try {
     const promptOf = batch => `일본어 단어장 카드를 만든다. 아래 단어 각각에 대해 JSON 배열 하나로만 답한다. 배열 순서는 입력 순서와 같다.
 원소 키:
 - "w": 입력한 단어 그대로
@@ -1801,7 +1873,7 @@ a.btn { color: inherit; }
     const apply = (x, o) => {
       const a = aiClean(o);
       if (!a || a.error || !(a.ko || a.r || a.ex)) return false;
-      for (const key of ["r", "ko", "en", "ex", "exko"]) if (!x.r[key] && a[key]) x.r[key] = String(a[key]);
+      for (const key of ["r", "ko", "en", "ex", "exko"]) if (!x.r[key] && a[key]) x.r[key] = key === "r" ? cleanR(x.r.w, a[key]) : String(a[key]);
       if (!x.r.pos && POS.includes(a.pos)) x.r.pos = a.pos;
       if (a.exf && furiPlain(String(a.exf)) === x.r.ex) x.r.exf = String(a.exf);
       return true;
@@ -1811,37 +1883,41 @@ a.btn { color: inherit; }
       const batch = todo.slice(k, k + B);
       gridMsg(`AI가 채우는 중… ${Math.min(k + batch.length, todo.length)}/${todo.length}`);
       let arr = null;
-      try { arr = await ask(batch); } catch (e) { if (e.fatal || e.message === "NO_KEY") { stopMsg = e.message === "NO_KEY" ? "API 키가 없어요." : e.message; failedW.push(...todo.slice(k).map(x => x.r.w.trim())); break; } }
+      try { arr = await ask(batch); } catch (e) { if (e.cancel) { cancelled = true; break; } if (e.fatal || e.message === "NO_KEY") { stopMsg = e.message === "NO_KEY" ? "API 키가 없어요." : e.message; failedW.push(...todo.slice(k).map(x => x.r.w.trim())); break; } }
       const miss = [];
       batch.forEach((x, j) => { const o = arr && (arr.find(o => o && o.w === x.r.w.trim()) || arr[j]); if (o && apply(x, o)) done++; else miss.push(x); });
       // 묶음이 실패했거나 빠진 단어는 하나씩 다시
       for (const x of miss) {
+        if (cancelled) break;
         if (stopMsg) { failedW.push(x.r.w.trim()); continue; }
         gridMsg(`'${x.r.w.trim()}' 다시 물어보는 중…`);
-        try { const a1 = await ask([x]); if (a1[0] && apply(x, a1[0])) { done++; continue; } } catch (e) { if (e.fatal || e.message === "NO_KEY") stopMsg = e.message === "NO_KEY" ? "API 키가 없어요." : e.message; }
+        try { const a1 = await ask([x]); if (a1[0] && apply(x, a1[0])) { done++; continue; } } catch (e) { if (e.cancel) { cancelled = true; break; } if (e.fatal || e.message === "NO_KEY") stopMsg = e.message === "NO_KEY" ? "API 키가 없어요." : e.message; }
         failedW.push(x.r.w.trim());
       }
-      if (topPage() && topPage().t === "grid") gridRerender();
+      if (topPage() && topPage().t === "grid") gridFillValues();
+      if (cancelled) break;
     }
     const failed = failedW.length;
     // 예문이 비어 남은 줄은 한 번 더 예문만 따로 받아 온다
     const noEx = todo.filter(x => !x.r.ex.trim() && !failedW.includes(x.r.w.trim()));
-    if (noEx.length && !stopMsg) {
+    if (noEx.length && !stopMsg && !cancelled) {
       gridMsg(`예문을 한 번 더 받아 오는 중… (${noEx.length}개)`);
       try {
         const v = parseJsonLoose(await aiAsk(`아래 일본어 단어마다 예문을 만든다. JSON 배열 하나로만 답하고, 원소 키는 "w"(입력 그대로), "ex"(이 단어가 들어간 자연스러운 일본어 예문 한 문장. 일본어 글자만 쓰고 한국어·번역·괄호 설명은 절대 넣지 않는다), "exko"(ex의 한국어 번역), "exf"(ex와 똑같되 한자 덩어리마다 바로 뒤에 [히라가나 읽기]).
 입력: ${JSON.stringify(noEx.map(x => x.r.w.trim()))}`));
         const arr = Array.isArray(v) ? v : (v && Array.isArray(v.items) ? v.items : []);
         noEx.forEach((x, j) => { const a = aiClean(arr.find(o => o && o.w === x.r.w.trim()) || arr[j]); if (!a || !a.ex) return; x.r.ex = a.ex; if (a.exko) x.r.exko = a.exko; if (a.exf && furiPlain(String(a.exf)) === a.ex) x.r.exf = String(a.exf); });
-      } catch (e) {}
+      } catch (e) { if (e.cancel) cancelled = true; }
       if ($("#gridMsg")) delete $("#gridMsg").dataset.kind;
     }
     if (topPage() && topPage().t === "grid") {
-      gridRerender();
+      gridFillValues(); gridAiStat("");
       const fl = [...new Set(failedW)];
-      if (stopMsg) gridMsg(`${done ? `${done}개는 채웠어요. ` : ""}${stopMsg}${fl.length ? ` (못 채운 단어: ${fl.join(", ")})` : ""}`, "error");
+      if (cancelled) gridMsg(`멈췄어요. ${done ? `${done}개는 채웠어요. ` : ""}남은 빈칸은 '빈칸 AI로 채우기'를 다시 누르면 이어서 채워요.`);
+      else if (stopMsg) gridMsg(`${done ? `${done}개는 채웠어요. ` : ""}${stopMsg}${fl.length ? ` (못 채운 단어: ${fl.join(", ")})` : ""}`, "error");
       else gridMsg(`${done}개를 채웠어요.${fl.length ? ` 못 채운 단어: ${fl.join(", ")} — '빈칸 AI로 채우기'를 다시 누르면 이 단어들만 다시 해요.` : ""} 내용을 확인하고 추가해 주세요.`, fl.length ? "error" : undefined);
     }
+    } finally { GAI_RUN = false; AI_STOP = null; const b2 = document.querySelector('[data-act="g-ai-stop"]'); if (b2) { b2.dataset.act = "g-ai"; b2.textContent = "빈칸 AI로 채우기"; b2.classList.remove("danger"); b2.disabled = false; } gridAiStat(""); }
   }
   // 표의 메모·표시를 저장된 단어에 반영. 기존 메모를 불러와 고친 줄(memoKey)은 기존 메모를 그 내용으로 바꾼다.
   function applyGridExtras(rows, keys) {
@@ -1859,7 +1935,8 @@ a.btn { color: inherit; }
   }
   async function saveGrid() {
     const g = S.grid; gridSyncHeader(); g.tried = true;
-    let rows = g.rows.map((r, i) => ({ ...r, w: r.w.trim(), ko: r.ko.trim(), _i: i })).filter(r => r.w);
+    g.rows.forEach(r => { const n = normNa(r.w, r.r); if (n) { r.w = n.w; r.r = n.r; r.pos = "な형용사"; } });
+    let rows = g.rows.map((r, i) => ({ ...r, w: r.w.trim(), r: cleanR(r.w, r.r), ko: r.ko.trim(), _i: i })).filter(r => r.w);
     if (!rows.length) { gridRefreshStatus(); return gridMsg("추가할 단어가 없어요.", "error"); }
     rows = uniqRows(rows);
     let skipped = [];
@@ -1918,6 +1995,7 @@ a.btn { color: inherit; }
           if (rowLv(r) !== baseLv) S.levels[meta.id + "-" + (meta.rows.length - 1)] = rowLv(r);
         }
         meta.count = meta.rows.length;
+        markAdded(keys);
         rebuild(); await S.store.saveDeck(); await S.store.saveLevels();
       }
     } catch (e) { return gridMsg("저장하지 못했어요. 다시 시도해 주세요.", "error"); }
@@ -2052,7 +2130,7 @@ a.btn { color: inherit; }
     const w = hlK ? esc(c.w).split(esc(hlK)).join(`<mark>${esc(hlK)}</mark>`) : esc(c.w);
     return `<button class="row" type="button" data-act="word" data-key="${esc(c.key)}">
       <span class="dot ${st.cls}" title="${st.label}"></span>
-      <span style="min-width:0"><span class="w" lang="ja">${w}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}${tagDots(c.key)}<div class="m">${esc(c.ko)}</div><div class="src">${esc(srcName(c))}</div></span>
+      <span style="min-width:0"><span class="w" lang="ja">${w}${naSuf(c)}</span>${c.r ? `<span class="r" lang="ja">${esc(c.r)}</span>` : ""}${tagDots(c.key)}<div class="m">${esc(c.ko)}</div><div class="src">${esc(srcName(c))}</div></span>
       <span>${S.favs[c.key] ? '<span class="star" aria-label="즐겨찾기">★</span>' : ""}</span>
     </button>`;
   }
@@ -2062,11 +2140,14 @@ a.btn { color: inherit; }
     const side = others.map(x => `<button class="kchip" type="button" data-act="kanji" data-k="${esc(x)}"><b lang="ja">${esc(x)}</b><span>${esc(kKo(S.kanji[x]).split(",")[0])}</span></button>`).join("");
     return `<div class="krow">${wordRow(c, k)}${side ? `<div class="kchips side">${side}</div>` : ""}</div>`;
   }
+  // 정렬: 기본(출처 순) / 최근 추가 / 최근 수정
+  const WSORTS = [["", "기본 순"], ["added", "최근 추가"], ["edited", "최근 수정"]];
   function wordsResults() {
-    const list = filteredCards();
+    let list = filteredCards();
+    if (S.wsort) { const k = S.wsort === "added" ? "a" : "u"; const dt = new Map(list.map(c => [c.key, cardDates(c)[k] || 0])); list = list.slice().sort((x, y) => dt.get(y.key) - dt.get(x.key)); if (S.wsort === "edited") list = list.filter(c => dt.get(c.key)); }
     const shown = list.slice(0, S.wordLimit);
     if (!S.cards.length) return '<p class="empty">아직 단어가 없어요. + 추가로 단어를 넣어 보세요.</p>';
-    return `<p class="note num">${list.length}개 단어</p>
+    return `<div class="wsortrow"><p class="note num">${list.length}개 단어${S.wsort === "edited" ? " (수정한 단어만)" : ""}</p><div class="seg small" role="group" aria-label="정렬">${WSORTS.map(([k, l]) => `<button class="chip" type="button" data-act="wsort" data-v="${k}" aria-pressed="${(S.wsort || "") === k}">${l}</button>`).join("")}</div></div>
       ${shown.length ? `<div class="list">${shown.map(c => wordRow(c)).join("")}</div>` : '<p class="empty">조건에 맞는 단어가 없어요.</p>'}
       ${list.length > shown.length ? `<div class="more"><button class="btn" type="button" data-act="more-words">더 보기 (${list.length - shown.length}개 남음)</button></div>` : ""}`;
   }
@@ -2078,14 +2159,40 @@ a.btn { color: inherit; }
   const KJC = "[々〆ヵヶ㐀-䶿一-鿿豈-﫿]";
   const COMPOUND_RE = new RegExp(`^(?:${KJC}+[ぁ-ゖ]{0,2}[いきぎしじちぢにひびぴみりえけげせぜてでねへべぺめれ]|[見出着寝似居煮得]|[ぁ-ゖ]+[いきぎしじちにひびみりえけげせてねべめれ])${KJC}+[ぁ-ゖ]*[うくぐすずつぬぶむる]$`);
   const isCompound = c => posGroup(c) === "verb" && COMPOUND_RE.test(String(c.w || "").trim());
+  // ===== 추가·수정 날짜 =====
+  // 직접 추가한 단어는 단어 안에(createdAt/updatedAt), 책 단어는 S.dates[키] = {a: 추가, u: 수정}에 적는다.
+  function markEdited(c, when) {
+    const t = when || Date.now();
+    if (c.mine) { const w = S.words.find(x => x.id === c.id); if (w) w.updatedAt = t; return; }
+    const d = S.dates[c.key] || (S.dates[c.key] = {}); d.u = t; serial("dates", () => S.store.saveDates());
+  }
+  function markAdded(keys, when) { const t = when || Date.now(); for (const k of keys) { const d = S.dates[k] || (S.dates[k] = {}); if (!d.a) d.a = t; } serial("dates", () => S.store.saveDates()); }
+  function cardDates(c) {
+    let a = 0, u = 0;
+    for (const x of [c, ...(c.alts || [])]) {
+      let xa, xu;
+      if (x.mine) { xa = x.createdAt; xu = x.updatedAt; }
+      else { const d = S.dates[x.key] || {}, meta = importedMetas.find(m => m.id === x.deck); xa = d.a || (meta && meta.createdAt) || 0; xu = d.u || 0; }
+      if (xa < 946684800000) xa = 0; if (xu < 946684800000) xu = 0; // 이상한 값(2000년 이전)은 날짜 없음으로
+      if (xa && (!a || xa < a)) a = xa;
+      if (xu > u) u = xu;
+    }
+    return { a, u };
+  }
+  const ymd = t => { const d = new Date(t); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`; };
+  function datesHtml(c) {
+    const { a, u } = cardDates(c);
+    if (!a && !u) return `<p class="wdates muted">추가·수정 날짜 없음</p>`;
+    return `<p class="wdates muted">${a ? `추가 ${ymd(a)}` : "추가 날짜 없음"}${u ? ` · 수정 ${ymd(u)}` : ""}</p>`;
+  }
   // ===== 추가 예문 =====
   const exsOf = key => (S.exs && S.exs[key]) || [];
   const EX_SCHEMA = { type: "OBJECT", properties: { ex: { type: "STRING" }, exko: { type: "STRING" }, exf: { type: "STRING" } }, required: ["ex", "exko", "exf"] };
   // 대표 예문을 바꾼다(직접 추가 단어는 단어 목록, 책 단어는 덱 데이터)
   async function setMainExample(c, e) {
-    if (c.mine) { const w = S.words.find(x => x.id === c.id); if (!w) return false; w.ex = e.ex; w.exko = e.exko || ""; w.exf = e.exf || ""; rebuild(); await S.store.saveWord(); return true; }
+    if (c.mine) { const w = S.words.find(x => x.id === c.id); if (!w) return false; w.ex = e.ex; w.exko = e.exko || ""; w.exf = e.exf || ""; w.updatedAt = Date.now(); rebuild(); await S.store.saveWord(); return true; }
     const meta = importedMetas.find(m => m.id === c.deck); if (!meta || meta.kind !== "words" || !meta.rows[c.idx]) return false;
-    const row = meta.rows[c.idx]; row[5] = e.ex; row[6] = e.exko || ""; row[7] = e.exf || ""; rebuild(); await S.store.saveDeck(); return true;
+    const row = meta.rows[c.idx]; row[5] = e.ex; row[6] = e.exko || ""; row[7] = e.exf || ""; markEdited(c); rebuild(); await S.store.saveDeck(); return true;
   }
   // 학습 카드: 추가 예문이 있으면 공부할 때마다 돌아가며 보여 준다
   function exVariant(c) {
@@ -2161,6 +2268,26 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
     return `<div class="tpair"><span class="muted">${label}</span>${list.map(x => x.c
       ? `<button class="tpc" type="button" data-act="word" data-key="${esc(x.c.key)}"><b lang="ja">${esc(x.w)}</b> <span lang="ja" class="muted">${esc(x.r || "")}</span> ${esc(x.c.ko || "")}${x.vt ? ` <span class="pos">${x.vt}동사</span>` : ""}</button>`
       : `<button class="tpc off" type="button" data-act="tp-add" data-w="${esc(x.w)}" data-r="${esc(toHira(x.r))}" title="단어장에 없어요. 누르면 추가 화면으로"><b lang="ja">${esc(x.w)}</b> <span lang="ja" class="muted">${esc(toHira(x.r))}</span> <span class="muted">· 단어장에 없음 ＋</span></button>`).join("")}</div>`;
+  }
+  // ===== な형용사 ↔ 명사 짝 (豊富 / 豊富な 처럼 な 하나 차이) =====
+  const stripNa = w => { w = String(w || "").trim(); return w.length > 1 && w.endsWith("な") && /[㐀-䶿一-鿿豈-﫿々]/.test(w) ? w.slice(0, -1) : w; };
+  function naPairs(c) {
+    if (c.html || !c.w) return [];
+    const b = stripNa(c.w), I = wordIndex(), rb = toHira(String(c.r || "")).replace(/な$/, "");
+    const forms = c.w === b ? [b + "な"] : [b];
+    // 같은 표기인데 품사만 다른 경우(豊富 명사 / 豊富 な형용사)는 이미 한 단어로 묶여 있으니 제외
+    const out = [];
+    for (const f of forms) for (const d of I.byW.get(f) || []) {
+      if (d === c || d.key === c.key) continue;
+      const rd = toHira(String(d.r || "")).replace(/な$/, "");
+      if (rb && rd && rb !== rd) continue;
+      if (!out.includes(d)) out.push(d);
+    }
+    return out;
+  }
+  function naPairHtml(c) {
+    const list = naPairs(c); if (!list.length) return "";
+    return `<div class="tpair"><span class="muted">${c.w.endsWith("な") ? "명사형" : "な형용사형"}</span>${list.map(d => `<button class="tpc" type="button" data-act="word" data-key="${esc(d.key)}"><b lang="ja">${esc(d.w)}</b> ${esc(d.ko || "")}${d.pos ? ` <span class="pos">${esc(d.pos)}</span>` : ""}</button>`).join("")}</div>`;
   }
   function isSuru(c) { const p = (c.pos || "").trim(), w = (c.w || "").trim(); return /する|サ변|サ変/.test(p) || (p.startsWith("동사") && KANJI_ONLY.test(w)); }
   function posGroup(c) {
@@ -2422,7 +2549,7 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
       const rg = c.ex ? hlRange(c.ex, c.w, c.pos) : null;
       body = `<div class="hero">
         <div class="wchips"><span class="decktag" style="margin:0">${esc(levelLabel(cardLevel(c)))}</span>${S.states[c.key] ? `<span class="ago">${agoLabel(c.key)}</span>` : ""}</div>
-        <div class="hero-top"><div class="word" lang="ja">${ul(linkText(c.w), c.key, "k")}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w, null, c.key, "w")}${favBtn}</div></div>
+        <div class="hero-top"><div class="word" lang="ja">${ul(linkText(c.w), c.key, "k")}${naSuf(c)}</div><div style="display:flex;gap:6px">${speakBtn(c.r || c.w, null, c.key, "w")}${favBtn}</div></div>
         ${readingHtml(c) ? `<div class="reading" lang="ja">${ul(readingHtml(c), c.key, "p")}</div>` : ""}
         <div class="meaning">${ul(esc(c.ko), c.key, "m")} ${c.en ? `<i>${esc(c.en)}</i>` : ""}</div>
         ${altMeanings(c)}
@@ -2430,6 +2557,7 @@ JSON 하나로만 답한다. 키: "ex"(일본어 예문, 일본어 글자만), "
         ${tagButtons(c.key)}
         
         <div>${c.pos ? `<span class="pos">${esc(c.pos)}</span>` : ""}<span class="decktag">출처 · ${esc(srcName(c))}</span></div>
+        ${datesHtml(c)}
         ${statusChips(c.key)}
         ${c.ex ? `<div class="example"><div class="jp" lang="ja"><span data-act="speak" data-text="${esc(c.ex)}" data-key="${esc(c.key)}" data-kind="ex" style="cursor:pointer">${linkText(c.ex, rg)}</span>${speakBtn(c.ex, "예문 듣기", c.key, "ex")}</div>${c.exko ? `<div class="ko">${esc(c.exko)}</div>` : ""}</div>` : ""}
         ${exampleMoreHtml(page, c)}
@@ -2670,7 +2798,21 @@ JSON 배열만 답한다. 원소: {"k": 한자, "ko": 음훈, "on": [음독], "k
     if (kw && !kc) return "가나로 이미 있어요";
     return "";
   }
-  const sameWordCards = (w, r, selfKey) => S.cards.filter(c => c.key !== selfKey && sameWordWhy(c, w, r)).map(c => ({ c, why: sameWordWhy(c, w, r) }));
+  // 단어 찾기용 색인(표 입력이 느려지지 않게). 단어 목록이 바뀌면 다시 만든다.
+  let WIDX = null;
+  function wordIndex() {
+    if (WIDX) return WIDX;
+    const byW = new Map(), byKana = new Map(), add = (m, k, c) => { const l = m.get(k); if (l) l.push(c); else m.set(k, [c]); };
+    for (const c of S.cards) { if (c.html || !c.w) continue; add(byW, c.w.trim(), c); const k = kanaOfCard(c); if (k) add(byKana, k, c); }
+    return (WIDX = { byW, byKana });
+  }
+  const sameWordCards = (w, r, selfKey) => {
+    w = (w || "").trim(); if (!w) return [];
+    const I = wordIndex(), kw = kanjiOf(w).length > 0;
+    const rws = (r || "").trim() ? [toHira(r.trim())] : !kw ? [toHira(w)] : ((ACCK && ACCK.get(w)) || []).map(toHira);
+    const cand = new Set([...(I.byW.get(w) || []), ...rws.flatMap(x => I.byKana.get(x) || [])]);
+    return [...cand].filter(c => c.key !== selfKey && sameWordWhy(c, w, r)).map(c => ({ c, why: sameWordWhy(c, w, r) }));
+  };
   function similarCards(q, selfKey, reading) {
     q = q.trim(); if (!q) return [];
     const ks = kanjiOf(q), qh = toHira(reading || q), out = [];
@@ -2738,17 +2880,24 @@ JSON 배열만 답한다. 원소: {"k": 한자, "ko": 음훈, "on": [음독], "k
   }
   function exfixScan() {
     const fix = [], bad = [];
-    for (const c of allWordCards()) { const r = exampleFix(c); if (!r) continue; (r.bad ? bad : fix).push({ c, r }); }
+    for (const c of allWordCards()) {
+      const r = exampleFix(c); if (r) (r.bad ? bad : fix).push({ c, r });
+      // 읽기 칸: 가나 단어에 같은 읽기가 또 들어갔거나, 읽기에 한자가 섞인 경우
+      const nn = normNa(c.w, c.rr || c.r);
+      if (nn) fix.push({ c, r: { naonly: true, w: nn.w, rd: cleanR(nn.w, nn.r), why: "な형용사를 사전형(な 없이)으로" } });
+      const rr = String(c.rr || "").trim();
+      if (rr && rr !== c.r) fix.push({ c, r: { ronly: true, rd: c.r, why: !/[㐀-䶿一-鿿豈-﫿々]/.test(c.w) ? "가나 단어라 읽기가 중복" : "읽기에 한자가 섞임" } });
+    }
     S.exfix = fix; S.exbad = bad;
     exfixModal();
   }
   function exfixModal(msg) {
     const fix = S.exfix || [], bad = S.exbad || [];
     const aiBtn = bad.length ? (aiReady() ? `<button class="btn" type="button" data-act="exfix-ai">AI로 ${bad.length}개 일본어 예문 만들기</button>` : `<p class="note">설정의 AI 키를 넣으면 이 단어들도 한국어 문장을 일본어 예문으로 자동으로 바꿀 수 있어요.</p>`) : "";
-    openModal(`<h3>예문 정리</h3>${msg ? `<p class="note">${msg}</p>` : ""}
+    openModal(`<h3>예문·읽기 정리</h3>${msg ? `<p class="note">${msg}</p>` : ""}
       ${!fix.length && !bad.length ? '<p class="note">고칠 예문이 없어요. 모두 깔끔해요.</p>' : ""}
       ${fix.length ? `<p class="note">아래 ${fix.length}개를 이렇게 고쳐요. <s>지금 예문</s> → 고친 예문 / 해석</p>
-      <div class="blist exlist">${fix.map(({ c, r }) => `<div class="exi"><b lang="ja">${esc(c.w)}</b> <span class="muted">${esc(r.why)} · ${esc(srcName(c))}</span><div class="old" lang="ja">${esc(c.ex)}</div><div class="new" lang="ja">→ ${esc(r.ex)}</div>${r.exko ? `<div class="newko">${esc(r.exko)}</div>` : '<div class="newko muted">(해석 없음)</div>'}</div>`).join("")}</div>` : ""}
+      <div class="blist exlist">${fix.map(({ c, r }) => r.naonly ? `<div class="exi"><b lang="ja">${esc(c.w)}</b> <span class="muted">${esc(r.why)} · ${esc(srcName(c))}</span><div class="old" lang="ja">${esc(c.w)}${c.r ? " · " + esc(c.r) : ""}</div><div class="new" lang="ja">→ ${esc(r.w)}${r.rd ? " · " + esc(r.rd) : ""} <span class="muted">(같은 단어가 있으면 하나로 묶여요)</span></div></div>` : r.ronly ? `<div class="exi"><b lang="ja">${esc(c.w)}</b> <span class="muted">${esc(r.why)} · ${esc(srcName(c))}</span><div class="old" lang="ja">읽기: ${esc(c.rr)}</div><div class="new" lang="ja">→ ${r.rd ? esc(r.rd) : "(읽기 칸 비움)"}</div></div>` : `<div class="exi"><b lang="ja">${esc(c.w)}</b> <span class="muted">${esc(r.why)} · ${esc(srcName(c))}</span><div class="old" lang="ja">${esc(c.ex)}</div><div class="new" lang="ja">→ ${esc(r.ex)}</div>${r.exko ? `<div class="newko">${esc(r.exko)}</div>` : '<div class="newko muted">(해석 없음)</div>'}</div>`).join("")}</div>` : ""}
       ${bad.length ? `<p class="note warnt">${bad.length}개는 예문에 일본어가 없어요. 한국어 문장을 바탕으로 AI가 일본어 예문을 만들 수 있어요. 눌러서 직접 고칠 수도 있어요.</p><div class="blist">${bad.map(({ c, r }) => `<button class="simrow" type="button" data-act="exfix-edit" data-key="${esc(c.key)}"><span class="w" lang="ja">${esc(c.w)}</span><span class="m">${esc(c.ex)}</span><span class="why">${esc(r.why)}</span></button>`).join("")}</div>${aiBtn}` : ""}
       <div class="formactions">${fix.length ? `<button class="btn primary" type="button" data-act="exfix-apply">${fix.length}개 고치기</button>` : ""}<button class="btn ghost" type="button" data-act="m-close">${fix.length ? "취소" : "닫기"}</button></div>`);
   }
@@ -2773,14 +2922,14 @@ JSON 배열만 답한다. 원소: {"k": 한자, "ko": 음훈, "on": [음독], "k
   async function exfixApply() {
     const list = S.exfix || []; let deckDirty = false, wordDirty = false, n = 0;
     for (const { c, r } of list) {
-      if (c.mine) { const w = S.words.find(x => x.id === c.id); if (!w) continue; w.ex = r.ex; w.exko = r.exko; w.exf = r.exf; wordDirty = true; n++; }
-      else { const meta = importedMetas.find(m => m.id === c.deck); if (!meta || meta.kind !== "words" || !meta.rows[c.idx]) continue; const row = meta.rows[c.idx]; row[5] = r.ex; row[6] = r.exko; row[7] = r.exf; deckDirty = true; n++; }
+      if (c.mine) { const w = S.words.find(x => x.id === c.id); if (!w) continue; if (r.naonly) { w.w = r.w; w.r = r.rd; if (!/な형용사/.test(w.pos || "")) w.pos = "な형용사"; } else if (r.ronly) w.r = r.rd; else { w.ex = r.ex; w.exko = r.exko; w.exf = r.exf; } w.updatedAt = Date.now(); wordDirty = true; n++; }
+      else { const meta = importedMetas.find(m => m.id === c.deck); if (!meta || meta.kind !== "words" || !meta.rows[c.idx]) continue; const row = meta.rows[c.idx]; if (r.naonly) { row[0] = r.w; row[1] = r.rd; if (!/な형용사/.test(row[4] || "")) row[4] = "な형용사"; } else if (r.ronly) row[1] = r.rd; else { row[5] = r.ex; row[6] = r.exko; row[7] = r.exf; } markEdited(c); deckDirty = true; n++; }
     }
     S.exfix = null;
     rebuild();
     if (deckDirty) await S.store.saveDeck();
     if (wordDirty) await S.store.saveWord();
-    closeModal(); render(); toast(`예문 ${n}개를 고쳤어요.`);
+    closeModal(); render(); toast(`${n}개를 고쳤어요.`);
   }
   function aiClean(a) {
     if (!a || typeof a !== "object") return a;
@@ -2828,7 +2977,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       if (topPage() !== page) return;
       if (!v || v.error) { formMsg(v && v.error ? "AI가 채우지 못했어요: " + v.error : "AI가 채우지 못했어요. 직접 입력해 주세요.", "error"); return; }
       const cur = readForm();
-      page.draft = { ...cur, r: cur.r || v.r || "", pos: POS.includes(v.pos) ? v.pos : cur.pos, ko: cur.ko || v.ko || "", en: cur.en || v.en || "", ex: cur.ex || v.ex || "", exko: cur.exko || v.exko || "" };
+      page.draft = { ...cur, r: cleanR(cur.w, cur.r || v.r || ""), pos: POS.includes(v.pos) ? v.pos : cur.pos, ko: cur.ko || v.ko || "", en: cur.en || v.en || "", ex: cur.ex || v.ex || "", exko: cur.exko || v.exko || "" };
       const exNow = page.draft.ex, f = v.exf ? String(v.exf) : "";
       if (f && furiPlain(f) === exNow && !(cur.exf && furiPlain(cur.exf) === exNow)) page.draft.exf = f;
       fillEdit(page);
@@ -2863,13 +3012,14 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       }
     }
     page.dupOk = false;
-    const fields = { w: f.w, r: f.r, pos: f.pos, ko: f.ko, en: f.en, ex: f.ex, exko: f.exko, exf: f.exf && furiPlain(f.exf) === f.ex ? f.exf : "" };
+    { const n = normNa(f.w, f.r); if (n) { f.w = n.w; f.r = n.r; f.pos = "な형용사"; } }
+    const fields = { w: f.w, r: cleanR(f.w, f.r), pos: f.pos, ko: f.ko, en: f.en, ex: f.ex, exko: f.exko, exf: f.exf && furiPlain(f.exf) === f.ex ? f.exf : "" };
     if (f.exf && !fields.exf) return formMsg("예문 후리가나에서 [읽기]를 빼면 예문과 똑같아야 해요. 고치거나 비워 주세요.", "error");
     try {
       if (existing && !existing.mine) {
         const meta = importedMetas.find(m => m.id === existing.deck);
         if (!meta || meta.kind !== "words") return formMsg("이 덱의 단어는 고칠 수 없어요.", "error");
-        meta.rows[existing.idx] = [fields.w, fields.r, fields.ko, fields.en, fields.pos, fields.ex, fields.exko, fields.exf];
+        meta.rows[existing.idx] = [fields.w, fields.r, fields.ko, fields.en, fields.pos, fields.ex, fields.exko, fields.exf]; markEdited(existing);
         const baseLv = meta.base && meta.level ? String(meta.level) : "mine";
         if (level === baseLv) delete S.levels[existing.key]; else S.levels[existing.key] = level;
         rebuild();
@@ -2877,7 +3027,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
         S.stack.pop(); toast("수정했어요."); render(); return;
       }
       const id = existing ? existing.id : "m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-      const word = { id, ...fields, level, createdAt: existing ? existing.createdAt || Date.now() : Date.now() };
+      const word = { id, ...fields, level, createdAt: existing ? existing.createdAt || Date.now() : Date.now(), updatedAt: existing ? Date.now() : 0 };
       const i = S.words.findIndex(x => x.id === id);
       if (i >= 0) S.words[i] = word; else S.words.push(word);
       if (S.levels["w-" + id]) { delete S.levels["w-" + id]; await S.store.saveLevels(); }
@@ -3413,6 +3563,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "ex-swap": { (async () => { const c = S.byKey[page.key]; if (!c || !page.gen) return; const old = { ex: c.ex, exko: c.exko || "", exf: c.exf || "" }, g = page.gen; page.gen = null; if (await setMainExample(c, g)) { const k = canonKey(c.key); if (old.ex) { (S.exs[k] || (S.exs[k] = [])).push(old); serial("exs", () => S.store.saveExs()); } render(); toast("대표 예문을 바꿨어요. 예전 예문은 추가 예문으로 남겨 뒀어요."); } else toast("이 단어의 예문은 바꿀 수 없어요."); })(); break; }
       case "ex-main": { (async () => { const c = S.byKey[page.key], i = +t.dataset.i, xs = c && exsOf(c.key); if (!xs || !xs[i]) return; const e = xs[i], old = { ex: c.ex, exko: c.exko || "", exf: c.exf || "" }; if (await setMainExample(c, e)) { const k = canonKey(c.key), l = S.exs[k] || []; const j = l.findIndex(x => x.ex === e.ex); if (j >= 0) l.splice(j, 1); if (old.ex) l.push(old); if (l.length) S.exs[k] = l; else delete S.exs[k]; serial("exs", () => S.store.saveExs()); render(); toast("대표 예문을 바꿨어요."); } })(); break; }
       case "ex-del": { const c = S.byKey[page.key], i = +t.dataset.i; if (!c || !S.exs[c.key]) break; S.exs[c.key].splice(i, 1); if (!S.exs[c.key].length) delete S.exs[c.key]; serial("exs", () => S.store.saveExs()); render(); break; }
+      case "g-ai-stop": if (AI_STOP) { AI_STOP.abort(); t.disabled = true; t.textContent = "멈추는 중…"; } break;
       case "tp-add": go({ t: "edit", key: null, draft: { w: t.dataset.w, r: t.dataset.r } }); break;
       case "add-one": S.stack.pop(); go({ t: "edit", key: null, draft: S.tab === "words" && S.q && KANJI_RE.test(S.q) ? { w: S.q.trim() } : {} }); break;
       case "add-file": S.stack.pop(); S.pendingImport = null; S.importMsg = null; go({ t: "import" }); break;
@@ -3488,6 +3639,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
       case "wmulti": { const m = t.dataset.v === "1"; S.settings.wMulti = m; saveSettingsSoon();
         if (!m) { S.wlevel = S.wlevel.slice(-1); S.wsrc = S.wsrc.slice(-1); S.wpos = S.wpos.slice(-1); S.wvt = S.wvt.slice(-1); S.wnt = S.wnt.slice(-1); if (!S.wpos.includes("verb")) S.wvt = []; if (!S.wpos.includes("noun")) S.wnt = []; }
         S.wordLimit = 100; render(); break; }
+      case "wsort": { S.wsort = t.dataset.v || ""; S.wordLimit = 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); break; }
       case "more-words": { S.wordLimit += 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); break; }
       case "kedit": go({ t: "kedit", k: t.dataset.k }); break;
       case "kai": kanjiAiOne(); break;
@@ -3529,7 +3681,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     if (S.grid && e.target.id === "g_src") { gridSyncHeader(); gridRefreshStatus(); }
     if (e.target.classList && e.target.classList.contains("gcell") && S.grid) {
       const r = +e.target.dataset.r, k = gcols()[+e.target.dataset.c][0];
-      if (S.grid.rows[r]) { S.grid.rows[r][k] = e.target.value; if (k === "w") { delete S.grid.rows[r].linkTo; delete S.grid.rows[r].linkNo; } if (k === "w" || k === "ko" || k === "r") gridRefreshStatus(); }
+      if (S.grid.rows[r]) { S.grid.rows[r][k] = e.target.value; if (k === "w") { delete S.grid.rows[r].linkTo; delete S.grid.rows[r].linkNo; } if (k === "w" || k === "ko" || k === "r") gridRefreshSoon(); }
       return;
     }
     if (e.target.id === "wsearch") { S.q = e.target.value; S.wordLimit = 100; const r = $("#wresults"); if (r) r.innerHTML = wordsResults(); }
@@ -3596,8 +3748,11 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     } catch (err) { gridMsg("파일을 읽지 못했어요: " + err.message + " (엑셀은 .xlsx로 저장해 주세요)", "error"); }
   });
   document.addEventListener("change", e => {
+    // 표: 단어 칸에 〜な를 적으면 사전형으로 바꾼다
+    if (e.target.classList && e.target.classList.contains("gcell") && S.grid && gcols()[+e.target.dataset.c] && gcols()[+e.target.dataset.c][0] === "w") { const i = +e.target.dataset.r, row = S.grid.rows[i]; const n = row && normNa(row.w, row.r); if (n) { const old = row.w.trim(); row.w = n.w; row.r = n.r; row.pos = "な형용사"; gridFillValues(); gridMsg(`${old} → ${n.w}로 바꿨어요. な형용사는 な 없이 저장하고, 목록에는 ${n.w}(な)로 보여요.`); } return; }
     if (e.target.classList && e.target.classList.contains("gsel") && S.grid) { const r = +e.target.dataset.r; if (S.grid.rows[r]) S.grid.rows[r].lv = e.target.value; const sm = $("#gSum"); if (sm) sm.innerHTML = gridSummary(); return; }
     if (e.target.id === "g_skip" && S.grid) { gridSyncHeader(); gridRefreshStatus(); return; }
+    if (e.target.id === "f_w") { const fr = $("#f_r"), n = normNa(e.target.value, fr ? fr.value : ""); if (n) { e.target.value = n.w; if (fr && fr.value) fr.value = n.r; const fp = $("#f_pos"); if (fp) fp.value = "な형용사"; dupCheck(); toast(`な형용사는 な 없이 저장해요: ${n.w}`); } }
     if (e.target.id !== "f_w" || !aiReady()) return;
     const f = readForm();
     // 가나로 쓴 단어인데 한자 후보가 있으면, 후보를 고를 때까지 AI 채우기를 미룬다
@@ -3708,7 +3863,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
 
   // ================= backup =================
   async function exportBackup() {
-    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, grad: S.grad, tags: S.tags, days: S.days, notes: S.notes, levels: S.levels, links: S.links, exs: S.exs, kedits: S.kedits, decks: importedMetas };
+    const data = { format: "fsrs-backup", version: 1, exportedAt: Date.now(), states: S.states, settings: S.settings, words: S.words, favs: S.favs, grad: S.grad, tags: S.tags, days: S.days, notes: S.notes, levels: S.levels, links: S.links, exs: S.exs, kedits: S.kedits, dates: S.dates, decks: importedMetas };
     const name = "나만의단어장-백업-" + dayKey(Date.now()) + ".json";
     const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
     try {
@@ -3766,13 +3921,14 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     for (const name of ["favs", "grad", "levels"]) for (const [k, v] of Object.entries(j[name] || {})) { const t = mk(k); if (!(t in S[name])) S[name][t] = v; }
     for (const [k, v] of Object.entries(j.tags || {})) { const t = mk(k); S.tags[t] = Object.assign({}, S.tags[t] || {}, v || {}); }
     for (const [k, v] of Object.entries(j.links || {})) S.links[mk(k)] = mk(v);
+    for (const [k, v] of Object.entries(j.dates || {})) { const t = mk(k), o = S.dates[t] || {}, as = [o.a, v && v.a].filter(Boolean); S.dates[t] = { a: as.length ? Math.min(...as) : 0, u: Math.max(o.u || 0, (v && v.u) || 0) }; }
     for (const [k, v] of Object.entries(j.exs || {})) { const t = mk(k), have = S.exs[t] || []; for (const e of v || []) if (e && e.ex && !have.some(h => h.ex === e.ex)) have.push(e); if (have.length) S.exs[t] = have; }
     for (const [k, v] of Object.entries(j.kedits || {})) { const h = S.kedits[k]; if (v && (!h || (v.at || 0) > (h.at || 0))) S.kedits[k] = v; }
     for (const [k, v] of Object.entries(j.days || {})) { const h = S.days[k] || {}; S.days[k] = { rev: Math.max(h.rev || 0, (v || {}).rev || 0), new: Math.max(h.new || 0, (v || {}).new || 0) }; }
     migrateNotes();
   }
   function overwriteBackup(j) {
-    S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.grad = j.grad || {}; S.tags = j.tags || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; S.links = j.links || {}; S.exs = j.exs || {}; S.kedits = j.kedits || {}; migrateNotes();
+    S.states = j.states || {}; S.words = j.words || []; S.favs = j.favs || {}; S.grad = j.grad || {}; S.tags = j.tags || {}; S.days = j.days || {}; S.notes = j.notes || {}; S.levels = j.levels || {}; S.links = j.links || {}; S.exs = j.exs || {}; S.kedits = j.kedits || {}; S.dates = j.dates || {}; migrateNotes();
     importedMetas = Array.isArray(j.decks) ? j.decks : [];
     applySettings(j.settings);
   }
@@ -3817,7 +3973,7 @@ ${page.draft.ex ? `예문은 이미 있으니 "ex"는 이 문장을 그대로 �
     const data = await S.store.loadAll();
     S.states = data.states || {};
     applySettings(data.settings);
-    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.grad = data.grad || {}; S.tags = data.tags || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {}; S.links = data.links || {}; S.exs = data.exs || {}; S.kedits = data.kedits || {};
+    importedMetas = data.decks || []; S.words = data.words || []; S.favs = data.favs || {}; S.grad = data.grad || {}; S.tags = data.tags || {}; S.days = data.days || {}; S.notes = data.notes || {}; S.levels = data.levels || {}; S.links = data.links || {}; S.exs = data.exs || {}; S.kedits = data.kedits || {}; S.dates = data.dates || {};
     kanjiRebuild();
     if (migrateNotes()) S.store.saveNotes();
     rebuild();
